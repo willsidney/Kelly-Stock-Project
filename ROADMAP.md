@@ -38,7 +38,8 @@ Turn the current Kelly Portfolio model into an accessible stock-selection system
 
 - Add a repeatable workflow for collecting current analyst inputs.
 - Start with user-provided candidate lists and database import/export. **Done**
-- Add API/source integrations if a suitable data source is chosen.
+- Use Yahoo Finance as the primary analyst-data source. **Chosen**
+- Add a Yahoo Finance updater that writes refreshed model inputs into `data/stocks.json`.
 - Prefer a scheduled updater or lightweight backend over direct browser API calls, because GitHub Pages cannot safely store private API keys.
 - Keep source attribution visible for each input.
 

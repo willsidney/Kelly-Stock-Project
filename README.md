@@ -48,6 +48,7 @@ npm run dev
 ## Files
 
 - `src/App.tsx` - current React model source.
+- `data/stocks.json` - shared stock database seed, prepared for Yahoo Finance-derived inputs.
 - `.github/workflows/deploy-pages.yml` - GitHub Pages deployment workflow.
 - `ROADMAP.md` - long-term plan for editable portfolios, candidate scoring, and market scanning.
 
@@ -59,7 +60,7 @@ The app now includes:
 - `Scanner` - ranks every stock in the saved database using the active model settings.
 - `Stock Search` - looks up stocks already loaded into the saved database.
 
-GitHub Pages can run the model and save data in the browser, but it cannot safely hold private API keys. A live market-data updater should be added as a small backend or scheduled workflow that writes trusted model inputs into the app.
+GitHub Pages can run the model and save data in the browser, but it cannot safely hold private API keys. Yahoo Finance is the chosen primary source for analyst-style data. The next step is a scheduled updater or lightweight backend that reads Yahoo Finance data and writes trusted model inputs into `data/stocks.json`.
 
 ## Privacy Note
 

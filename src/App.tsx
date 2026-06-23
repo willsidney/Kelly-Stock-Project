@@ -28,6 +28,7 @@ const W_EP       = 0.10;  // Earnings proximity — binary event uncertainty
 const LAST_REVIEW = "May 25 2026";
 const NEXT_REVIEW = "Nov 2026";
 const STORAGE_KEY = "kelly-stock-database-v1";
+const DATA_URL = "./data/stocks.json";
 
 // ─────────────────────────────────────────────────────────────────────────────
 // STOCK DATA — May 2026 + Novo Nordisk replaces IonQ
@@ -115,6 +116,9 @@ function normalizeStock(raw, idx=0){
     ytd: n(raw.ytd,0),
     analystCount: Math.max(0,n(raw.analystCount,0)),
     analystSrc: raw.analystSrc || "database",
+    dataProvider: raw.dataProvider || "Yahoo Finance",
+    lastUpdated: raw.lastUpdated || null,
+    sourceUrl: raw.sourceUrl || `https://finance.yahoo.com/quote/${ticker}`,
   };
 }
 
@@ -132,6 +136,10 @@ function loadStockDatabase(){
 
 function saveStockDatabase(stocks){
   localStorage.setItem(STORAGE_KEY,JSON.stringify(stocks,null,2));
+}
+
+function hasLocalStockDatabase(){
+  try{return Boolean(localStorage.getItem(STORAGE_KEY));}catch{return false;}
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -640,14 +648,15 @@ function Scanner({results,setView}){
   );
 }
 
-function StockDatabase({stocks,setStocks,setView}){
-  const empty = { name:"", ticker:"", sector:"other", emoji:"◆", color:STOCK_COLORS[0], strongBuy:40, buy:30, hold:25, sell:5, upside:0.25, drawdown:0.30, shortInt:0.02, beta:1.1, fxExposed:true, earningsDays:90, ytd:0, analystCount:0, analystSrc:"owner entry" };
+function StockDatabase({stocks,setStocks,setView,setDbMode}){
+  const empty = { name:"", ticker:"", sector:"other", emoji:"◆", color:STOCK_COLORS[0], strongBuy:40, buy:30, hold:25, sell:5, upside:0.25, drawdown:0.30, shortInt:0.02, beta:1.1, fxExposed:true, earningsDays:90, ytd:0, analystCount:0, analystSrc:"Yahoo Finance", dataProvider:"Yahoo Finance" };
   const [draft,setDraft] = useState(empty);
   const [importText,setImportText] = useState("");
   const update=(k,v)=>setDraft(d=>({...d,[k]:v}));
   const pct=(k,v)=>update(k,(Number(v)||0)/100);
   const upsert=()=>{
     const next=normalizeStock(draft,stocks.length);
+    setDbMode("local");
     setStocks(prev=>{
       const without=prev.filter(s=>s.ticker!==next.ticker);
       return [...without,next].sort((a,b)=>a.ticker.localeCompare(b.ticker));
@@ -655,7 +664,7 @@ function StockDatabase({stocks,setStocks,setView}){
     setDraft(empty);
     setView("scanner");
   };
-  const resetDb=()=>setStocks(BASE_STOCKS);
+  const resetDb=()=>{ localStorage.removeItem(STORAGE_KEY); setDbMode("published"); setStocks(BASE_STOCKS); };
   const exportDb=()=>{
     const blob=new Blob([JSON.stringify(stocks,null,2)],{type:"application/json"});
     const url=URL.createObjectURL(blob),a=document.createElement("a");
@@ -665,6 +674,7 @@ function StockDatabase({stocks,setStocks,setView}){
     try{
       const parsed=JSON.parse(importText);
       if(!Array.isArray(parsed)) return;
+      setDbMode("local");
       setStocks(parsed.map(normalizeStock));
       setImportText("");
       setView("scanner");
@@ -677,7 +687,7 @@ function StockDatabase({stocks,setStocks,setView}){
       <div style={{display:"grid",gridTemplateColumns:"minmax(320px,1fr) minmax(320px,.9fr)",gap:16}} className="candidate-grid">
         <div style={{background:"#080f1e",border:"1px solid #1e293b",borderRadius:12,padding:"16px 18px"}}>
           <div style={{fontSize:13,fontWeight:700,color:"#e2e8f0",marginBottom:2}}>Add Stock To Database</div>
-          <div style={{fontSize:9,color:"#475569",marginBottom:14}}>Owner/admin model inputs until the live data updater is connected</div>
+          <div style={{fontSize:9,color:"#475569",marginBottom:14}}>Yahoo Finance is the chosen source; manual entry is the bridge until the updater is connected</div>
           <div style={{display:"grid",gridTemplateColumns:"1.4fr .8fr 1fr",gap:10,marginBottom:10}}>
             <Field label="Company"><input style={inputStyle} value={draft.name} onChange={e=>update("name",e.target.value)}/></Field>
             <Field label="Ticker"><input style={{...inputStyle,fontFamily:"JetBrains Mono,monospace",textTransform:"uppercase"}} value={draft.ticker} onChange={e=>update("ticker",e.target.value.toUpperCase())}/></Field>
@@ -747,6 +757,7 @@ function Toggle({label,sub,on,onToggle,color="#00cc77"}){
 // ─────────────────────────────────────────────────────────────────────────────
 export default function App(){
   const [stocks,         setStocks]         = useState(()=>loadStockDatabase());
+  const [dbMode,         setDbMode]         = useState(()=>hasLocalStockDatabase()?"local":"published");
   const [budget,         setBudget]         = useState(250);
   const [kellyMult,      setKellyMult]      = useState(0.5);
   const [marketBull,     setMarketBull]     = useState(true);
@@ -767,8 +778,15 @@ export default function App(){
   },[stocks,eurUsdNow,eurUsdForecast]);
 
   useEffect(()=>{ runSim(mcSeed); },[]);
-  useEffect(()=>{ saveStockDatabase(stocks); },[stocks]);
+  useEffect(()=>{ if(dbMode==="local") saveStockDatabase(stocks); },[stocks,dbMode]);
   useEffect(()=>{ runSim(mcSeed); },[stocks]);
+  useEffect(()=>{
+    if(dbMode!=="published") return;
+    fetch(DATA_URL,{cache:"no-store"})
+      .then(r=>r.ok?r.json():null)
+      .then(data=>{ if(Array.isArray(data)&&data.length) setStocks(data.map(normalizeStock)); })
+      .catch(()=>{});
+  },[dbMode]);
 
   const results       = runModel(stocks,mcResults,budget,kellyMult,flags,marketBull,eurUsdNow,eurUsdForecast);
   const weightsByBase = stocks.map(s=>results.find(r=>r.ticker===s.ticker)?.weight??(1/stocks.length));
@@ -829,7 +847,7 @@ export default function App(){
               </h1>
               <span className="pill" style={{background:"#1e293b",color:"#60a5fa",border:"1px solid #3b82f630"}}>v13</span>
               <span className="pill" style={{background:"#083344",color:"#22d3ee",border:"1px solid #22d3ee40"}}>🔀 Blended Win Prob</span>
-              <span className="pill" style={{background:"#052e16",color:"#4ade80",border:"1px solid #4ade8040"}}>{stocks.length} stocks loaded</span>
+              <span className="pill" style={{background:"#052e16",color:"#4ade80",border:"1px solid #4ade8040"}}>{stocks.length} stocks · {dbMode}</span>
               {running&&<span className="pill pulsing" style={{background:"#451a03",color:"#fb923c",border:"1px solid #fb923c40"}}>⟳ MC Running</span>}
             </div>
             <p style={{fontSize:11,color:"#475569"}}>
@@ -911,7 +929,7 @@ export default function App(){
 
       {view==="chart"&&<div style={{padding:"20px 22px"}}><PortfolioChart bands={portBands} budget={budget}/></div>}
       {view==="scanner"&&<Scanner results={results} setView={setView}/>}
-      {view==="database"&&<StockDatabase stocks={stocks} setStocks={setStocks} setView={setView}/>}
+      {view==="database"&&<StockDatabase stocks={stocks} setStocks={setStocks} setView={setView} setDbMode={setDbMode}/>}
       {view==="search"&&<StockSearch portfolioResults={results}/>}
       {view==="prob"&&<ProbBreakdownPanel stocks={stocks}/>}
 
