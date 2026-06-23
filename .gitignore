@@ -1,0 +1,17 @@
+# Dependencies and builds
+node_modules/
+dist/
+.vite/
+
+# Local/private working material
+PROJECT_INDEX.md
+work/
+inputs/
+outputs/
+
+# macOS
+.DS_Store
+
+# Environment files
+.env
+.env.*
