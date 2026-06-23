@@ -10,7 +10,7 @@ Interactive Kelly Criterion portfolio model for a EUR 250 Trading 212 portfolio.
 - Holdings: Ryanair, Nvidia, Adidas, ASML, Broadcom, Cloudflare, Palantir, Novo Nordisk, IREN, Visa
 - Model features:
   - blended win probability
-  - manual candidate stock scoring
+  - stock search for model-loaded holdings
   - beta penalty and dynamic floors
   - downside-adjusted Kelly
   - short-interest penalty
@@ -47,9 +47,9 @@ npm run dev
 - `.github/workflows/deploy-pages.yml` - GitHub Pages deployment workflow.
 - `ROADMAP.md` - long-term plan for editable portfolios, candidate scoring, and market scanning.
 
-## Candidate Lab
+## Stock Search
 
-The app now includes a Candidate Lab tab. Enter a stock's analyst mix, upside, drawdown, beta, short interest, YTD performance, earnings distance, sector, and FX exposure to see how it scores against the current portfolio under the active model settings.
+The app includes a Stock Search tab for looking up stocks already loaded into the model. The long-term candidate workflow should accept a ticker, collect/update the required model inputs behind the scenes, then show the model result without asking the user to manually enter upside, downside, beta, short interest, or analyst data.
 
 ## Privacy Note
 

@@ -25,12 +25,13 @@ Turn the current Kelly Portfolio model into an accessible stock-selection system
 
 ## Phase 3: Candidate Scoring
 
-- Add a manual Candidate Lab for testing one stock at a time. **Done**
-- Score each candidate through the same blended win-probability and Kelly pipeline. **Done for manual entry**
+- Add Stock Search for stocks already loaded into the model. **Done**
+- Add a data-backed candidate engine where the user enters a ticker and the system gathers/upserts the required model inputs behind the scenes.
+- Score each candidate through the same blended win-probability and Kelly pipeline.
 - Rank candidates against the current portfolio.
-- Show why a candidate wins or loses: blended p, raw Kelly, adjusted Kelly, diversification, sector overlap, beta, drawdown, and short interest. **Done for manual entry**
+- Show why a candidate wins or loses through user-facing model results, without exposing raw assumption entry as the main workflow.
 - Add a candidate-watchlist table.
-- Allow saved JSON candidates to be imported back into the app.
+- Add an admin/import path for updating model inputs from a trusted data file or data source.
 
 ## Phase 4: Market Scan
 
