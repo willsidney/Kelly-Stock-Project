@@ -818,6 +818,14 @@ export default function App(){
   const portMed    = portBands?.p50[PORT_STEPS];
   const portP10    = portBands?.p10[PORT_STEPS];
   const fxPct      = ((eurUsdForecast-eurUsdNow)/eurUsdNow*100).toFixed(2);
+  const usePublishedDatabase = () => {
+    try{ localStorage.removeItem(STORAGE_KEY); }catch{}
+    setDbMode("published");
+    fetch(DATA_URL,{cache:"no-store"})
+      .then(r=>r.ok?r.json():null)
+      .then(data=>{ if(Array.isArray(data)&&data.length) setStocks(data.map(normalizeStock)); else setStocks(BASE_STOCKS); })
+      .catch(()=>setStocks(BASE_STOCKS));
+  };
 
   const flagDefs=[
     {k:"blendedP",   label:"🔀 Blended Win Prob",sub:"Analyst+Momentum+R/R+SI+EP",color:"#22d3ee"},
@@ -861,6 +869,7 @@ export default function App(){
               <span className="pill" style={{background:"#1e293b",color:"#60a5fa",border:"1px solid #3b82f630"}}>v13</span>
               <span className="pill" style={{background:"#083344",color:"#22d3ee",border:"1px solid #22d3ee40"}}>🔀 Blended Win Prob</span>
               <span className="pill" style={{background:"#052e16",color:"#4ade80",border:"1px solid #4ade8040"}}>{stocks.length} stocks · {dbMode}</span>
+              {dbMode==="local"&&<button className="btn" onClick={usePublishedDatabase} style={{padding:"3px 9px",fontSize:9}}>Use Yahoo DB</button>}
               {running&&<span className="pill pulsing" style={{background:"#451a03",color:"#fb923c",border:"1px solid #fb923c40"}}>⟳ MC Running</span>}
             </div>
             <p style={{fontSize:11,color:"#475569"}}>
