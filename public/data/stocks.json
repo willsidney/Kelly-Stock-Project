@@ -19,7 +19,7 @@
     "analystCount": 20,
     "analystSrc": "Yahoo Finance",
     "dataProvider": "Yahoo Finance",
-    "lastUpdated": "2026-06-23T12:38:09+00:00",
+    "lastUpdated": "2026-06-23T12:55:25+00:00",
     "sourceUrl": "https://finance.yahoo.com/quote/RYAAY",
     "currentPrice": 62.7400016784668,
     "priceCurrency": "EUR"
@@ -44,7 +44,7 @@
     "analystCount": 62,
     "analystSrc": "Yahoo Finance",
     "dataProvider": "Yahoo Finance",
-    "lastUpdated": "2026-06-23T12:38:09+00:00",
+    "lastUpdated": "2026-06-23T12:55:25+00:00",
     "sourceUrl": "https://finance.yahoo.com/quote/NVDA",
     "currentPrice": 208.64999389648438,
     "priceCurrency": "USD"
@@ -69,7 +69,7 @@
     "analystCount": 28,
     "analystSrc": "Yahoo Finance",
     "dataProvider": "Yahoo Finance",
-    "lastUpdated": "2026-06-23T12:38:10+00:00",
+    "lastUpdated": "2026-06-23T12:55:26+00:00",
     "sourceUrl": "https://finance.yahoo.com/quote/ADDYY",
     "currentPrice": 99.5999984741211,
     "priceCurrency": "EUR"
@@ -94,7 +94,7 @@
     "analystCount": 44,
     "analystSrc": "Yahoo Finance",
     "dataProvider": "Yahoo Finance",
-    "lastUpdated": "2026-06-23T12:38:11+00:00",
+    "lastUpdated": "2026-06-23T12:55:27+00:00",
     "sourceUrl": "https://finance.yahoo.com/quote/ASML",
     "currentPrice": 1929.25,
     "priceCurrency": "EUR"
@@ -119,7 +119,7 @@
     "analystCount": 47,
     "analystSrc": "Yahoo Finance",
     "dataProvider": "Yahoo Finance",
-    "lastUpdated": "2026-06-23T12:38:12+00:00",
+    "lastUpdated": "2026-06-23T12:55:27+00:00",
     "sourceUrl": "https://finance.yahoo.com/quote/AVGO",
     "currentPrice": 392.1300048828125,
     "priceCurrency": "USD"
@@ -144,7 +144,7 @@
     "analystCount": 34,
     "analystSrc": "Yahoo Finance",
     "dataProvider": "Yahoo Finance",
-    "lastUpdated": "2026-06-23T12:38:13+00:00",
+    "lastUpdated": "2026-06-23T12:55:28+00:00",
     "sourceUrl": "https://finance.yahoo.com/quote/NET",
     "currentPrice": 218.3800048828125,
     "priceCurrency": "USD"
@@ -169,7 +169,7 @@
     "analystCount": 31,
     "analystSrc": "Yahoo Finance",
     "dataProvider": "Yahoo Finance",
-    "lastUpdated": "2026-06-23T12:38:13+00:00",
+    "lastUpdated": "2026-06-23T12:55:29+00:00",
     "sourceUrl": "https://finance.yahoo.com/quote/PLTR",
     "currentPrice": 119.5,
     "priceCurrency": "USD"
@@ -194,7 +194,7 @@
     "analystCount": 32,
     "analystSrc": "Yahoo Finance",
     "dataProvider": "Yahoo Finance",
-    "lastUpdated": "2026-06-23T12:38:14+00:00",
+    "lastUpdated": "2026-06-23T12:55:29+00:00",
     "sourceUrl": "https://finance.yahoo.com/quote/NVO",
     "currentPrice": 45.880001068115234,
     "priceCurrency": "USD"
@@ -219,7 +219,7 @@
     "analystCount": 14,
     "analystSrc": "Yahoo Finance",
     "dataProvider": "Yahoo Finance",
-    "lastUpdated": "2026-06-23T12:38:15+00:00",
+    "lastUpdated": "2026-06-23T12:55:30+00:00",
     "sourceUrl": "https://finance.yahoo.com/quote/IREN",
     "currentPrice": 56.869998931884766,
     "priceCurrency": "USD"
@@ -244,7 +244,7 @@
     "analystCount": 22,
     "analystSrc": "Yahoo Finance",
     "dataProvider": "Yahoo Finance",
-    "lastUpdated": "2026-06-23T12:38:15+00:00",
+    "lastUpdated": "2026-06-23T12:55:31+00:00",
     "sourceUrl": "https://finance.yahoo.com/quote/V",
     "currentPrice": 326.6000061035156,
     "priceCurrency": "USD"
