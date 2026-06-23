@@ -96,6 +96,7 @@ function blendedP(s) {
 
 function normalizeStock(raw, idx=0){
   const n = (v,f=0) => Number.isFinite(Number(v)) ? Number(v) : f;
+  const opt = v => v === null || v === undefined || v === "" || !Number.isFinite(Number(v)) ? null : Number(v);
   const ticker = String(raw.ticker || `STK${idx+1}`).trim().toUpperCase();
   return {
     name: String(raw.name || ticker).trim(),
@@ -122,6 +123,30 @@ function normalizeStock(raw, idx=0){
     lastUpdated: raw.lastUpdated || null,
     priceSource: raw.priceSource || null,
     priceTime: raw.priceTime || null,
+    marketCap: opt(raw.marketCap),
+    forwardPE: opt(raw.forwardPE),
+    trailingPE: opt(raw.trailingPE),
+    pegRatio: opt(raw.pegRatio),
+    priceToSales: opt(raw.priceToSales),
+    priceToBook: opt(raw.priceToBook),
+    enterpriseToEbitda: opt(raw.enterpriseToEbitda),
+    revenueGrowth: opt(raw.revenueGrowth),
+    earningsGrowth: opt(raw.earningsGrowth),
+    grossMargins: opt(raw.grossMargins),
+    operatingMargins: opt(raw.operatingMargins),
+    profitMargins: opt(raw.profitMargins),
+    returnOnEquity: opt(raw.returnOnEquity),
+    returnOnAssets: opt(raw.returnOnAssets),
+    freeCashflow: opt(raw.freeCashflow),
+    operatingCashflow: opt(raw.operatingCashflow),
+    totalDebt: opt(raw.totalDebt),
+    totalCash: opt(raw.totalCash),
+    debtToEquity: opt(raw.debtToEquity),
+    currentRatio: opt(raw.currentRatio),
+    quickRatio: opt(raw.quickRatio),
+    freeCashflowYield: opt(raw.freeCashflowYield),
+    operatingCashflowYield: opt(raw.operatingCashflowYield),
+    cashDebtRatio: opt(raw.cashDebtRatio),
     sourceUrl: raw.sourceUrl || `https://finance.yahoo.com/quote/${ticker}`,
   };
 }
@@ -152,6 +177,52 @@ function priceLabel(s){
   return `${symbol}${Number(s.currentPrice).toFixed(2)}`;
 }
 const modelScore = s => Math.max(0,Number(s.adj)||0)*100;
+const clamp01 = x => Math.max(0,Math.min(1,x));
+const isNum = v => Number.isFinite(Number(v));
+const scoreHigher = (value, weak, strong) => isNum(value) ? clamp01((Number(value)-weak)/(strong-weak)) : null;
+const scoreLower = (value, strong, weak) => isNum(value) && Number(value)>0 ? clamp01((weak-Number(value))/(weak-strong)) : null;
+const avgScore = values => {
+  const clean = values.filter(v=>v!==null&&v!==undefined&&Number.isFinite(Number(v)));
+  return clean.length ? clean.reduce((s,v)=>s+Number(v),0)/clean.length : null;
+};
+const fmtScore = v => v===null||v===undefined ? "—" : Number(v).toFixed(0);
+const fmtMultiple = v => v===null||v===undefined ? "—" : Number(v).toFixed(1)+"x";
+const fmtPct = v => v===null||v===undefined ? "—" : (Number(v)*100).toFixed(0)+"%";
+const debtRatio = v => !isNum(v) ? null : Number(v)>10 ? Number(v)/100 : Number(v);
+
+function fundamentalScores(s){
+  const qualityParts = [
+    scoreHigher(s.grossMargins,0.25,0.70),
+    scoreHigher(s.operatingMargins,0.08,0.35),
+    scoreHigher(s.profitMargins,0.04,0.25),
+    scoreHigher(s.returnOnEquity,0.08,0.35),
+    scoreHigher(s.returnOnAssets,0.03,0.15),
+    scoreHigher(s.revenueGrowth,0.00,0.30),
+    scoreHigher(s.earningsGrowth,0.00,0.40),
+    scoreHigher(s.freeCashflowYield,0.00,0.08),
+    scoreLower(debtRatio(s.debtToEquity),0.25,2.50),
+    scoreHigher(s.currentRatio,1.00,2.50),
+    scoreHigher(s.cashDebtRatio,0.25,2.00),
+  ];
+  const valuationParts = [
+    scoreLower(s.forwardPE,12,45),
+    scoreLower(s.trailingPE,12,55),
+    scoreLower(s.enterpriseToEbitda,8,35),
+    scoreLower(s.priceToSales,2,18),
+    scoreLower(s.priceToBook,1.5,12),
+    scoreLower(s.pegRatio,0.8,3.0),
+    scoreHigher(s.freeCashflowYield,0.00,0.08),
+    isNum(s.revenueGrowth)&&isNum(s.priceToSales)&&s.priceToSales>0 ? scoreHigher(Math.max(0,s.revenueGrowth)/s.priceToSales,0.01,0.08) : null,
+  ];
+  const quality = avgScore(qualityParts);
+  const valuation = avgScore(valuationParts);
+  return {
+    quality: quality===null ? null : quality*100,
+    valuation: valuation===null ? null : valuation*100,
+    qualityCount: qualityParts.filter(v=>v!==null).length,
+    valuationCount: valuationParts.filter(v=>v!==null).length,
+  };
+}
 
 // ─────────────────────────────────────────────────────────────────────────────
 // CORRELATION MATRICES
@@ -622,6 +693,8 @@ function Scanner({results,setView}){
       const map = {
         score: modelScore,
         win: s=>s.pAdj*100,
+        quality: s=>fundamentalScores(s).quality ?? -1,
+        valuation: s=>fundamentalScores(s).valuation ?? -1,
         upside: s=>s.fxAdjUpside*100,
         drawdown: s=>-s.drawdown*100,
         allocation: s=>s.weight*100,
@@ -644,6 +717,8 @@ function Scanner({results,setView}){
           </select>
           <select className="ni" style={{width:130}} value={sortBy} onChange={e=>setSortBy(e.target.value)}>
             <option value="score">Sort score</option>
+            <option value="quality">Sort quality</option>
+            <option value="valuation">Sort valuation</option>
             <option value="win">Sort win %</option>
             <option value="upside">Sort upside</option>
             <option value="drawdown">Sort drawdown</option>
@@ -663,20 +738,16 @@ function Scanner({results,setView}){
         <span style={{fontSize:9,color:"#334155"}}>{filtered.length} of {results.length} shown</span>
       </div>
       <div style={{background:"#080f1e",border:"1px solid #1e293b",borderRadius:12,overflow:"hidden"}}>
-        <div style={{display:"grid",gridTemplateColumns:"42px 1.4fr 88px 88px 92px 82px 82px 96px 1fr",padding:"9px 14px",background:"#0f172a",borderBottom:"1px solid #1e293b"}}>
-          {["#","Stock","Price","Score","Win Prob","Upside","Drawdown","Allocation","Why"].map((h,i)=>(
+        <div style={{display:"grid",gridTemplateColumns:"42px 1.35fr 76px 78px 78px 78px 86px 76px 76px 88px",padding:"9px 14px",background:"#0f172a",borderBottom:"1px solid #1e293b"}}>
+          {["#","Stock","Price","Score","Quality","Value","Win Prob","Upside","Drawdown","Allocation"].map((h,i)=>(
             <div key={h} style={{fontSize:8,fontWeight:700,color:"#1e3a5f",letterSpacing:".08em",textTransform:"uppercase",textAlign:i>1?"right":"left"}}>{h}</div>
           ))}
         </div>
         {filtered.map((s,i)=>{
           const score=modelScore(s);
-          const why=[
-            s.rawK>0?"positive Kelly":"floor only",
-            s.secMult<1?"sector penalty":"sector ok",
-            s.beta>1.5?"high beta":"beta ok",
-          ].join(" · ");
+          const fs=fundamentalScores(s);
           return(
-            <div key={s.ticker} style={{display:"grid",gridTemplateColumns:"42px 1.4fr 88px 88px 92px 82px 82px 96px 1fr",padding:"10px 14px",borderBottom:"1px solid #0f172a",alignItems:"center"}}>
+            <div key={s.ticker} style={{display:"grid",gridTemplateColumns:"42px 1.35fr 76px 78px 78px 78px 86px 76px 76px 88px",padding:"10px 14px",borderBottom:"1px solid #0f172a",alignItems:"center"}}>
               <div className="mono" style={{fontSize:11,fontWeight:700,color:i<3?"#60a5fa":"#334155"}}>{i+1}</div>
               <div style={{display:"flex",alignItems:"center",gap:7}}>
                 <span>{s.emoji}</span>
@@ -687,11 +758,12 @@ function Scanner({results,setView}){
               </div>
               <div className="mono" style={{fontSize:12,fontWeight:700,color:s.currentPrice?"#94a3b8":"#334155",textAlign:"right"}}>{priceLabel(s)}</div>
               <div className="mono" style={{fontSize:13,fontWeight:700,color:"#4ade80",textAlign:"right"}}>{score.toFixed(1)}</div>
+              <div className="mono" style={{fontSize:12,fontWeight:700,color:fs.quality===null?"#334155":"#a78bfa",textAlign:"right"}}>{fmtScore(fs.quality)}</div>
+              <div className="mono" style={{fontSize:12,fontWeight:700,color:fs.valuation===null?"#334155":"#fbbf24",textAlign:"right"}}>{fmtScore(fs.valuation)}</div>
               <div className="mono" style={{fontSize:12,fontWeight:700,color:"#22d3ee",textAlign:"right"}}>{(s.pAdj*100).toFixed(1)}%</div>
               <div className="mono" style={{fontSize:12,fontWeight:700,color:"#94a3b8",textAlign:"right"}}>{(s.fxAdjUpside*100).toFixed(0)}%</div>
               <div className="mono" style={{fontSize:12,fontWeight:700,color:s.drawdown>0.45?"#f87171":"#94a3b8",textAlign:"right"}}>{(s.drawdown*100).toFixed(0)}%</div>
               <div className="mono" style={{fontSize:12,fontWeight:700,color:"#60a5fa",textAlign:"right"}}>{(s.weight*100).toFixed(1)}%</div>
-              <div style={{fontSize:9,color:"#64748b",textAlign:"right"}}>{why}</div>
             </div>
           );
         })}
@@ -801,19 +873,72 @@ function StockDatabase({stocks,results,setStocks,setView,setDbMode}){
           <textarea style={{...inputStyle,height:120,fontFamily:"JetBrains Mono,monospace",fontSize:10,resize:"vertical"}} placeholder="Paste exported JSON here to import..." value={importText} onChange={e=>setImportText(e.target.value)}/>
           <button className="btn" style={{marginTop:8}} onClick={importDb}>Import JSON</button>
           <div style={{marginTop:12,maxHeight:260,overflow:"auto",border:"1px solid #1e293b",borderRadius:8}}>
-            <div style={{display:"grid",gridTemplateColumns:"1fr 70px 70px 72px",gap:8,padding:"7px 10px",background:"#0f172a",borderBottom:"1px solid #1e293b"}}>
-              {["Stock","Price","Score","Win %"].map((h,i)=><div key={h} style={{fontSize:8,fontWeight:700,color:"#1e3a5f",letterSpacing:".08em",textTransform:"uppercase",textAlign:i?"right":"left"}}>{h}</div>)}
+            <div style={{display:"grid",gridTemplateColumns:"1fr 64px 58px 54px 54px 62px",gap:8,padding:"7px 10px",background:"#0f172a",borderBottom:"1px solid #1e293b"}}>
+              {["Stock","Price","Score","Qual","Value","Win %"].map((h,i)=><div key={h} style={{fontSize:8,fontWeight:700,color:"#1e3a5f",letterSpacing:".08em",textTransform:"uppercase",textAlign:i?"right":"left"}}>{h}</div>)}
             </div>
-            {visibleStocks.map(s=>(
-              <div key={s.ticker} style={{display:"grid",gridTemplateColumns:"1fr 70px 70px 72px",gap:8,padding:"8px 10px",borderBottom:"1px solid #0f172a",alignItems:"center"}}>
-                <span style={{fontSize:11,color:"#e2e8f0"}}>{s.emoji} {s.name} <span className="mono" style={{fontSize:9,color:"#60a5fa"}}>{s.ticker}</span></span>
-                <span className="mono" style={{fontSize:10,color:"#94a3b8",textAlign:"right"}}>{priceLabel(s)}</span>
-                <span className="mono" style={{fontSize:10,color:"#4ade80",textAlign:"right"}}>{s.adj!==undefined?modelScore(s).toFixed(1):"—"}</span>
-                <span className="mono" style={{fontSize:10,color:"#22d3ee",textAlign:"right"}}>{s.pAdj!==undefined?(s.pAdj*100).toFixed(1)+"%":"—"}</span>
-              </div>
-            ))}
+            {visibleStocks.map(s=>{
+              const fs=fundamentalScores(s);
+              return(
+                <div key={s.ticker} style={{display:"grid",gridTemplateColumns:"1fr 64px 58px 54px 54px 62px",gap:8,padding:"8px 10px",borderBottom:"1px solid #0f172a",alignItems:"center"}}>
+                  <span style={{fontSize:11,color:"#e2e8f0"}}>{s.emoji} {s.name} <span className="mono" style={{fontSize:9,color:"#60a5fa"}}>{s.ticker}</span></span>
+                  <span className="mono" style={{fontSize:10,color:"#94a3b8",textAlign:"right"}}>{priceLabel(s)}</span>
+                  <span className="mono" style={{fontSize:10,color:"#4ade80",textAlign:"right"}}>{s.adj!==undefined?modelScore(s).toFixed(1):"—"}</span>
+                  <span className="mono" style={{fontSize:10,color:"#a78bfa",textAlign:"right"}}>{fmtScore(fs.quality)}</span>
+                  <span className="mono" style={{fontSize:10,color:"#fbbf24",textAlign:"right"}}>{fmtScore(fs.valuation)}</span>
+                  <span className="mono" style={{fontSize:10,color:"#22d3ee",textAlign:"right"}}>{s.pAdj!==undefined?(s.pAdj*100).toFixed(1)+"%":"—"}</span>
+                </div>
+              );
+            })}
           </div>
         </div>
+      </div>
+    </div>
+  );
+}
+
+function Fundamentals({results}){
+  const rows = results
+    .map(s=>({...s,fs:fundamentalScores(s)}))
+    .sort((a,b)=>(((b.fs.quality??0)+(b.fs.valuation??0))-((a.fs.quality??0)+(a.fs.valuation??0))));
+  return(
+    <div style={{padding:"20px 22px"}}>
+      <div style={{display:"flex",justifyContent:"space-between",gap:12,alignItems:"flex-end",flexWrap:"wrap",marginBottom:12}}>
+        <div>
+          <div style={{fontSize:13,fontWeight:700,color:"#e2e8f0"}}>Fundamentals</div>
+          <div style={{fontSize:9,color:"#475569",marginTop:2}}>Quality and valuation are research layers only; they do not change allocations yet</div>
+        </div>
+        <div style={{display:"flex",gap:8,flexWrap:"wrap"}}>
+          <span className="pill" style={{background:"#2e1065",color:"#c4b5fd",border:"1px solid #a78bfa40"}}>Quality</span>
+          <span className="pill" style={{background:"#422006",color:"#fde68a",border:"1px solid #fbbf2440"}}>Valuation</span>
+        </div>
+      </div>
+      <div style={{background:"#080f1e",border:"1px solid #1e293b",borderRadius:12,overflow:"hidden"}}>
+        <div style={{display:"grid",gridTemplateColumns:"42px 1.3fr 86px 86px 82px 70px 70px 74px 74px 74px 82px",gap:8,padding:"9px 14px",background:"#0f172a",borderBottom:"1px solid #1e293b"}}>
+          {["#","Stock","Quality","Value","Fwd P/E","P/S","EV/EBITDA","Gross","Op Margin","Rev Gr.","Debt/Eq"].map((h,i)=>(
+            <div key={h} style={{fontSize:8,fontWeight:700,color:"#1e3a5f",letterSpacing:".08em",textTransform:"uppercase",textAlign:i>1?"right":"left"}}>{h}</div>
+          ))}
+        </div>
+        {rows.map((s,i)=>{
+          const debt=debtRatio(s.debtToEquity);
+          return(
+            <div key={s.ticker} style={{display:"grid",gridTemplateColumns:"42px 1.3fr 86px 86px 82px 70px 70px 74px 74px 74px 82px",gap:8,padding:"10px 14px",borderBottom:"1px solid #0f172a",alignItems:"center"}}>
+              <div className="mono" style={{fontSize:11,fontWeight:700,color:i<3?"#60a5fa":"#334155"}}>{i+1}</div>
+              <div>
+                <div style={{fontSize:12,fontWeight:700,color:"#f8fafc"}}>{s.emoji} {s.name}</div>
+                <div className="mono" style={{fontSize:8,color:"#475569"}}>{s.ticker} · {SECTOR_LABELS[s.sector]||s.sector}</div>
+              </div>
+              <div className="mono" style={{fontSize:13,fontWeight:700,color:s.fs.quality===null?"#334155":"#a78bfa",textAlign:"right"}}>{fmtScore(s.fs.quality)}<span style={{fontSize:8,color:"#475569"}}>/{s.fs.qualityCount}</span></div>
+              <div className="mono" style={{fontSize:13,fontWeight:700,color:s.fs.valuation===null?"#334155":"#fbbf24",textAlign:"right"}}>{fmtScore(s.fs.valuation)}<span style={{fontSize:8,color:"#475569"}}>/{s.fs.valuationCount}</span></div>
+              <div className="mono" style={{fontSize:12,color:"#94a3b8",textAlign:"right"}}>{fmtMultiple(s.forwardPE)}</div>
+              <div className="mono" style={{fontSize:12,color:"#94a3b8",textAlign:"right"}}>{fmtMultiple(s.priceToSales)}</div>
+              <div className="mono" style={{fontSize:12,color:"#94a3b8",textAlign:"right"}}>{fmtMultiple(s.enterpriseToEbitda)}</div>
+              <div className="mono" style={{fontSize:12,color:"#94a3b8",textAlign:"right"}}>{fmtPct(s.grossMargins)}</div>
+              <div className="mono" style={{fontSize:12,color:"#94a3b8",textAlign:"right"}}>{fmtPct(s.operatingMargins)}</div>
+              <div className="mono" style={{fontSize:12,color:"#94a3b8",textAlign:"right"}}>{fmtPct(s.revenueGrowth)}</div>
+              <div className="mono" style={{fontSize:12,color:"#94a3b8",textAlign:"right"}}>{fmtMultiple(debt)}</div>
+            </div>
+          );
+        })}
       </div>
     </div>
   );
@@ -1095,7 +1220,7 @@ export default function App(){
 
       {/* TABS */}
       <div style={{padding:"8px 22px",borderBottom:"1px solid #1e293b",display:"flex",gap:4,background:"#020617",flexWrap:"wrap"}}>
-        {[{l:"Allocations",v:"table"},{l:"Portfolio Chart",v:"chart"},{l:"Scanner",v:"scanner"},{l:"Database",v:"database"},{l:"Create Model",v:"create"},{l:"Stock Search",v:"search"},{l:"🔀 Win Prob Breakdown",v:"prob"}].map(o=>(
+        {[{l:"Allocations",v:"table"},{l:"Portfolio Chart",v:"chart"},{l:"Scanner",v:"scanner"},{l:"Database",v:"database"},{l:"Fundamentals",v:"fundamentals"},{l:"Create Model",v:"create"},{l:"Stock Search",v:"search"},{l:"🔀 Win Prob Breakdown",v:"prob"}].map(o=>(
           <button key={o.v} className={`view-btn${view===o.v?" active":""}`} onClick={()=>setView(o.v)}
             style={o.v==="prob"?{color:view==="prob"?"#e2e8f0":"#22d3ee"}:{}}>{o.l}</button>
         ))}
@@ -1104,6 +1229,7 @@ export default function App(){
       {view==="chart"&&<div style={{padding:"20px 22px"}}><PortfolioChart bands={portBands} budget={budget}/></div>}
       {view==="scanner"&&<Scanner results={results} setView={setView}/>}
       {view==="database"&&<StockDatabase stocks={stocks} results={results} setStocks={setStocks} setView={setView} setDbMode={setDbMode}/>}
+      {view==="fundamentals"&&<Fundamentals results={results}/>}
       {view==="create"&&<CreateModel stocks={stocks} results={results} budget={budget} kellyMult={kellyMult} flags={flags} marketBull={marketBull} eurUsdNow={eurUsdNow} eurUsdForecast={eurUsdForecast}/>}
       {view==="search"&&<StockSearch portfolioResults={results}/>}
       {view==="prob"&&<ProbBreakdownPanel stocks={stocks}/>}

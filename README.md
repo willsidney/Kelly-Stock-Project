@@ -14,6 +14,7 @@ Interactive Kelly Criterion portfolio model for a EUR 250 Trading 212 portfolio.
   - add/update stock records
   - JSON import/export
   - filterable optimal stock scanner with model score
+  - separate fundamental quality and valuation scores
   - custom model builder from database stocks
   - stock search for model-loaded holdings
   - beta penalty and dynamic floors
@@ -59,6 +60,7 @@ The app now includes:
 
 - `Database` - add or update model stock records, export the database, import a saved JSON database, or reset to the original model stocks.
 - `Scanner` - ranks every stock in the saved database using the active model settings, with filters for score, win probability, upside, drawdown, sector, and search.
+- `Fundamentals` - compares quality and valuation metrics from Yahoo Finance without changing the allocation model.
 - `Create Model` - select stocks from the database and generate a fresh allocation table using the same Kelly model settings.
 - `Stock Search` - looks up stocks already loaded into the saved database.
 
@@ -70,7 +72,7 @@ The app keeps the first page load light by running the v13 Kelly allocation mode
 
 The repo includes a GitHub Actions workflow named `Update Yahoo Finance Data`.
 
-It refreshes `public/data/stocks.json` from Yahoo Finance on weekdays and can also be run manually from the Actions tab. It updates best-effort fields including price, currency, analyst recommendation mix, target-price upside, beta, short interest, earnings distance, YTD performance, and one-year drawdown when Yahoo returns those fields.
+It refreshes `public/data/stocks.json` from Yahoo Finance on weekdays and can also be run manually from the Actions tab. It updates best-effort fields including price, currency, analyst recommendation mix, target-price upside, beta, short interest, earnings distance, YTD performance, one-year drawdown, valuation multiples, margins, growth, cash flow, and balance-sheet metrics when Yahoo returns those fields.
 
 To add new stocks:
 

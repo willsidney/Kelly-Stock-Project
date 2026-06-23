@@ -51,6 +51,14 @@ def raw(value, default=None):
     return default
 
 
+def as_number(value):
+    if isinstance(value, dict) and "raw" in value:
+        value = value["raw"]
+    if isinstance(value, (int, float)) and math.isfinite(value):
+        return float(value)
+    return None
+
+
 def clamp(value, lo, hi):
     return max(lo, min(hi, value))
 
@@ -158,7 +166,7 @@ def chart_stats(ticker: str) -> dict:
 
 
 def quote_summary(ticker: str) -> dict:
-    modules = "financialData,recommendationTrend,defaultKeyStatistics,calendarEvents,price,assetProfile"
+    modules = "financialData,recommendationTrend,defaultKeyStatistics,summaryDetail,calendarEvents,price,assetProfile"
     url = f"https://query2.finance.yahoo.com/v10/finance/quoteSummary/{urllib.parse.quote(ticker)}?modules={modules}"
     data = fetch_json(url)
     result = (((data or {}).get("quoteSummary") or {}).get("result") or [None])[0]
@@ -254,6 +262,7 @@ def update_stock(stock: dict, quote: dict | None) -> dict:
     summary = quote_summary(ticker)
     financial = summary.get("financialData") or {}
     key_stats = summary.get("defaultKeyStatistics") or {}
+    summary_detail = summary.get("summaryDetail") or {}
     price = summary.get("price") or {}
     asset_profile = summary.get("assetProfile") or {}
 
@@ -280,6 +289,64 @@ def update_stock(stock: dict, quote: dict | None) -> dict:
     beta = raw(key_stats.get("beta"))
     if beta:
         updated["beta"] = clamp(float(beta), 0.1, 6)
+
+    market_cap = (
+        (quote or {}).get("marketCap")
+        or as_number(price.get("marketCap"))
+        or as_number(summary_detail.get("marketCap"))
+    )
+    if market_cap:
+        updated["marketCap"] = market_cap
+
+    fundamental_fields = {
+        "forwardPE": [
+            as_number((quote or {}).get("forwardPE")),
+            as_number(summary_detail.get("forwardPE")),
+            as_number(key_stats.get("forwardPE")),
+        ],
+        "trailingPE": [
+            as_number((quote or {}).get("trailingPE")),
+            as_number(summary_detail.get("trailingPE")),
+            as_number(key_stats.get("trailingPE")),
+        ],
+        "pegRatio": [as_number(key_stats.get("pegRatio"))],
+        "priceToSales": [
+            as_number(summary_detail.get("priceToSalesTrailing12Months")),
+            as_number(key_stats.get("priceToSalesTrailing12Months")),
+        ],
+        "priceToBook": [as_number(key_stats.get("priceToBook"))],
+        "enterpriseToEbitda": [as_number(key_stats.get("enterpriseToEbitda"))],
+        "revenueGrowth": [as_number(financial.get("revenueGrowth"))],
+        "earningsGrowth": [as_number(financial.get("earningsGrowth"))],
+        "grossMargins": [as_number(financial.get("grossMargins"))],
+        "operatingMargins": [as_number(financial.get("operatingMargins"))],
+        "profitMargins": [as_number(financial.get("profitMargins"))],
+        "returnOnEquity": [as_number(financial.get("returnOnEquity"))],
+        "returnOnAssets": [as_number(financial.get("returnOnAssets"))],
+        "freeCashflow": [as_number(financial.get("freeCashflow"))],
+        "operatingCashflow": [as_number(financial.get("operatingCashflow"))],
+        "totalDebt": [as_number(financial.get("totalDebt"))],
+        "totalCash": [as_number(financial.get("totalCash"))],
+        "debtToEquity": [as_number(financial.get("debtToEquity"))],
+        "currentRatio": [as_number(financial.get("currentRatio"))],
+        "quickRatio": [as_number(financial.get("quickRatio"))],
+    }
+    for key, candidates in fundamental_fields.items():
+        value = next((x for x in candidates if isinstance(x, (int, float)) and math.isfinite(x)), None)
+        if value is not None:
+            updated[key] = value
+
+    if market_cap:
+        free_cashflow = updated.get("freeCashflow")
+        operating_cashflow = updated.get("operatingCashflow")
+        if isinstance(free_cashflow, (int, float)) and math.isfinite(free_cashflow):
+            updated["freeCashflowYield"] = free_cashflow / market_cap
+        if isinstance(operating_cashflow, (int, float)) and math.isfinite(operating_cashflow):
+            updated["operatingCashflowYield"] = operating_cashflow / market_cap
+    total_debt = updated.get("totalDebt")
+    total_cash = updated.get("totalCash")
+    if isinstance(total_debt, (int, float)) and total_debt > 0 and isinstance(total_cash, (int, float)):
+        updated["cashDebtRatio"] = total_cash / total_debt
 
     short_float = raw(key_stats.get("shortPercentOfFloat"))
     if short_float is not None:

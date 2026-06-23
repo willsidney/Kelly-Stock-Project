@@ -28,6 +28,7 @@ Turn the current Kelly Portfolio model into an accessible stock-selection system
 - Add Stock Search for stocks already loaded into the model. **Done**
 - Add optimal scanner over the saved stock database. **Done**
 - Add scanner filters and a model score column so the strongest candidates can be surfaced quickly. **Done**
+- Add fundamental quality and valuation research scores before feeding them into allocation. **Research display done; allocation integration pending**
 - Add a data-backed candidate engine where the user enters a ticker and the system gathers/upserts the required model inputs behind the scenes.
 - Score each candidate through the same blended win-probability and Kelly pipeline.
 - Rank candidates against the current portfolio. **Done for saved database**
@@ -40,7 +41,8 @@ Turn the current Kelly Portfolio model into an accessible stock-selection system
 - Add a repeatable workflow for collecting current analyst inputs.
 - Start with user-provided candidate lists and database import/export. **Done**
 - Use Yahoo Finance as the primary analyst-data source. **Chosen**
-- Add a Yahoo Finance updater that writes refreshed prices and model inputs into `data/stocks.json`.
+- Add a Yahoo Finance updater that writes refreshed prices and model inputs into `public/data/stocks.json`. **Done**
+- Extend the Yahoo updater to capture valuation, profitability, growth, cash-flow, and balance-sheet metrics. **Done**
 - Prefer a scheduled updater or lightweight backend over direct browser API calls, because GitHub Pages cannot safely store private API keys.
 - Keep source attribution visible for each input.
 
