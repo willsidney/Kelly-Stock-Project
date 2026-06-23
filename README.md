@@ -60,7 +60,7 @@ The app now includes:
 - `Scanner` - ranks every stock in the saved database using the active model settings.
 - `Stock Search` - looks up stocks already loaded into the saved database.
 
-GitHub Pages can run the model and save data in the browser, but it cannot safely hold private API keys. Yahoo Finance is the chosen primary source for analyst-style data. The next step is a scheduled updater or lightweight backend that reads Yahoo Finance data and writes trusted model inputs into `data/stocks.json`.
+GitHub Pages can run the model and save data in the browser, but it cannot safely hold private API keys. Yahoo Finance is the chosen primary source for analyst-style data and stock prices. The next step is a scheduled updater or lightweight backend that reads Yahoo Finance data and writes trusted model inputs into `data/stocks.json`.
 
 ## Privacy Note
 

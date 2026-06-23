@@ -111,6 +111,8 @@ function normalizeStock(raw, idx=0){
     drawdown: Math.max(0.01,n(raw.drawdown,0.30)),
     shortInt: Math.max(0,n(raw.shortInt,0.02)),
     beta: Math.max(0.1,n(raw.beta,1)),
+    currentPrice: raw.currentPrice === null || raw.currentPrice === undefined ? null : Math.max(0,n(raw.currentPrice,0)),
+    priceCurrency: raw.priceCurrency || (raw.fxExposed ? "USD" : "EUR"),
     fxExposed: Boolean(raw.fxExposed),
     earningsDays: Math.max(0,n(raw.earningsDays,90)),
     ytd: n(raw.ytd,0),
@@ -140,6 +142,12 @@ function saveStockDatabase(stocks){
 
 function hasLocalStockDatabase(){
   try{return Boolean(localStorage.getItem(STORAGE_KEY));}catch{return false;}
+}
+
+function priceLabel(s){
+  if(!s.currentPrice) return "—";
+  const symbol = s.priceCurrency==="EUR" ? "€" : s.priceCurrency==="GBP" ? "£" : "$";
+  return `${symbol}${Number(s.currentPrice).toFixed(2)}`;
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -613,8 +621,8 @@ function Scanner({results,setView}){
         </div>
       </div>
       <div style={{background:"#080f1e",border:"1px solid #1e293b",borderRadius:12,overflow:"hidden"}}>
-        <div style={{display:"grid",gridTemplateColumns:"42px 1.4fr 96px 96px 96px 96px 1fr",padding:"9px 14px",background:"#0f172a",borderBottom:"1px solid #1e293b"}}>
-          {["#","Stock","Score","Win Prob","Kelly","Allocation","Why"].map((h,i)=>(
+        <div style={{display:"grid",gridTemplateColumns:"42px 1.4fr 88px 96px 96px 96px 96px 1fr",padding:"9px 14px",background:"#0f172a",borderBottom:"1px solid #1e293b"}}>
+          {["#","Stock","Price","Score","Win Prob","Kelly","Allocation","Why"].map((h,i)=>(
             <div key={h} style={{fontSize:8,fontWeight:700,color:"#1e3a5f",letterSpacing:".08em",textTransform:"uppercase",textAlign:i>1?"right":"left"}}>{h}</div>
           ))}
         </div>
@@ -626,7 +634,7 @@ function Scanner({results,setView}){
             s.beta>1.5?"high beta":"beta ok",
           ].join(" · ");
           return(
-            <div key={s.ticker} style={{display:"grid",gridTemplateColumns:"42px 1.4fr 96px 96px 96px 96px 1fr",padding:"10px 14px",borderBottom:"1px solid #0f172a",alignItems:"center"}}>
+            <div key={s.ticker} style={{display:"grid",gridTemplateColumns:"42px 1.4fr 88px 96px 96px 96px 96px 1fr",padding:"10px 14px",borderBottom:"1px solid #0f172a",alignItems:"center"}}>
               <div className="mono" style={{fontSize:11,fontWeight:700,color:i<3?"#60a5fa":"#334155"}}>{i+1}</div>
               <div style={{display:"flex",alignItems:"center",gap:7}}>
                 <span>{s.emoji}</span>
@@ -635,6 +643,7 @@ function Scanner({results,setView}){
                   <div className="mono" style={{fontSize:8,color:"#475569"}}>{s.ticker} · {SECTOR_LABELS[s.sector]||s.sector}</div>
                 </div>
               </div>
+              <div className="mono" style={{fontSize:12,fontWeight:700,color:s.currentPrice?"#94a3b8":"#334155",textAlign:"right"}}>{priceLabel(s)}</div>
               <div className="mono" style={{fontSize:13,fontWeight:700,color:"#4ade80",textAlign:"right"}}>{score.toFixed(1)}</div>
               <div className="mono" style={{fontSize:12,fontWeight:700,color:"#22d3ee",textAlign:"right"}}>{(s.pAdj*100).toFixed(1)}%</div>
               <div className="mono" style={{fontSize:12,fontWeight:700,color:s.rawK>0?"#94a3b8":"#f87171",textAlign:"right"}}>{s.rawK>0?(s.rawK*100).toFixed(1)+"%":"neg"}</div>
@@ -649,7 +658,7 @@ function Scanner({results,setView}){
 }
 
 function StockDatabase({stocks,setStocks,setView,setDbMode}){
-  const empty = { name:"", ticker:"", sector:"other", emoji:"◆", color:STOCK_COLORS[0], strongBuy:40, buy:30, hold:25, sell:5, upside:0.25, drawdown:0.30, shortInt:0.02, beta:1.1, fxExposed:true, earningsDays:90, ytd:0, analystCount:0, analystSrc:"Yahoo Finance", dataProvider:"Yahoo Finance" };
+  const empty = { name:"", ticker:"", sector:"other", emoji:"◆", color:STOCK_COLORS[0], strongBuy:40, buy:30, hold:25, sell:5, upside:0.25, drawdown:0.30, shortInt:0.02, beta:1.1, currentPrice:null, priceCurrency:"USD", fxExposed:true, earningsDays:90, ytd:0, analystCount:0, analystSrc:"Yahoo Finance", dataProvider:"Yahoo Finance" };
   const [draft,setDraft] = useState(empty);
   const [importText,setImportText] = useState("");
   const update=(k,v)=>setDraft(d=>({...d,[k]:v}));
@@ -702,9 +711,13 @@ function StockDatabase({stocks,setStocks,setView,setDbMode}){
             <Field label="YTD %"><input style={inputStyle} type="number" value={(draft.ytd*100).toFixed(0)} onChange={e=>pct("ytd",e.target.value)}/></Field>
             <Field label="Short %"><input style={inputStyle} type="number" value={(draft.shortInt*100).toFixed(1)} onChange={e=>pct("shortInt",e.target.value)}/></Field>
           </div>
-          <div style={{display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:8,marginBottom:12}}>
+          <div style={{display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:8,marginBottom:10}}>
+            <Field label="Price"><input style={inputStyle} type="number" step="0.01" value={draft.currentPrice??""} onChange={e=>update("currentPrice",e.target.value===""?null:Number(e.target.value)||0)}/></Field>
+            <Field label="Currency"><select style={inputStyle} value={draft.priceCurrency} onChange={e=>update("priceCurrency",e.target.value)}><option value="USD">USD</option><option value="EUR">EUR</option><option value="GBP">GBP</option></select></Field>
             <Field label="Beta"><input style={inputStyle} type="number" step="0.1" value={draft.beta} onChange={e=>update("beta",Number(e.target.value)||1)}/></Field>
             <Field label="Earnings Days"><input style={inputStyle} type="number" value={draft.earningsDays} onChange={e=>update("earningsDays",Number(e.target.value)||90)}/></Field>
+          </div>
+          <div style={{display:"grid",gridTemplateColumns:"repeat(2,1fr)",gap:8,marginBottom:12}}>
             <Field label="Analysts"><input style={inputStyle} type="number" value={draft.analystCount} onChange={e=>update("analystCount",Number(e.target.value)||0)}/></Field>
             <Field label="FX"><select style={inputStyle} value={draft.fxExposed?"usd":"native"} onChange={e=>update("fxExposed",e.target.value==="usd")}><option value="usd">USD exposed</option><option value="native">Native/EUR</option></select></Field>
           </div>
@@ -935,9 +948,9 @@ export default function App(){
 
       {view==="table"&&(
         <div>
-          <div style={{display:"grid",gridTemplateColumns:"36px 1fr 90px 68px 88px 72px 68px 68px 150px 88px",padding:"9px 22px",borderBottom:"1px solid #1e293b",background:"#080f1e"}}>
-            {["#","Stock","Win Prob","Upside","Beta","Short","Earn.","Floor","Weight","€ Amount"].map((h,i)=>(
-              <div key={i} style={{fontSize:8,fontWeight:700,color:"#1e3a5f",letterSpacing:".08em",textTransform:"uppercase",textAlign:i>=8?"right":"left"}}>{h}</div>
+          <div style={{display:"grid",gridTemplateColumns:"36px 1fr 76px 90px 68px 88px 72px 68px 68px 150px 88px",padding:"9px 22px",borderBottom:"1px solid #1e293b",background:"#080f1e"}}>
+            {["#","Stock","Price","Win Prob","Upside","Beta","Short","Earn.","Floor","Weight","€ Amount"].map((h,i)=>(
+              <div key={i} style={{fontSize:8,fontWeight:700,color:"#1e3a5f",letterSpacing:".08em",textTransform:"uppercase",textAlign:i>=9||i===2?"right":"left"}}>{h}</div>
             ))}
           </div>
 
@@ -956,7 +969,7 @@ export default function App(){
             return(
               <div key={s.ticker}>
                 <div className={`row-card${isExp?" sel":""}`}
-                  style={{display:"grid",gridTemplateColumns:"36px 1fr 90px 68px 88px 72px 68px 68px 150px 88px",padding:"11px 22px",alignItems:"center"}}
+                  style={{display:"grid",gridTemplateColumns:"36px 1fr 76px 90px 68px 88px 72px 68px 68px 150px 88px",padding:"11px 22px",alignItems:"center"}}
                   onClick={()=>setExpanded(isExp?null:s.ticker)}>
                   <div style={{fontFamily:"monospace",fontSize:12,fontWeight:700,color:"#1e293b"}}>{ri+1}</div>
                   <div>
@@ -973,6 +986,7 @@ export default function App(){
                       <span style={{color:ytdColor,fontFamily:"monospace"}}>{s.ytd>0?"+":""}{(s.ytd*100).toFixed(0)}%YTD</span>
                     </div>
                   </div>
+                  <div className="mono" style={{fontSize:11,fontWeight:700,color:s.currentPrice?"#94a3b8":"#334155",textAlign:"right"}}>{priceLabel(s)}</div>
 
                   {/* Win prob — blended */}
                   <div>
@@ -1076,10 +1090,10 @@ export default function App(){
             );
           })}
 
-          <div style={{display:"grid",gridTemplateColumns:"36px 1fr 90px 68px 88px 72px 68px 68px 150px 88px",padding:"9px 22px",borderTop:"1px solid #1e293b",background:"#080f1e",alignItems:"center"}}>
+          <div style={{display:"grid",gridTemplateColumns:"36px 1fr 76px 90px 68px 88px 72px 68px 68px 150px 88px",padding:"9px 22px",borderTop:"1px solid #1e293b",background:"#080f1e",alignItems:"center"}}>
             <div/>
             <div className="mono" style={{fontSize:9,fontWeight:700,color:"#1e3a5f",letterSpacing:".1em",textTransform:"uppercase"}}>Total</div>
-            <div/><div/><div/><div/><div/><div/>
+            <div/><div/><div/><div/><div/><div/><div/>
             <div className="mono" style={{fontSize:11,fontWeight:700,color:"#4ade80",textAlign:"right"}}>{(totalW*100).toFixed(2)}%</div>
             <div className="mono" style={{fontSize:14,fontWeight:700,color:"#4ade80",textAlign:"right"}}>€{totalE.toFixed(2)}</div>
           </div>

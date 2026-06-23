@@ -20,7 +20,9 @@
     "analystSrc": "investing.com (RYA)",
     "dataProvider": "Yahoo Finance",
     "lastUpdated": null,
-    "sourceUrl": "https://finance.yahoo.com/quote/RYAAY"
+    "sourceUrl": "https://finance.yahoo.com/quote/RYAAY",
+    "currentPrice": null,
+    "priceCurrency": "EUR"
   },
   {
     "name": "Nvidia",
@@ -43,7 +45,9 @@
     "analystSrc": "stockanalysis.com",
     "dataProvider": "Yahoo Finance",
     "lastUpdated": null,
-    "sourceUrl": "https://finance.yahoo.com/quote/NVDA"
+    "sourceUrl": "https://finance.yahoo.com/quote/NVDA",
+    "currentPrice": null,
+    "priceCurrency": "USD"
   },
   {
     "name": "Adidas",
@@ -66,7 +70,9 @@
     "analystSrc": "investing.com (ADS.DE)",
     "dataProvider": "Yahoo Finance",
     "lastUpdated": null,
-    "sourceUrl": "https://finance.yahoo.com/quote/ADDYY"
+    "sourceUrl": "https://finance.yahoo.com/quote/ADDYY",
+    "currentPrice": null,
+    "priceCurrency": "EUR"
   },
   {
     "name": "ASML",
@@ -89,7 +95,9 @@
     "analystSrc": "stockanalysis.com",
     "dataProvider": "Yahoo Finance",
     "lastUpdated": null,
-    "sourceUrl": "https://finance.yahoo.com/quote/ASML"
+    "sourceUrl": "https://finance.yahoo.com/quote/ASML",
+    "currentPrice": null,
+    "priceCurrency": "EUR"
   },
   {
     "name": "Broadcom",
@@ -112,7 +120,9 @@
     "analystSrc": "stockanalysis.com",
     "dataProvider": "Yahoo Finance",
     "lastUpdated": null,
-    "sourceUrl": "https://finance.yahoo.com/quote/AVGO"
+    "sourceUrl": "https://finance.yahoo.com/quote/AVGO",
+    "currentPrice": null,
+    "priceCurrency": "USD"
   },
   {
     "name": "Cloudflare",
@@ -135,7 +145,9 @@
     "analystSrc": "stockanalysis.com",
     "dataProvider": "Yahoo Finance",
     "lastUpdated": null,
-    "sourceUrl": "https://finance.yahoo.com/quote/NET"
+    "sourceUrl": "https://finance.yahoo.com/quote/NET",
+    "currentPrice": null,
+    "priceCurrency": "USD"
   },
   {
     "name": "Palantir",
@@ -158,7 +170,9 @@
     "analystSrc": "stockanalysis.com",
     "dataProvider": "Yahoo Finance",
     "lastUpdated": null,
-    "sourceUrl": "https://finance.yahoo.com/quote/PLTR"
+    "sourceUrl": "https://finance.yahoo.com/quote/PLTR",
+    "currentPrice": null,
+    "priceCurrency": "USD"
   },
   {
     "name": "Novo Nordisk",
@@ -181,7 +195,9 @@
     "analystSrc": "stockanalysis.com",
     "dataProvider": "Yahoo Finance",
     "lastUpdated": null,
-    "sourceUrl": "https://finance.yahoo.com/quote/NVO"
+    "sourceUrl": "https://finance.yahoo.com/quote/NVO",
+    "currentPrice": null,
+    "priceCurrency": "USD"
   },
   {
     "name": "IREN",
@@ -204,7 +220,9 @@
     "analystSrc": "stockanalysis.com",
     "dataProvider": "Yahoo Finance",
     "lastUpdated": null,
-    "sourceUrl": "https://finance.yahoo.com/quote/IREN"
+    "sourceUrl": "https://finance.yahoo.com/quote/IREN",
+    "currentPrice": null,
+    "priceCurrency": "USD"
   },
   {
     "name": "Visa",
@@ -227,6 +245,8 @@
     "analystSrc": "stockanalysis.com",
     "dataProvider": "Yahoo Finance",
     "lastUpdated": null,
-    "sourceUrl": "https://finance.yahoo.com/quote/V"
+    "sourceUrl": "https://finance.yahoo.com/quote/V",
+    "currentPrice": null,
+    "priceCurrency": "USD"
   }
 ]
