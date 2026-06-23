@@ -46,6 +46,40 @@ const BASE_STOCKS = [
 
 const SECTOR_LABELS  = { ai:"AI/Tech", travel:"Travel", consumer:"Consumer", semi:"Semiconductors", quantum:"Quantum", payments:"Payments", healthcare:"Healthcare" };
 const EARNINGS_DATES = { RYAAY:"Nov 2026", NVDA:"Aug 26", ADDYY:"Aug 2026", ASML:"Jul 2026", AVGO:"Sep 2026", NET:"Aug 2026", PLTR:"Aug 2026", NVO:"Aug 2026", IREN:"Aug 2026", V:"Jul 2026" };
+const SECTOR_OPTIONS = [
+  ["ai","AI/Tech"],
+  ["travel","Travel"],
+  ["consumer","Consumer"],
+  ["semi","Semiconductors"],
+  ["payments","Payments"],
+  ["healthcare","Healthcare"],
+  ["software","Software"],
+  ["industrial","Industrial"],
+  ["financial","Financial"],
+  ["energy","Energy"],
+  ["other","Other"],
+];
+
+const DEFAULT_CANDIDATE = {
+  name:"Candidate Stock",
+  ticker:"TEST",
+  sector:"software",
+  emoji:"◇",
+  color:"#22d3ee",
+  strongBuy:45,
+  buy:30,
+  hold:20,
+  sell:5,
+  upside:0.30,
+  drawdown:0.30,
+  shortInt:0.03,
+  beta:1.20,
+  fxExposed:true,
+  earningsDays:90,
+  ytd:-0.10,
+  analystCount:20,
+  analystSrc:"manual entry",
+};
 
 // ─────────────────────────────────────────────────────────────────────────────
 // BLENDED WIN PROBABILITY — 5 components
@@ -281,6 +315,39 @@ function runModel(stocks,mcResults,budget,kellyMult,flags,marketBull,eurNow,eurF
   return staged.map(s=>({...s,weight:s.weight/tw,euros:(s.weight/tw)*budget,isCapped:s.weight>=CAP*0.99})).sort((a,b)=>b.euros-a.euros);
 }
 
+function scoreCandidate(candidate, portfolioResults, kellyMult, flags, marketBull, eurNow, eurFcast){
+  const existingCount = BASE_STOCKS.reduce((n,s)=>n+(s.sector===candidate.sector?1:0),0);
+  const sectorCnt = existingCount + 1;
+  const regime = marketBull ? 1.0 : 0.7;
+  const fxDrift = (eurFcast - eurNow) / eurNow;
+  const bp = blendedP(candidate);
+  const pComposite = flags.blendedP ? bp.blend : bp.pa;
+  const siP = flags.shortInt ? Math.min(0.15,candidate.shortInt*0.5) : 0;
+  const pAdj = pComposite * (1-siP);
+  const fxAdj = flags.fx && candidate.fxExposed ? fxDrift : 0;
+  const b = Math.max(0.001,candidate.upside*(1+fxAdj));
+  const d = flags.drawdown ? Math.max(0.001,candidate.drawdown) : 0.001;
+  const q = 1-pAdj;
+  const rawK = flags.drawdown ? (pAdj*b-q*d)/(b+d) : (pAdj*b-q)/b;
+  const betaMult = flags.beta ? 1/Math.max(0.01,candidate.beta) : 1;
+  const secMult = flags.sector && sectorCnt>1 ? Math.max(0.60,1-(sectorCnt-1)*0.08) : 1;
+  const epMult = flags.earnings ? earningsMult(candidate.earningsDays) : 1;
+  const adj = Math.max(0,rawK*kellyMult*betaMult*secMult*epMult*regime);
+  const portfolioBlend = portfolioResults.map(s=>s.bp.blend).sort((a,b)=>a-b);
+  const medianBlend = portfolioBlend[Math.floor(portfolioBlend.length/2)] ?? 0;
+  const topBlend = Math.max(...portfolioResults.map(s=>s.bp.blend),0);
+  const topAdj = Math.max(...portfolioResults.map(s=>s.adj),0);
+  const fitScore = topAdj>0 ? Math.min(100,(adj/topAdj)*100) : 0;
+  const notes = [
+    rawK>0 ? "positive raw Kelly" : "negative raw Kelly",
+    bp.blend>=medianBlend ? "above portfolio median win probability" : "below portfolio median win probability",
+    bp.blend>=topBlend ? "highest blended probability in the set" : "not highest probability yet",
+    secMult<1 ? `${sectorCnt} stocks in ${SECTOR_LABELS[candidate.sector]||candidate.sector}` : "adds sector variety",
+    candidate.beta>1.5 ? "high-beta risk penalty" : "beta penalty is moderate",
+  ];
+  return {...candidate,bp,pComposite,pAdj,siP,fxAdj,rawK,betaMult,secMult,epMult,adj,fitScore,medianBlend,topBlend,topAdj,notes};
+}
+
 // ─────────────────────────────────────────────────────────────────────────────
 // COMPONENTS
 // ─────────────────────────────────────────────────────────────────────────────
@@ -430,6 +497,174 @@ function ProbBreakdownPanel({stocks}){
   );
 }
 
+function CandidateLab({candidate,setCandidate,score,portfolioResults}){
+  const update = (key,val) => setCandidate(s=>({...s,[key]:val}));
+  const pct = (key,val) => update(key,(parseFloat(val)||0)/100);
+  const number = (key,val,fallback=0) => update(key,parseFloat(val)||fallback);
+  const ratingTotal = candidate.strongBuy + candidate.buy + candidate.hold + candidate.sell;
+  const ratingWarn = Math.abs(ratingTotal-100) > 0.5;
+  const topPortfolio = portfolioResults[0];
+  const downloadCandidate = () => {
+    const blob = new Blob([JSON.stringify({savedAt:new Date().toISOString(),candidate},null,2)],{type:"application/json"});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `${candidate.ticker || "candidate"}-kelly-inputs.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+  const resetCandidate = () => setCandidate(DEFAULT_CANDIDATE);
+  const metric = (label,value,color="#e2e8f0",sub=null) => (
+    <div style={{background:"#0f172a",border:"1px solid #1e293b",borderRadius:8,padding:"10px 12px"}}>
+      <div style={{fontSize:8,fontWeight:700,color:"#334155",letterSpacing:".06em",textTransform:"uppercase",marginBottom:4}}>{label}</div>
+      <div className="mono" style={{fontSize:18,fontWeight:700,color,lineHeight:1}}>{value}</div>
+      {sub&&<div style={{fontSize:8,color:"#475569",marginTop:4}}>{sub}</div>}
+    </div>
+  );
+  const Field = ({label,children}) => (
+    <label style={{display:"block"}}>
+      <div style={{fontSize:8,fontWeight:700,color:"#334155",letterSpacing:".06em",textTransform:"uppercase",marginBottom:4}}>{label}</div>
+      {children}
+    </label>
+  );
+  const inputStyle = {width:"100%",background:"#0f172a",border:"1px solid #1e293b",color:"#e2e8f0",fontFamily:"inherit",fontSize:12,padding:"8px 10px",borderRadius:8,outline:"none"};
+  const notes = score.notes;
+  const pColor = score.pAdj>0.75?"#4ade80":score.pAdj>0.60?"#fbbf24":"#f87171";
+  const kColor = score.rawK>0?"#4ade80":"#f87171";
+
+  return(
+    <div style={{padding:"20px 22px"}}>
+      <div className="candidate-grid" style={{display:"grid",gridTemplateColumns:"minmax(320px,0.95fr) minmax(340px,1.05fr)",gap:16}}>
+        <div style={{background:"#080f1e",border:"1px solid #1e293b",borderRadius:12,padding:"16px 18px"}}>
+          <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",gap:10,marginBottom:14}}>
+            <div>
+              <div style={{fontSize:13,fontWeight:700,color:"#e2e8f0"}}>Candidate Inputs</div>
+              <div style={{fontSize:9,color:"#475569",marginTop:2}}>Manual stock test against the current model settings</div>
+            </div>
+            <div style={{display:"flex",gap:6}}>
+              <button className="btn" onClick={resetCandidate}>Reset</button>
+              <button className="btn active" onClick={downloadCandidate}>Save JSON</button>
+            </div>
+          </div>
+
+          <div style={{display:"grid",gridTemplateColumns:"1.4fr .8fr",gap:10,marginBottom:10}}>
+            <Field label="Company">
+              <input style={inputStyle} value={candidate.name} onChange={e=>update("name",e.target.value)}/>
+            </Field>
+            <Field label="Ticker">
+              <input style={{...inputStyle,fontFamily:"JetBrains Mono,monospace",textTransform:"uppercase"}} value={candidate.ticker} onChange={e=>update("ticker",e.target.value.toUpperCase())}/>
+            </Field>
+          </div>
+
+          <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:10,marginBottom:10}}>
+            <Field label="Sector">
+              <select style={inputStyle} value={candidate.sector} onChange={e=>update("sector",e.target.value)}>
+                {SECTOR_OPTIONS.map(([v,l])=><option key={v} value={v}>{l}</option>)}
+              </select>
+            </Field>
+            <Field label="Currency Exposure">
+              <select style={inputStyle} value={candidate.fxExposed?"usd":"eur"} onChange={e=>update("fxExposed",e.target.value==="usd")}>
+                <option value="usd">USD exposed</option>
+                <option value="eur">EUR/native</option>
+              </select>
+            </Field>
+          </div>
+
+          <div style={{display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:8,marginBottom:10}}>
+            {[
+              ["strongBuy","Strong Buy"],
+              ["buy","Buy"],
+              ["hold","Hold"],
+              ["sell","Sell"],
+            ].map(([key,label])=>(
+              <Field key={key} label={label}>
+                <input style={{...inputStyle,fontFamily:"JetBrains Mono,monospace"}} type="number" min={0} max={100} value={candidate[key]} onChange={e=>number(key,e.target.value)}/>
+              </Field>
+            ))}
+          </div>
+          <div style={{fontSize:9,color:ratingWarn?"#f87171":"#475569",marginBottom:12}}>
+            Analyst rating total: {ratingTotal.toFixed(0)}%{ratingWarn?" · should total 100%":""}
+          </div>
+
+          <div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:10,marginBottom:10}}>
+            <Field label="Upside %">
+              <input style={{...inputStyle,fontFamily:"JetBrains Mono,monospace"}} type="number" value={(candidate.upside*100).toFixed(0)} onChange={e=>pct("upside",e.target.value)}/>
+            </Field>
+            <Field label="Drawdown %">
+              <input style={{...inputStyle,fontFamily:"JetBrains Mono,monospace"}} type="number" value={(candidate.drawdown*100).toFixed(0)} onChange={e=>pct("drawdown",e.target.value)}/>
+            </Field>
+            <Field label="YTD %">
+              <input style={{...inputStyle,fontFamily:"JetBrains Mono,monospace"}} type="number" value={(candidate.ytd*100).toFixed(0)} onChange={e=>pct("ytd",e.target.value)}/>
+            </Field>
+          </div>
+
+          <div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:10}}>
+            <Field label="Beta">
+              <input style={{...inputStyle,fontFamily:"JetBrains Mono,monospace"}} type="number" step="0.1" value={candidate.beta} onChange={e=>number("beta",e.target.value,1)}/>
+            </Field>
+            <Field label="Short Interest %">
+              <input style={{...inputStyle,fontFamily:"JetBrains Mono,monospace"}} type="number" step="0.1" value={(candidate.shortInt*100).toFixed(1)} onChange={e=>pct("shortInt",e.target.value)}/>
+            </Field>
+            <Field label="Days To Earnings">
+              <input style={{...inputStyle,fontFamily:"JetBrains Mono,monospace"}} type="number" value={candidate.earningsDays} onChange={e=>number("earningsDays",e.target.value,90)}/>
+            </Field>
+          </div>
+        </div>
+
+        <div style={{background:"#080f1e",border:"1px solid #1e293b",borderRadius:12,padding:"16px 18px"}}>
+          <div style={{display:"flex",justifyContent:"space-between",gap:12,alignItems:"flex-start",marginBottom:14}}>
+            <div>
+              <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:2}}>
+                <span style={{fontSize:18}}>{candidate.emoji}</span>
+                <div style={{fontSize:16,fontWeight:700,color:"#f8fafc"}}>{candidate.name || "Candidate"}</div>
+                <span style={{fontSize:9,color:"#334155",background:"#1e293b",padding:"2px 6px",borderRadius:5,fontFamily:"monospace"}}>{candidate.ticker || "TICKER"}</span>
+              </div>
+              <div style={{fontSize:9,color:"#475569"}}>{SECTOR_LABELS[candidate.sector] || candidate.sector} · compared with current portfolio</div>
+            </div>
+            <span className="pill" style={{background:score.fitScore>=75?"#052e16":"#1e293b",color:score.fitScore>=75?"#4ade80":"#94a3b8",border:"1px solid #334155"}}>
+              Fit {score.fitScore.toFixed(0)}/100
+            </span>
+          </div>
+
+          <div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:10,marginBottom:12}}>
+            {metric("Blended p",(score.bp.blend*100).toFixed(1)+"%","#22d3ee",`Analyst-only ${(score.bp.pa*100).toFixed(1)}%`)}
+            {metric("Adjusted p",(score.pAdj*100).toFixed(1)+"%",pColor,`SI penalty ${(score.siP*100).toFixed(1)}%`)}
+            {metric("Raw Kelly",score.rawK>0?(score.rawK*100).toFixed(1)+"%":"Negative",kColor,"before model multipliers")}
+          </div>
+
+          <div style={{display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:8,marginBottom:14}}>
+            {metric("Beta x","×"+score.betaMult.toFixed(2),score.betaMult<0.75?"#fbbf24":"#94a3b8")}
+            {metric("Sector x","×"+score.secMult.toFixed(2),score.secMult<1?"#fb923c":"#4ade80")}
+            {metric("Earnings x","×"+score.epMult.toFixed(2),score.epMult<0.95?"#fbbf24":"#94a3b8")}
+            {metric("Adj Kelly",(score.adj*100).toFixed(1)+"%",score.adj>0?"#4ade80":"#f87171")}
+          </div>
+
+          <div style={{background:"#0f172a",border:"1px solid #1e293b",borderRadius:8,padding:"11px 12px",marginBottom:12}}>
+            <div style={{fontSize:9,fontWeight:700,color:"#334155",letterSpacing:".06em",textTransform:"uppercase",marginBottom:8}}>Portfolio Comparison</div>
+            {[
+              ["Top current allocation",topPortfolio?`${topPortfolio.name} · €${topPortfolio.euros.toFixed(2)}`:"—","#60a5fa"],
+              ["Candidate blended p",`${(score.bp.blend*100).toFixed(1)}% vs portfolio median ${(score.medianBlend*100).toFixed(1)}%`,"#22d3ee"],
+              ["Current best blended p",`${(score.topBlend*100).toFixed(1)}%`,"#a78bfa"],
+              ["Candidate adjusted Kelly",`${(score.adj*100).toFixed(1)}% vs current best ${(score.topAdj*100).toFixed(1)}%`,"#4ade80"],
+            ].map(([l,v,c])=>(
+              <div key={l} style={{display:"flex",justifyContent:"space-between",gap:10,padding:"4px 0",borderBottom:"1px solid #1e293b"}}>
+                <span style={{fontSize:9,color:"#475569"}}>{l}</span>
+                <span className="mono" style={{fontSize:9,fontWeight:700,color:c,textAlign:"right"}}>{v}</span>
+              </div>
+            ))}
+          </div>
+
+          <div style={{display:"flex",gap:6,flexWrap:"wrap"}}>
+            {notes.map((n,i)=>(
+              <span key={i} className="pill" style={{background:i===0&&score.rawK<=0?"#450a0a":"#0f172a",color:i===0&&score.rawK<=0?"#f87171":"#94a3b8",border:"1px solid #1e293b"}}>{n}</span>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function Toggle({label,sub,on,onToggle,color="#00cc77"}){
   return(
     <div style={{background:on?color+"0a":"#0f172a",border:`1px solid ${on?color+"50":"#1e293b"}`,borderRadius:10,padding:"9px 12px",cursor:"pointer",transition:"all .15s",userSelect:"none"}}
@@ -461,6 +696,7 @@ export default function App(){
   const [portBands, setPortBands] = useState(null);
   const [running,   setRunning]   = useState(false);
   const [mcSeed,    setMcSeed]    = useState(12345);
+  const [candidate, setCandidate] = useState(DEFAULT_CANDIDATE);
   const toggle = k => setFlags(f=>({...f,[k]:!f[k]}));
 
   const runSim = useCallback((seed)=>{
@@ -471,6 +707,7 @@ export default function App(){
   useEffect(()=>{ runSim(mcSeed); },[]);
 
   const results       = runModel(BASE_STOCKS,mcResults,budget,kellyMult,flags,marketBull,eurUsdNow,eurUsdForecast);
+  const candidateScore = scoreCandidate(candidate,results,kellyMult,flags,marketBull,eurUsdNow,eurUsdForecast);
   const weightsByBase = BASE_STOCKS.map(s=>results.find(r=>r.ticker===s.ticker)?.weight??0.1);
 
   useEffect(()=>{
@@ -515,6 +752,7 @@ export default function App(){
         .view-btn{background:transparent;border:none;color:#475569;font-family:inherit;font-size:11px;font-weight:600;padding:7px 16px;border-radius:8px;cursor:pointer;transition:all .15s;letter-spacing:.04em;text-transform:uppercase;}
         .view-btn.active{background:#1e293b;color:#e2e8f0;}
         @keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}.pulsing{animation:pulse 1.1s ease-in-out infinite;}
+        @media(max-width:920px){.candidate-grid{grid-template-columns:1fr!important;}}
         @media(max-width:780px){.hide-sm{display:none!important;}.grid-flags{grid-template-columns:repeat(2,1fr)!important;}.grid-stats{grid-template-columns:repeat(2,1fr)!important;}}
       `}</style>
 
@@ -602,13 +840,14 @@ export default function App(){
 
       {/* TABS */}
       <div style={{padding:"8px 22px",borderBottom:"1px solid #1e293b",display:"flex",gap:4,background:"#020617"}}>
-        {[{l:"Allocations",v:"table"},{l:"Portfolio Chart",v:"chart"},{l:"🔀 Win Prob Breakdown",v:"prob"}].map(o=>(
+        {[{l:"Allocations",v:"table"},{l:"Portfolio Chart",v:"chart"},{l:"Candidate Lab",v:"candidate"},{l:"🔀 Win Prob Breakdown",v:"prob"}].map(o=>(
           <button key={o.v} className={`view-btn${view===o.v?" active":""}`} onClick={()=>setView(o.v)}
             style={o.v==="prob"?{color:view==="prob"?"#e2e8f0":"#22d3ee"}:{}}>{o.l}</button>
         ))}
       </div>
 
       {view==="chart"&&<div style={{padding:"20px 22px"}}><PortfolioChart bands={portBands} budget={budget}/></div>}
+      {view==="candidate"&&<CandidateLab candidate={candidate} setCandidate={setCandidate} score={candidateScore} portfolioResults={results}/>}
       {view==="prob"&&<ProbBreakdownPanel stocks={BASE_STOCKS}/>}
 
       {view==="table"&&(
