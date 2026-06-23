@@ -5,8 +5,8 @@ import { useState, useEffect, useCallback, useMemo } from "react";
 // ─────────────────────────────────────────────────────────────────────────────
 const MARKET_VOL    = 0.18;
 const TRADING_DAYS  = 252;
-const MC_SIMS       = 3000;
-const PORT_SIMS     = 250;
+const MC_SIMS       = 8000;
+const PORT_SIMS     = 400;
 const PORT_STEPS    = 52;
 const T_DF          = 5;
 const JUMP_LAMBDA   = 4;
@@ -340,14 +340,8 @@ function runModel(stocks,mcResults,budget,kellyMult,flags,marketBull,eurNow,eurF
     const pAdj=pComposite*(1-siP);
 
     const fxAdj=flags.fx&&s.fxExposed?fxDrift:0;
-    let rawK;
-    if(mc&&flags.monteCarlo){
-      const pMC=mc.pSim*(1-siP);
-      rawK=(pMC*mc.avgWin-(1-pMC)*mc.avgLoss)/(mc.avgWin+mc.avgLoss);
-    } else {
-      const b=s.upside*(1+fxAdj),d=flags.drawdown?s.drawdown:0.001,q=1-pAdj;
-      rawK=flags.drawdown?(pAdj*b-q*d)/(b+d):(pAdj*b-q)/b;
-    }
+    const b=s.upside*(1+fxAdj),d=flags.drawdown?s.drawdown:0.001,q=1-pAdj;
+    const rawK=flags.drawdown?(pAdj*b-q*d)/(b+d):(pAdj*b-q)/b;
 
     const bm=flags.beta?1/s.beta:1;
     const sc=sectorCnt[s.sector];
@@ -923,7 +917,7 @@ export default function App(){
   const [marketBull,     setMarketBull]     = useState(true);
   const [eurUsdNow,      setEurUsdNow]      = useState(1.1733);
   const [eurUsdForecast, setEurUsdForecast] = useState(1.175);
-  const [flags, setFlags] = useState({blendedP:true,monteCarlo:true,beta:true,drawdown:true,shortInt:true,sector:true,fx:true,earnings:true});
+  const [flags, setFlags] = useState({blendedP:true,beta:true,drawdown:true,shortInt:true,sector:true,fx:true,earnings:true});
   const [expanded,  setExpanded]  = useState(null);
   const [view,      setView]      = useState("table");
   const [mcResults, setMcResults] = useState(null);
@@ -988,7 +982,6 @@ export default function App(){
 
   const flagDefs=[
     {k:"blendedP",   label:"🔀 Blended Win Prob",sub:"Analyst+Momentum+R/R+SI+EP",color:"#22d3ee"},
-    {k:"monteCarlo", label:"🎲 Monte Carlo",      sub:"t(5)+jumps+regime+FX",     color:"#a78bfa"},
     {k:"beta",       label:"β Beta Penalty",      sub:"1/β + dynamic floors",     color:"#34d399"},
     {k:"drawdown",   label:"📉 Drawdown",          sub:"Analytical loss floor",    color:"#f87171"},
     {k:"shortInt",   label:"🩳 Short Interest",    sub:"Penalty on top of blend",  color:"#fb923c"},
@@ -1095,7 +1088,7 @@ export default function App(){
       {/* TOGGLES */}
       <div style={{padding:"12px 22px",borderBottom:"1px solid #1e293b",background:"#020617"}}>
         <div style={{fontSize:9,fontWeight:600,color:"#334155",letterSpacing:".06em",textTransform:"uppercase",marginBottom:8}}>Model Adjustments</div>
-        <div style={{display:"grid",gridTemplateColumns:"repeat(7,1fr)",gap:7}} className="grid-flags">
+        <div style={{display:"grid",gridTemplateColumns:"repeat(6,1fr)",gap:7}} className="grid-flags">
           {flagDefs.map(f=><Toggle key={f.k} label={f.label} sub={f.sub} on={flags[f.k]} onToggle={()=>toggle(f.k)} color={f.color}/>)}
         </div>
       </div>

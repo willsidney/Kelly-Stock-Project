@@ -64,7 +64,7 @@ The app now includes:
 
 GitHub Pages can run the model and save data in the browser, but it cannot safely hold private API keys. Yahoo Finance is the chosen primary source for analyst-style data and stock prices. The updater reads Yahoo Finance data and writes trusted model inputs into `public/data/stocks.json`.
 
-The app keeps the first page load light by using the fast model immediately. Monte Carlo and portfolio chart projections run only when requested or when the chart is opened.
+The app keeps the first page load light by running the v13 Kelly allocation model immediately. Monte Carlo is separate: it is an on-demand projection layer and does not change model score, win probability, target weight, or euro allocation.
 
 ## Yahoo Finance Updates
 
