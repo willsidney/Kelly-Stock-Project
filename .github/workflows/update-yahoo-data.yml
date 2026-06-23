@@ -35,7 +35,9 @@ jobs:
           python-version: "3.12"
 
       - name: Refresh Yahoo data
-        run: python scripts/update_yahoo_data.py --tickers "${{ github.event.inputs.tickers }}"
+        run: |
+          echo "Requested tickers: ${{ inputs.tickers }}"
+          python scripts/update_yahoo_data.py --tickers "${{ inputs.tickers }}"
 
       - name: Commit refreshed database
         run: |

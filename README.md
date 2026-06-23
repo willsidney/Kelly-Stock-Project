@@ -76,6 +76,8 @@ To add new stocks:
 4. Enter ticker codes in the `tickers` field, for example `MSFT, AAPL, TEAM`.
 5. Run the workflow. It adds missing tickers to `public/data/stocks.json`, refreshes Yahoo data, commits the database, and redeploys the site.
 
+In the workflow log, the `Refresh Yahoo data` step prints `Requested tickers` and `database tickers`. If the new ticker is not in `database tickers`, the workflow did not receive the ticker input.
+
 ## Privacy Note
 
 The uploaded PDFs, Word files, extracted text, project notes, and scratch files are ignored by Git because they may contain personal project context. Only the app source and GitHub Pages viewer are intended for publishing.

@@ -246,6 +246,10 @@ def main() -> int:
 
     stocks = json.loads(DATA_PATH.read_text())
     requested = parse_tickers(args.tickers)
+    if requested:
+        print(f"requested tickers: {', '.join(requested)}")
+    else:
+        print("requested tickers: none")
     existing = {str(s.get("ticker", "")).upper().strip() for s in stocks if s.get("ticker")}
     missing = [ticker for ticker in requested if ticker not in existing]
     if missing:
@@ -253,6 +257,8 @@ def main() -> int:
         missing_quotes = quote_batch(missing)
         for ticker in missing:
             stocks.append(seed_stock(ticker, missing_quotes.get(ticker), len(stocks)))
+    elif requested:
+        print("all requested tickers are already in the database")
 
     tickers = [str(s.get("ticker", "")).upper().strip() for s in stocks if s.get("ticker")]
     quotes = quote_batch(tickers)
@@ -263,6 +269,7 @@ def main() -> int:
         refreshed.append(update_stock(stock, quotes.get(ticker)))
         time.sleep(0.5)
     DATA_PATH.write_text(json.dumps(refreshed, indent=2) + "\n")
+    print("database tickers: " + ", ".join(s["ticker"] for s in refreshed))
     print(f"updated {DATA_PATH}")
     return 0
 
