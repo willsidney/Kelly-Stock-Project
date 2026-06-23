@@ -55,6 +55,41 @@ def clamp(value, lo, hi):
     return max(lo, min(hi, value))
 
 
+def valid_price(value) -> bool:
+    return isinstance(value, (int, float)) and math.isfinite(value) and value > 0
+
+
+def quote_current_price(quote: dict | None) -> tuple[float | None, str | None, int | None]:
+    """Prefer Yahoo's active quote fields over previous-close style fallbacks."""
+    if not quote:
+        return None, None, None
+    state = str(quote.get("marketState") or "").upper()
+    candidates = []
+    if state == "REGULAR":
+        candidates.append(("regularMarketPrice", "Yahoo regular market"))
+    elif state == "POST":
+        candidates.append(("postMarketPrice", "Yahoo post-market"))
+        candidates.append(("regularMarketPrice", "Yahoo regular market"))
+    elif state == "PRE":
+        candidates.append(("preMarketPrice", "Yahoo pre-market"))
+        candidates.append(("regularMarketPrice", "Yahoo regular market"))
+    else:
+        candidates.append(("regularMarketPrice", "Yahoo quote"))
+        candidates.append(("postMarketPrice", "Yahoo post-market"))
+        candidates.append(("preMarketPrice", "Yahoo pre-market"))
+
+    for key, source in candidates:
+        price = quote.get(key)
+        if valid_price(price):
+            time_key = {
+                "regularMarketPrice": "regularMarketTime",
+                "postMarketPrice": "postMarketTime",
+                "preMarketPrice": "preMarketTime",
+            }.get(key, "regularMarketTime")
+            return float(price), source, quote.get(time_key) or quote.get("regularMarketTime")
+    return None, None, None
+
+
 def normalize_rating_mix(trend: dict | None) -> dict | None:
     if not trend:
         return None
@@ -68,6 +103,29 @@ def normalize_rating_mix(trend: dict | None) -> dict | None:
         "sell": round((float(trend.get("sell", 0) or 0) / total) * 100),
         "analystCount": int(total),
     }
+
+
+def intraday_price(ticker: str) -> tuple[float | None, str | None, int | None]:
+    url = f"https://query1.finance.yahoo.com/v8/finance/chart/{urllib.parse.quote(ticker)}?range=1d&interval=1m"
+    data = fetch_json(url)
+    result = (((data or {}).get("chart") or {}).get("result") or [None])[0]
+    if not result:
+        return None, None, None
+    meta = result.get("meta") or {}
+    for key, source in (
+        ("regularMarketPrice", "Yahoo intraday chart"),
+        ("postMarketPrice", "Yahoo post-market chart"),
+        ("preMarketPrice", "Yahoo pre-market chart"),
+    ):
+        price = meta.get(key)
+        if valid_price(price):
+            return float(price), source, meta.get("regularMarketTime")
+    quote = (((result.get("indicators") or {}).get("quote") or [None])[0] or {})
+    closes = [c for c in quote.get("close", []) if valid_price(c)]
+    timestamps = result.get("timestamp") or []
+    if closes:
+        return float(closes[-1]), "Yahoo intraday close", timestamps[-1] if timestamps else None
+    return None, None, None
 
 
 def chart_stats(ticker: str) -> dict:
@@ -96,7 +154,7 @@ def chart_stats(ticker: str) -> dict:
         peak = max(peak, price)
         if peak:
             max_drawdown = max(max_drawdown, (peak - price) / peak)
-    return {"currentPrice": current, "ytd": ytd, "drawdown": max_drawdown}
+    return {"ytd": ytd, "drawdown": max_drawdown}
 
 
 def quote_summary(ticker: str) -> dict:
@@ -144,11 +202,12 @@ def yahoo_sector_to_model(value: str | None) -> str:
 def seed_stock(ticker: str, quote: dict | None, idx: int) -> dict:
     name = ticker
     currency = "USD"
-    current_price = None
+    current_price, price_source, price_time = quote_current_price(quote)
     if quote:
         name = quote.get("shortName") or quote.get("longName") or ticker
         currency = quote.get("currency") or currency
-        current_price = quote.get("regularMarketPrice")
+    if current_price is None:
+        current_price, price_source, price_time = intraday_price(ticker)
     return {
         "name": name,
         "ticker": ticker,
@@ -172,6 +231,8 @@ def seed_stock(ticker: str, quote: dict | None, idx: int) -> dict:
         "analystSrc": "Yahoo Finance",
         "dataProvider": "Yahoo Finance",
         "lastUpdated": None,
+        "priceSource": price_source,
+        "priceTime": datetime.fromtimestamp(price_time, timezone.utc).replace(microsecond=0).isoformat() if price_time else None,
         "sourceUrl": f"https://finance.yahoo.com/quote/{ticker}",
     }
 
@@ -183,9 +244,8 @@ def update_stock(stock: dict, quote: dict | None) -> dict:
     updated["dataProvider"] = "Yahoo Finance"
     updated["sourceUrl"] = f"https://finance.yahoo.com/quote/{ticker}"
 
+    quote_price, price_source, price_time = quote_current_price(quote)
     if quote:
-        if quote.get("regularMarketPrice") is not None:
-            updated["currentPrice"] = quote["regularMarketPrice"]
         if quote.get("currency"):
             updated["priceCurrency"] = quote["currency"]
         if quote.get("shortName") and not updated.get("name"):
@@ -200,8 +260,20 @@ def update_stock(stock: dict, quote: dict | None) -> dict:
     if asset_profile.get("sector"):
         updated["sector"] = yahoo_sector_to_model(asset_profile.get("sector"))
 
+    if quote_price is None:
+        quote_price, price_source, price_time = intraday_price(ticker)
+    if quote_price is None:
+        summary_price = raw(price.get("regularMarketPrice"))
+        if valid_price(summary_price):
+            quote_price, price_source = float(summary_price), "Yahoo quote summary"
+    if quote_price is not None:
+        updated["currentPrice"] = quote_price
+        updated["priceSource"] = price_source
+        if price_time:
+            updated["priceTime"] = datetime.fromtimestamp(price_time, timezone.utc).replace(microsecond=0).isoformat()
+
     target_mean = raw(financial.get("targetMeanPrice"))
-    current_price = updated.get("currentPrice") or raw(price.get("regularMarketPrice"))
+    current_price = updated.get("currentPrice")
     if target_mean and current_price:
         updated["upside"] = clamp((float(target_mean) / float(current_price)) - 1, 0, 3)
 
@@ -227,8 +299,6 @@ def update_stock(stock: dict, quote: dict | None) -> dict:
             updated["earningsDays"] = max(0, days)
 
     stats = chart_stats(ticker)
-    if stats.get("currentPrice") and not updated.get("currentPrice"):
-        updated["currentPrice"] = stats["currentPrice"]
     if stats.get("ytd") is not None:
         updated["ytd"] = clamp(float(stats["ytd"]), -0.95, 5)
     if stats.get("drawdown"):

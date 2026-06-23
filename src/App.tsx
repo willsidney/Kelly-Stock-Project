@@ -120,6 +120,8 @@ function normalizeStock(raw, idx=0){
     analystSrc: raw.analystSrc || "database",
     dataProvider: raw.dataProvider || "Yahoo Finance",
     lastUpdated: raw.lastUpdated || null,
+    priceSource: raw.priceSource || null,
+    priceTime: raw.priceTime || null,
     sourceUrl: raw.sourceUrl || `https://finance.yahoo.com/quote/${ticker}`,
   };
 }
