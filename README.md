@@ -48,7 +48,7 @@ npm run dev
 ## Files
 
 - `src/App.tsx` - current React model source.
-- `data/stocks.json` - shared stock database seed, prepared for Yahoo Finance-derived inputs.
+- `public/data/stocks.json` - published stock database seed, prepared for Yahoo Finance-derived inputs.
 - `.github/workflows/deploy-pages.yml` - GitHub Pages deployment workflow.
 - `ROADMAP.md` - long-term plan for editable portfolios, candidate scoring, and market scanning.
 
@@ -60,13 +60,13 @@ The app now includes:
 - `Scanner` - ranks every stock in the saved database using the active model settings.
 - `Stock Search` - looks up stocks already loaded into the saved database.
 
-GitHub Pages can run the model and save data in the browser, but it cannot safely hold private API keys. Yahoo Finance is the chosen primary source for analyst-style data and stock prices. The next step is a scheduled updater or lightweight backend that reads Yahoo Finance data and writes trusted model inputs into `data/stocks.json`.
+GitHub Pages can run the model and save data in the browser, but it cannot safely hold private API keys. Yahoo Finance is the chosen primary source for analyst-style data and stock prices. The updater reads Yahoo Finance data and writes trusted model inputs into `public/data/stocks.json`.
 
 ## Yahoo Finance Updates
 
 The repo includes a GitHub Actions workflow named `Update Yahoo Finance Data`.
 
-It refreshes `data/stocks.json` from Yahoo Finance on weekdays and can also be run manually from the Actions tab. It updates best-effort fields including price, currency, analyst recommendation mix, target-price upside, beta, short interest, earnings distance, YTD performance, and one-year drawdown when Yahoo returns those fields.
+It refreshes `public/data/stocks.json` from Yahoo Finance on weekdays and can also be run manually from the Actions tab. It updates best-effort fields including price, currency, analyst recommendation mix, target-price upside, beta, short interest, earnings distance, YTD performance, and one-year drawdown when Yahoo returns those fields.
 
 ## Privacy Note
 

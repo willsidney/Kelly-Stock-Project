@@ -2,7 +2,7 @@
 """Refresh the Kelly stock database from Yahoo Finance.
 
 This updater uses Yahoo's public finance endpoints on a best-effort basis.
-It writes normalized model inputs back to data/stocks.json so the static
+It writes normalized model inputs back to public/data/stocks.json so the static
 GitHub Pages app can consume updated data without storing API keys in the
 browser.
 """
@@ -20,7 +20,7 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[1]
-DATA_PATH = ROOT / "data" / "stocks.json"
+DATA_PATH = ROOT / "public" / "data" / "stocks.json"
 UA = "Mozilla/5.0 (compatible; KellyStockProject/1.0; +https://github.com/willsidney/Kelly-Stock-Project)"
 
 
