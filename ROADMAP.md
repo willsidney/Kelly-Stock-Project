@@ -27,6 +27,7 @@ Turn the current Kelly Portfolio model into an accessible stock-selection system
 
 - Add Stock Search for stocks already loaded into the model. **Done**
 - Add optimal scanner over the saved stock database. **Done**
+- Add scanner filters and a model score column so the strongest candidates can be surfaced quickly. **Done**
 - Add a data-backed candidate engine where the user enters a ticker and the system gathers/upserts the required model inputs behind the scenes.
 - Score each candidate through the same blended win-probability and Kelly pipeline.
 - Rank candidates against the current portfolio. **Done for saved database**
@@ -45,6 +46,7 @@ Turn the current Kelly Portfolio model into an accessible stock-selection system
 
 ## Phase 5: Rebalancing
 
+- Add a Create Model section where the user selects database stocks and the app generates portfolio allocations from the active model settings. **Done**
 - Add target-vs-current allocation entry.
 - Show drift against the target weights.
 - Highlight rebalance actions only when drift exceeds the configured threshold.

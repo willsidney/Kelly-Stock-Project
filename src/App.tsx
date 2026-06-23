@@ -149,6 +149,7 @@ function priceLabel(s){
   const symbol = s.priceCurrency==="EUR" ? "€" : s.priceCurrency==="GBP" ? "£" : "$";
   return `${symbol}${Number(s.currentPrice).toFixed(2)}`;
 }
+const modelScore = s => Math.max(0,Number(s.adj)||0)*100;
 
 // ─────────────────────────────────────────────────────────────────────────────
 // CORRELATION MATRICES
@@ -602,8 +603,36 @@ function StockSearch({portfolioResults}){
 
 function Scanner({results,setView}){
   const [sector,setSector] = useState("all");
+  const [query,setQuery] = useState("");
   const [minWin,setMinWin] = useState(0);
-  const filtered = results.filter(s=>(sector==="all"||s.sector===sector) && s.pAdj*100>=minWin);
+  const [minScore,setMinScore] = useState(0);
+  const [minUpside,setMinUpside] = useState(0);
+  const [maxDrawdown,setMaxDrawdown] = useState(100);
+  const [sortBy,setSortBy] = useState("score");
+  const filterFields = [
+    {label:"Min score", value:minScore, setter:setMinScore},
+    {label:"Min win %", value:minWin, setter:setMinWin},
+    {label:"Min upside %", value:minUpside, setter:setMinUpside},
+    {label:"Max drawdown %", value:maxDrawdown, setter:setMaxDrawdown},
+  ];
+  const filtered = results
+    .filter(s=>(sector==="all"||s.sector===sector)
+      && (!query || `${s.name} ${s.ticker}`.toUpperCase().includes(query.toUpperCase()))
+      && s.pAdj*100>=minWin
+      && modelScore(s)>=minScore
+      && s.fxAdjUpside*100>=minUpside
+      && s.drawdown*100<=maxDrawdown)
+    .sort((a,b)=>{
+      const map = {
+        score: modelScore,
+        win: s=>s.pAdj*100,
+        upside: s=>s.fxAdjUpside*100,
+        drawdown: s=>-s.drawdown*100,
+        allocation: s=>s.weight*100,
+        price: s=>s.currentPrice || 0,
+      };
+      return (map[sortBy](b)-map[sortBy](a));
+    });
   return(
     <div style={{padding:"20px 22px"}}>
       <div style={{display:"flex",justifyContent:"space-between",gap:12,alignItems:"flex-end",flexWrap:"wrap",marginBottom:12}}>
@@ -612,29 +641,46 @@ function Scanner({results,setView}){
           <div style={{fontSize:9,color:"#475569",marginTop:2}}>Ranks every stock in the database using the active model settings</div>
         </div>
         <div style={{display:"flex",gap:8,alignItems:"center",flexWrap:"wrap"}}>
+          <input className="ni" style={{width:150}} placeholder="Search" value={query} onChange={e=>setQuery(e.target.value)}/>
           <select className="ni" style={{width:150}} value={sector} onChange={e=>setSector(e.target.value)}>
             <option value="all">All sectors</option>
             {SECTOR_OPTIONS.map(([v,l])=><option key={v} value={v}>{l}</option>)}
           </select>
-          <input className="ni" type="number" min={0} max={100} value={minWin} onChange={e=>setMinWin(Number(e.target.value)||0)} title="Minimum win probability"/>
+          <select className="ni" style={{width:130}} value={sortBy} onChange={e=>setSortBy(e.target.value)}>
+            <option value="score">Sort score</option>
+            <option value="win">Sort win %</option>
+            <option value="upside">Sort upside</option>
+            <option value="drawdown">Sort drawdown</option>
+            <option value="allocation">Sort allocation</option>
+            <option value="price">Sort price</option>
+          </select>
           <button className="btn" onClick={()=>setView("database")}>Add Stocks</button>
         </div>
       </div>
+      <div style={{display:"flex",gap:8,alignItems:"center",flexWrap:"wrap",marginBottom:12}}>
+        {filterFields.map(({label,value,setter})=>(
+          <label key={label} style={{display:"flex",alignItems:"center",gap:5,fontSize:9,color:"#475569"}}>
+            {label}
+            <input className="ni" style={{width:72}} type="number" value={value} onChange={e=>setter(Number(e.target.value)||0)}/>
+          </label>
+        ))}
+        <span style={{fontSize:9,color:"#334155"}}>{filtered.length} of {results.length} shown</span>
+      </div>
       <div style={{background:"#080f1e",border:"1px solid #1e293b",borderRadius:12,overflow:"hidden"}}>
-        <div style={{display:"grid",gridTemplateColumns:"42px 1.4fr 88px 96px 96px 96px 96px 1fr",padding:"9px 14px",background:"#0f172a",borderBottom:"1px solid #1e293b"}}>
-          {["#","Stock","Price","Score","Win Prob","Kelly","Allocation","Why"].map((h,i)=>(
+        <div style={{display:"grid",gridTemplateColumns:"42px 1.4fr 88px 88px 92px 82px 82px 96px 1fr",padding:"9px 14px",background:"#0f172a",borderBottom:"1px solid #1e293b"}}>
+          {["#","Stock","Price","Score","Win Prob","Upside","Drawdown","Allocation","Why"].map((h,i)=>(
             <div key={h} style={{fontSize:8,fontWeight:700,color:"#1e3a5f",letterSpacing:".08em",textTransform:"uppercase",textAlign:i>1?"right":"left"}}>{h}</div>
           ))}
         </div>
         {filtered.map((s,i)=>{
-          const score=Math.max(0,s.adj)*100;
+          const score=modelScore(s);
           const why=[
             s.rawK>0?"positive Kelly":"floor only",
             s.secMult<1?"sector penalty":"sector ok",
             s.beta>1.5?"high beta":"beta ok",
           ].join(" · ");
           return(
-            <div key={s.ticker} style={{display:"grid",gridTemplateColumns:"42px 1.4fr 88px 96px 96px 96px 96px 1fr",padding:"10px 14px",borderBottom:"1px solid #0f172a",alignItems:"center"}}>
+            <div key={s.ticker} style={{display:"grid",gridTemplateColumns:"42px 1.4fr 88px 88px 92px 82px 82px 96px 1fr",padding:"10px 14px",borderBottom:"1px solid #0f172a",alignItems:"center"}}>
               <div className="mono" style={{fontSize:11,fontWeight:700,color:i<3?"#60a5fa":"#334155"}}>{i+1}</div>
               <div style={{display:"flex",alignItems:"center",gap:7}}>
                 <span>{s.emoji}</span>
@@ -646,7 +692,8 @@ function Scanner({results,setView}){
               <div className="mono" style={{fontSize:12,fontWeight:700,color:s.currentPrice?"#94a3b8":"#334155",textAlign:"right"}}>{priceLabel(s)}</div>
               <div className="mono" style={{fontSize:13,fontWeight:700,color:"#4ade80",textAlign:"right"}}>{score.toFixed(1)}</div>
               <div className="mono" style={{fontSize:12,fontWeight:700,color:"#22d3ee",textAlign:"right"}}>{(s.pAdj*100).toFixed(1)}%</div>
-              <div className="mono" style={{fontSize:12,fontWeight:700,color:s.rawK>0?"#94a3b8":"#f87171",textAlign:"right"}}>{s.rawK>0?(s.rawK*100).toFixed(1)+"%":"neg"}</div>
+              <div className="mono" style={{fontSize:12,fontWeight:700,color:"#94a3b8",textAlign:"right"}}>{(s.fxAdjUpside*100).toFixed(0)}%</div>
+              <div className="mono" style={{fontSize:12,fontWeight:700,color:s.drawdown>0.45?"#f87171":"#94a3b8",textAlign:"right"}}>{(s.drawdown*100).toFixed(0)}%</div>
               <div className="mono" style={{fontSize:12,fontWeight:700,color:"#60a5fa",textAlign:"right"}}>{(s.weight*100).toFixed(1)}%</div>
               <div style={{fontSize:9,color:"#64748b",textAlign:"right"}}>{why}</div>
             </div>
@@ -657,10 +704,20 @@ function Scanner({results,setView}){
   );
 }
 
-function StockDatabase({stocks,setStocks,setView,setDbMode}){
+function StockDatabase({stocks,results,setStocks,setView,setDbMode}){
   const empty = { name:"", ticker:"", sector:"other", emoji:"◆", color:STOCK_COLORS[0], strongBuy:40, buy:30, hold:25, sell:5, upside:0.25, drawdown:0.30, shortInt:0.02, beta:1.1, currentPrice:null, priceCurrency:"USD", fxExposed:true, earningsDays:90, ytd:0, analystCount:0, analystSrc:"Yahoo Finance", dataProvider:"Yahoo Finance" };
   const [draft,setDraft] = useState(empty);
   const [importText,setImportText] = useState("");
+  const [dbQuery,setDbQuery] = useState("");
+  const [dbSector,setDbSector] = useState("all");
+  const [dbMinScore,setDbMinScore] = useState(0);
+  const resultByTicker = Object.fromEntries(results.map(s=>[s.ticker,s]));
+  const visibleStocks = stocks
+    .map(s=>resultByTicker[s.ticker] || s)
+    .filter(s=>(dbSector==="all"||s.sector===dbSector)
+      && (!dbQuery || `${s.name} ${s.ticker}`.toUpperCase().includes(dbQuery.toUpperCase()))
+      && (s.adj===undefined || modelScore(s)>=dbMinScore))
+    .sort((a,b)=>(modelScore(b)-modelScore(a)));
   const update=(k,v)=>setDraft(d=>({...d,[k]:v}));
   const pct=(k,v)=>update(k,(Number(v)||0)/100);
   const upsert=()=>{
@@ -727,23 +784,111 @@ function StockDatabase({stocks,setStocks,setView,setDbMode}){
           <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",gap:8,marginBottom:10}}>
             <div>
               <div style={{fontSize:13,fontWeight:700,color:"#e2e8f0"}}>Database</div>
-              <div style={{fontSize:9,color:"#475569"}}>{stocks.length} stocks saved in this browser</div>
+              <div style={{fontSize:9,color:"#475569"}}>{visibleStocks.length} of {stocks.length} stocks shown</div>
             </div>
             <div style={{display:"flex",gap:6}}>
               <button className="btn" onClick={exportDb}>Export</button>
               <button className="btn" onClick={resetDb}>Reset</button>
             </div>
           </div>
+          <div style={{display:"flex",gap:8,marginBottom:10,flexWrap:"wrap"}}>
+            <input className="ni" style={{width:130}} placeholder="Search" value={dbQuery} onChange={e=>setDbQuery(e.target.value)}/>
+            <select className="ni" style={{width:132}} value={dbSector} onChange={e=>setDbSector(e.target.value)}>
+              <option value="all">All sectors</option>
+              {SECTOR_OPTIONS.map(([v,l])=><option key={v} value={v}>{l}</option>)}
+            </select>
+            <label style={{display:"flex",alignItems:"center",gap:5,fontSize:9,color:"#475569"}}>
+              Min score
+              <input className="ni" style={{width:72}} type="number" value={dbMinScore} onChange={e=>setDbMinScore(Number(e.target.value)||0)}/>
+            </label>
+          </div>
           <textarea style={{...inputStyle,height:120,fontFamily:"JetBrains Mono,monospace",fontSize:10,resize:"vertical"}} placeholder="Paste exported JSON here to import..." value={importText} onChange={e=>setImportText(e.target.value)}/>
           <button className="btn" style={{marginTop:8}} onClick={importDb}>Import JSON</button>
           <div style={{marginTop:12,maxHeight:260,overflow:"auto",border:"1px solid #1e293b",borderRadius:8}}>
-            {stocks.map(s=>(
-              <div key={s.ticker} style={{display:"flex",justifyContent:"space-between",gap:8,padding:"8px 10px",borderBottom:"1px solid #0f172a"}}>
-                <span style={{fontSize:11,color:"#e2e8f0"}}>{s.emoji} {s.name}</span>
-                <span className="mono" style={{fontSize:10,color:"#60a5fa"}}>{s.ticker}</span>
+            <div style={{display:"grid",gridTemplateColumns:"1fr 70px 70px 72px",gap:8,padding:"7px 10px",background:"#0f172a",borderBottom:"1px solid #1e293b"}}>
+              {["Stock","Price","Score","Win %"].map((h,i)=><div key={h} style={{fontSize:8,fontWeight:700,color:"#1e3a5f",letterSpacing:".08em",textTransform:"uppercase",textAlign:i?"right":"left"}}>{h}</div>)}
+            </div>
+            {visibleStocks.map(s=>(
+              <div key={s.ticker} style={{display:"grid",gridTemplateColumns:"1fr 70px 70px 72px",gap:8,padding:"8px 10px",borderBottom:"1px solid #0f172a",alignItems:"center"}}>
+                <span style={{fontSize:11,color:"#e2e8f0"}}>{s.emoji} {s.name} <span className="mono" style={{fontSize:9,color:"#60a5fa"}}>{s.ticker}</span></span>
+                <span className="mono" style={{fontSize:10,color:"#94a3b8",textAlign:"right"}}>{priceLabel(s)}</span>
+                <span className="mono" style={{fontSize:10,color:"#4ade80",textAlign:"right"}}>{s.adj!==undefined?modelScore(s).toFixed(1):"—"}</span>
+                <span className="mono" style={{fontSize:10,color:"#22d3ee",textAlign:"right"}}>{s.pAdj!==undefined?(s.pAdj*100).toFixed(1)+"%":"—"}</span>
               </div>
             ))}
           </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function CreateModel({stocks,results,budget,kellyMult,flags,marketBull,eurUsdNow,eurUsdForecast}){
+  const [query,setQuery] = useState("");
+  const [sector,setSector] = useState("all");
+  const [selected,setSelected] = useState(()=>stocks.slice(0,Math.min(10,stocks.length)).map(s=>s.ticker));
+  const selectedStocks = stocks.filter(s=>selected.includes(s.ticker));
+  const customResults = selectedStocks.length ? runModel(selectedStocks,null,budget,kellyMult,flags,marketBull,eurUsdNow,eurUsdForecast) : [];
+  const available = stocks
+    .filter(s=>(sector==="all"||s.sector===sector) && (!query || `${s.name} ${s.ticker}`.toUpperCase().includes(query.toUpperCase())))
+    .sort((a,b)=>a.ticker.localeCompare(b.ticker));
+  const toggleTicker = ticker => setSelected(prev=>prev.includes(ticker)?prev.filter(t=>t!==ticker):[...prev,ticker]);
+  const clear = () => setSelected([]);
+  const topTen = () => setSelected(results.slice().sort((a,b)=>modelScore(b)-modelScore(a)).slice(0,10).map(s=>s.ticker));
+  return(
+    <div style={{padding:"20px 22px"}}>
+      <div style={{display:"grid",gridTemplateColumns:"minmax(310px,.8fr) minmax(420px,1.2fr)",gap:16}} className="candidate-grid">
+        <div style={{background:"#080f1e",border:"1px solid #1e293b",borderRadius:12,padding:"16px 18px"}}>
+          <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",gap:8,marginBottom:12}}>
+            <div>
+              <div style={{fontSize:13,fontWeight:700,color:"#e2e8f0"}}>Create Model</div>
+              <div style={{fontSize:9,color:"#475569"}}>{selected.length} stocks selected from database</div>
+            </div>
+            <div style={{display:"flex",gap:6}}>
+              <button className="btn" onClick={topTen}>Top 10</button>
+              <button className="btn" onClick={clear}>Clear</button>
+            </div>
+          </div>
+          <div style={{display:"flex",gap:8,marginBottom:10,flexWrap:"wrap"}}>
+            <input className="ni" style={{width:150}} placeholder="Search" value={query} onChange={e=>setQuery(e.target.value)}/>
+            <select className="ni" style={{width:145}} value={sector} onChange={e=>setSector(e.target.value)}>
+              <option value="all">All sectors</option>
+              {SECTOR_OPTIONS.map(([v,l])=><option key={v} value={v}>{l}</option>)}
+            </select>
+          </div>
+          <div style={{maxHeight:460,overflow:"auto",border:"1px solid #1e293b",borderRadius:8}}>
+            {available.map(s=>(
+              <button key={s.ticker} onClick={()=>toggleTicker(s.ticker)}
+                style={{width:"100%",display:"grid",gridTemplateColumns:"26px 1fr 70px",gap:8,alignItems:"center",padding:"8px 10px",background:selected.includes(s.ticker)?"#0f172a":"#080f1e",border:"none",borderBottom:"1px solid #0f172a",cursor:"pointer",textAlign:"left"}}>
+                <span style={{width:14,height:14,borderRadius:4,border:`1px solid ${selected.includes(s.ticker)?"#60a5fa":"#334155"}`,background:selected.includes(s.ticker)?"#3b82f6":"transparent"}}/>
+                <span style={{fontSize:11,color:"#e2e8f0"}}>{s.emoji} {s.name} <span className="mono" style={{fontSize:9,color:"#60a5fa"}}>{s.ticker}</span></span>
+                <span className="mono" style={{fontSize:10,color:"#94a3b8",textAlign:"right"}}>{priceLabel(s)}</span>
+              </button>
+            ))}
+          </div>
+        </div>
+        <div style={{background:"#080f1e",border:"1px solid #1e293b",borderRadius:12,overflow:"hidden"}}>
+          <div style={{padding:"14px 16px",borderBottom:"1px solid #1e293b",display:"flex",justifyContent:"space-between",gap:10,alignItems:"center"}}>
+            <div>
+              <div style={{fontSize:13,fontWeight:700,color:"#e2e8f0"}}>Model Allocation</div>
+              <div style={{fontSize:9,color:"#475569"}}>Uses the current budget, Kelly mode, regime, and model toggles</div>
+            </div>
+            <div className="mono" style={{fontSize:15,fontWeight:700,color:"#4ade80"}}>€{customResults.reduce((s,x)=>s+x.euros,0).toFixed(2)}</div>
+          </div>
+          <div style={{display:"grid",gridTemplateColumns:"42px 1fr 82px 82px 90px 90px",padding:"8px 14px",background:"#0f172a",borderBottom:"1px solid #1e293b"}}>
+            {["#","Stock","Score","Win %","Weight","€"].map((h,i)=><div key={h} style={{fontSize:8,fontWeight:700,color:"#1e3a5f",letterSpacing:".08em",textTransform:"uppercase",textAlign:i>1?"right":"left"}}>{h}</div>)}
+          </div>
+          {customResults.map((s,i)=>(
+            <div key={s.ticker} style={{display:"grid",gridTemplateColumns:"42px 1fr 82px 82px 90px 90px",padding:"10px 14px",borderBottom:"1px solid #0f172a",alignItems:"center"}}>
+              <div className="mono" style={{fontSize:11,fontWeight:700,color:i<3?"#60a5fa":"#334155"}}>{i+1}</div>
+              <div style={{fontSize:12,fontWeight:700,color:"#f8fafc"}}>{s.emoji} {s.name} <span className="mono" style={{fontSize:9,color:"#60a5fa"}}>{s.ticker}</span></div>
+              <div className="mono" style={{fontSize:12,fontWeight:700,color:"#4ade80",textAlign:"right"}}>{modelScore(s).toFixed(1)}</div>
+              <div className="mono" style={{fontSize:12,fontWeight:700,color:"#22d3ee",textAlign:"right"}}>{(s.pAdj*100).toFixed(1)}%</div>
+              <div className="mono" style={{fontSize:12,fontWeight:700,color:"#60a5fa",textAlign:"right"}}>{(s.weight*100).toFixed(1)}%</div>
+              <div className="mono" style={{fontSize:13,fontWeight:700,color:"#e2e8f0",textAlign:"right"}}>€{s.euros.toFixed(2)}</div>
+            </div>
+          ))}
+          {!customResults.length&&<div style={{padding:24,color:"#475569",fontSize:12}}>Select stocks to build a model.</div>}
         </div>
       </div>
     </div>
@@ -942,8 +1087,8 @@ export default function App(){
       </div>
 
       {/* TABS */}
-      <div style={{padding:"8px 22px",borderBottom:"1px solid #1e293b",display:"flex",gap:4,background:"#020617"}}>
-        {[{l:"Allocations",v:"table"},{l:"Portfolio Chart",v:"chart"},{l:"Scanner",v:"scanner"},{l:"Database",v:"database"},{l:"Stock Search",v:"search"},{l:"🔀 Win Prob Breakdown",v:"prob"}].map(o=>(
+      <div style={{padding:"8px 22px",borderBottom:"1px solid #1e293b",display:"flex",gap:4,background:"#020617",flexWrap:"wrap"}}>
+        {[{l:"Allocations",v:"table"},{l:"Portfolio Chart",v:"chart"},{l:"Scanner",v:"scanner"},{l:"Database",v:"database"},{l:"Create Model",v:"create"},{l:"Stock Search",v:"search"},{l:"🔀 Win Prob Breakdown",v:"prob"}].map(o=>(
           <button key={o.v} className={`view-btn${view===o.v?" active":""}`} onClick={()=>setView(o.v)}
             style={o.v==="prob"?{color:view==="prob"?"#e2e8f0":"#22d3ee"}:{}}>{o.l}</button>
         ))}
@@ -951,7 +1096,8 @@ export default function App(){
 
       {view==="chart"&&<div style={{padding:"20px 22px"}}><PortfolioChart bands={portBands} budget={budget}/></div>}
       {view==="scanner"&&<Scanner results={results} setView={setView}/>}
-      {view==="database"&&<StockDatabase stocks={stocks} setStocks={setStocks} setView={setView} setDbMode={setDbMode}/>}
+      {view==="database"&&<StockDatabase stocks={stocks} results={results} setStocks={setStocks} setView={setView} setDbMode={setDbMode}/>}
+      {view==="create"&&<CreateModel stocks={stocks} results={results} budget={budget} kellyMult={kellyMult} flags={flags} marketBull={marketBull} eurUsdNow={eurUsdNow} eurUsdForecast={eurUsdForecast}/>}
       {view==="search"&&<StockSearch portfolioResults={results}/>}
       {view==="prob"&&<ProbBreakdownPanel stocks={stocks}/>}
 

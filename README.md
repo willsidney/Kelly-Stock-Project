@@ -13,7 +13,8 @@ Interactive Kelly Criterion portfolio model for a EUR 250 Trading 212 portfolio.
   - browser-saved stock database
   - add/update stock records
   - JSON import/export
-  - optimal stock scanner
+  - filterable optimal stock scanner with model score
+  - custom model builder from database stocks
   - stock search for model-loaded holdings
   - beta penalty and dynamic floors
   - downside-adjusted Kelly
@@ -57,7 +58,8 @@ npm run dev
 The app now includes:
 
 - `Database` - add or update model stock records, export the database, import a saved JSON database, or reset to the original model stocks.
-- `Scanner` - ranks every stock in the saved database using the active model settings.
+- `Scanner` - ranks every stock in the saved database using the active model settings, with filters for score, win probability, upside, drawdown, sector, and search.
+- `Create Model` - select stocks from the database and generate a fresh allocation table using the same Kelly model settings.
 - `Stock Search` - looks up stocks already loaded into the saved database.
 
 GitHub Pages can run the model and save data in the browser, but it cannot safely hold private API keys. Yahoo Finance is the chosen primary source for analyst-style data and stock prices. The updater reads Yahoo Finance data and writes trusted model inputs into `public/data/stocks.json`.
