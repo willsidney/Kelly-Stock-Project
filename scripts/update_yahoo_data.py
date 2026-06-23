@@ -15,6 +15,7 @@ import sys
 import time
 import urllib.parse
 import urllib.request
+import argparse
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -22,6 +23,16 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 DATA_PATH = ROOT / "public" / "data" / "stocks.json"
 UA = "Mozilla/5.0 (compatible; KellyStockProject/1.0; +https://github.com/willsidney/Kelly-Stock-Project)"
+SECTOR_MAP = {
+    "technology": "ai",
+    "communication services": "software",
+    "consumer cyclical": "consumer",
+    "consumer defensive": "consumer",
+    "healthcare": "healthcare",
+    "financial services": "financial",
+    "industrials": "industrial",
+    "energy": "energy",
+}
 
 
 def fetch_json(url: str) -> dict | None:
@@ -89,7 +100,7 @@ def chart_stats(ticker: str) -> dict:
 
 
 def quote_summary(ticker: str) -> dict:
-    modules = "financialData,recommendationTrend,defaultKeyStatistics,calendarEvents,price"
+    modules = "financialData,recommendationTrend,defaultKeyStatistics,calendarEvents,price,assetProfile"
     url = f"https://query2.finance.yahoo.com/v10/finance/quoteSummary/{urllib.parse.quote(ticker)}?modules={modules}"
     data = fetch_json(url)
     result = (((data or {}).get("quoteSummary") or {}).get("result") or [None])[0]
@@ -111,6 +122,60 @@ def quote_batch(tickers: list[str]) -> dict[str, dict]:
     return out
 
 
+def parse_tickers(value: str | None) -> list[str]:
+    if not value:
+        return []
+    seen = set()
+    out = []
+    for token in value.replace("\n", ",").replace(" ", ",").split(","):
+        ticker = token.strip().upper()
+        if ticker and ticker not in seen:
+            seen.add(ticker)
+            out.append(ticker)
+    return out
+
+
+def yahoo_sector_to_model(value: str | None) -> str:
+    if not value:
+        return "other"
+    return SECTOR_MAP.get(value.strip().lower(), "other")
+
+
+def seed_stock(ticker: str, quote: dict | None, idx: int) -> dict:
+    name = ticker
+    currency = "USD"
+    current_price = None
+    if quote:
+        name = quote.get("shortName") or quote.get("longName") or ticker
+        currency = quote.get("currency") or currency
+        current_price = quote.get("regularMarketPrice")
+    return {
+        "name": name,
+        "ticker": ticker,
+        "sector": "other",
+        "emoji": "◆",
+        "color": ["#3b82f6", "#84cc16", "#94a3b8", "#38bdf8", "#f87171", "#fb923c", "#e879f9", "#22d3ee", "#34d399", "#818cf8"][idx % 10],
+        "strongBuy": 0,
+        "buy": 0,
+        "hold": 100,
+        "sell": 0,
+        "upside": 0.15,
+        "drawdown": 0.30,
+        "shortInt": 0.02,
+        "beta": 1.0,
+        "currentPrice": current_price,
+        "priceCurrency": currency,
+        "fxExposed": currency == "USD",
+        "earningsDays": 90,
+        "ytd": 0,
+        "analystCount": 0,
+        "analystSrc": "Yahoo Finance",
+        "dataProvider": "Yahoo Finance",
+        "lastUpdated": None,
+        "sourceUrl": f"https://finance.yahoo.com/quote/{ticker}",
+    }
+
+
 def update_stock(stock: dict, quote: dict | None) -> dict:
     ticker = str(stock.get("ticker", "")).upper().strip()
     updated = dict(stock)
@@ -130,6 +195,10 @@ def update_stock(stock: dict, quote: dict | None) -> dict:
     financial = summary.get("financialData") or {}
     key_stats = summary.get("defaultKeyStatistics") or {}
     price = summary.get("price") or {}
+    asset_profile = summary.get("assetProfile") or {}
+
+    if asset_profile.get("sector"):
+        updated["sector"] = yahoo_sector_to_model(asset_profile.get("sector"))
 
     target_mean = raw(financial.get("targetMeanPrice"))
     current_price = updated.get("currentPrice") or raw(price.get("regularMarketPrice"))
@@ -171,7 +240,20 @@ def update_stock(stock: dict, quote: dict | None) -> dict:
 
 
 def main() -> int:
+    parser = argparse.ArgumentParser(description="Refresh Kelly stock database from Yahoo Finance.")
+    parser.add_argument("--tickers", default="", help="Comma or space separated ticker codes to add before refresh.")
+    args = parser.parse_args()
+
     stocks = json.loads(DATA_PATH.read_text())
+    requested = parse_tickers(args.tickers)
+    existing = {str(s.get("ticker", "")).upper().strip() for s in stocks if s.get("ticker")}
+    missing = [ticker for ticker in requested if ticker not in existing]
+    if missing:
+        print(f"adding tickers: {', '.join(missing)}")
+        missing_quotes = quote_batch(missing)
+        for ticker in missing:
+            stocks.append(seed_stock(ticker, missing_quotes.get(ticker), len(stocks)))
+
     tickers = [str(s.get("ticker", "")).upper().strip() for s in stocks if s.get("ticker")]
     quotes = quote_batch(tickers)
     refreshed = []

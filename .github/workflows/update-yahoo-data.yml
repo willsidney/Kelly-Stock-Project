@@ -2,6 +2,11 @@ name: Update Yahoo Finance Data
 
 on:
   workflow_dispatch:
+    inputs:
+      tickers:
+        description: "Optional ticker codes to add, separated by commas or spaces"
+        required: false
+        default: ""
   schedule:
     - cron: "17 7 * * 1-5"
 
@@ -30,7 +35,7 @@ jobs:
           python-version: "3.12"
 
       - name: Refresh Yahoo data
-        run: python scripts/update_yahoo_data.py
+        run: python scripts/update_yahoo_data.py --tickers "${{ github.event.inputs.tickers }}"
 
       - name: Commit refreshed database
         run: |

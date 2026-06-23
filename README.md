@@ -68,6 +68,14 @@ The repo includes a GitHub Actions workflow named `Update Yahoo Finance Data`.
 
 It refreshes `public/data/stocks.json` from Yahoo Finance on weekdays and can also be run manually from the Actions tab. It updates best-effort fields including price, currency, analyst recommendation mix, target-price upside, beta, short interest, earnings distance, YTD performance, and one-year drawdown when Yahoo returns those fields.
 
+To add new stocks:
+
+1. Open GitHub Actions.
+2. Choose `Update Yahoo Finance Data`.
+3. Click `Run workflow`.
+4. Enter ticker codes in the `tickers` field, for example `MSFT, AAPL, TEAM`.
+5. Run the workflow. It adds missing tickers to `public/data/stocks.json`, refreshes Yahoo data, commits the database, and redeploys the site.
+
 ## Privacy Note
 
 The uploaded PDFs, Word files, extracted text, project notes, and scratch files are ignored by Git because they may contain personal project context. Only the app source and GitHub Pages viewer are intended for publishing.
