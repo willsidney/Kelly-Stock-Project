@@ -21,7 +21,7 @@ Interactive Kelly Criterion portfolio model for a EUR 250 Trading 212 portfolio.
   - short-interest penalty
   - sector concentration penalty
   - earnings proximity multiplier
-  - Monte Carlo projection
+  - on-demand Monte Carlo projection
   - EUR/USD FX overlay
   - 20% hard cap per position
 
@@ -63,6 +63,8 @@ The app now includes:
 - `Stock Search` - looks up stocks already loaded into the saved database.
 
 GitHub Pages can run the model and save data in the browser, but it cannot safely hold private API keys. Yahoo Finance is the chosen primary source for analyst-style data and stock prices. The updater reads Yahoo Finance data and writes trusted model inputs into `public/data/stocks.json`.
+
+The app keeps the first page load light by using the fast model immediately. Monte Carlo and portfolio chart projections run only when requested or when the chart is opened.
 
 ## Yahoo Finance Updates
 

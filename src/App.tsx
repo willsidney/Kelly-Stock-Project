@@ -1,12 +1,12 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 
 // ─────────────────────────────────────────────────────────────────────────────
 // CONSTANTS
 // ─────────────────────────────────────────────────────────────────────────────
 const MARKET_VOL    = 0.18;
 const TRADING_DAYS  = 252;
-const MC_SIMS       = 8000;
-const PORT_SIMS     = 400;
+const MC_SIMS       = 3000;
+const PORT_SIMS     = 250;
 const PORT_STEPS    = 52;
 const T_DF          = 5;
 const JUMP_LAMBDA   = 4;
@@ -935,9 +935,7 @@ export default function App(){
     setTimeout(()=>{ const mc=runMonteCarlo(stocks,seed,eurUsdNow,eurUsdForecast); setMcResults(mc); setRunning(false); },50);
   },[stocks,eurUsdNow,eurUsdForecast]);
 
-  useEffect(()=>{ runSim(mcSeed); },[]);
   useEffect(()=>{ if(dbMode==="local") saveStockDatabase(stocks); },[stocks,dbMode]);
-  useEffect(()=>{ runSim(mcSeed); },[stocks]);
   useEffect(()=>{
     if(dbMode!=="published") return;
     fetch(DATA_URL,{cache:"no-store"})
@@ -946,14 +944,28 @@ export default function App(){
       .catch(()=>{});
   },[dbMode]);
 
-  const results       = runModel(stocks,mcResults,budget,kellyMult,flags,marketBull,eurUsdNow,eurUsdForecast);
-  const weightsByBase = stocks.map(s=>results.find(r=>r.ticker===s.ticker)?.weight??(1/stocks.length));
+  useEffect(()=>{ setMcResults(null); setPortBands(null); },[stocks,eurUsdNow,eurUsdForecast]);
+
+  const results = useMemo(
+    ()=>runModel(stocks,mcResults,budget,kellyMult,flags,marketBull,eurUsdNow,eurUsdForecast),
+    [stocks,mcResults,budget,kellyMult,flags,marketBull,eurUsdNow,eurUsdForecast]
+  );
+  const weightsByBase = useMemo(
+    ()=>stocks.map(s=>results.find(r=>r.ticker===s.ticker)?.weight??(1/stocks.length)),
+    [stocks,results]
+  );
 
   useEffect(()=>{
-    if(!mcResults) return;
-    const bands=runPortfolioSim(stocks,weightsByBase,budget,mcSeed+7,eurUsdNow,eurUsdForecast);
-    setPortBands(bands);
-  },[mcResults,budget,stocks]);
+    setPortBands(null);
+  },[budget,kellyMult,flags,marketBull,stocks,mcResults,eurUsdNow,eurUsdForecast]);
+
+  useEffect(()=>{
+    if(view!=="chart" || portBands) return;
+    const id=setTimeout(()=>{
+      setPortBands(runPortfolioSim(stocks,weightsByBase,budget,mcSeed+7,eurUsdNow,eurUsdForecast));
+    },50);
+    return()=>clearTimeout(id);
+  },[view,portBands,stocks,weightsByBase,budget,mcSeed,eurUsdNow,eurUsdForecast]);
 
   const maxEuros   = results[0]?.euros||1;
   const totalFloor = results.reduce((s,x)=>s+x.floor,0);
