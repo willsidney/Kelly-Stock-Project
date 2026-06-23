@@ -10,6 +10,10 @@ Interactive Kelly Criterion portfolio model for a EUR 250 Trading 212 portfolio.
 - Holdings: Ryanair, Nvidia, Adidas, ASML, Broadcom, Cloudflare, Palantir, Novo Nordisk, IREN, Visa
 - Model features:
   - blended win probability
+  - browser-saved stock database
+  - add/update stock records
+  - JSON import/export
+  - optimal stock scanner
   - stock search for model-loaded holdings
   - beta penalty and dynamic floors
   - downside-adjusted Kelly
@@ -47,9 +51,15 @@ npm run dev
 - `.github/workflows/deploy-pages.yml` - GitHub Pages deployment workflow.
 - `ROADMAP.md` - long-term plan for editable portfolios, candidate scoring, and market scanning.
 
-## Stock Search
+## Database And Scanner
 
-The app includes a Stock Search tab for looking up stocks already loaded into the model. The long-term candidate workflow should accept a ticker, collect/update the required model inputs behind the scenes, then show the model result without asking the user to manually enter upside, downside, beta, short interest, or analyst data.
+The app now includes:
+
+- `Database` - add or update model stock records, export the database, import a saved JSON database, or reset to the original model stocks.
+- `Scanner` - ranks every stock in the saved database using the active model settings.
+- `Stock Search` - looks up stocks already loaded into the saved database.
+
+GitHub Pages can run the model and save data in the browser, but it cannot safely hold private API keys. A live market-data updater should be added as a small backend or scheduled workflow that writes trusted model inputs into the app.
 
 ## Privacy Note
 

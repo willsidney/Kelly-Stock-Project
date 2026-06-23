@@ -18,17 +18,18 @@ Turn the current Kelly Portfolio model into an accessible stock-selection system
 
 ## Phase 2: Editable Portfolio
 
-- Move stock data out of hardcoded component code into structured JSON/state.
-- Add stock add/edit/remove screens.
-- Add validation for analyst percentages, upside, drawdown, beta, short interest, earnings proximity, YTD performance, FX exposure, and sector.
-- Add import/export so the portfolio can be backed up as JSON or CSV.
+- Move stock data out of hardcoded component code into structured JSON/state. **Done**
+- Add stock add/edit/remove screens. **Add/update done; remove pending**
+- Add validation for analyst percentages, upside, drawdown, beta, short interest, earnings proximity, YTD performance, FX exposure, and sector. **Basic normalization done; stricter validation pending**
+- Add import/export so the portfolio can be backed up as JSON or CSV. **JSON done; CSV pending**
 
 ## Phase 3: Candidate Scoring
 
 - Add Stock Search for stocks already loaded into the model. **Done**
+- Add optimal scanner over the saved stock database. **Done**
 - Add a data-backed candidate engine where the user enters a ticker and the system gathers/upserts the required model inputs behind the scenes.
 - Score each candidate through the same blended win-probability and Kelly pipeline.
-- Rank candidates against the current portfolio.
+- Rank candidates against the current portfolio. **Done for saved database**
 - Show why a candidate wins or loses through user-facing model results, without exposing raw assumption entry as the main workflow.
 - Add a candidate-watchlist table.
 - Add an admin/import path for updating model inputs from a trusted data file or data source.
@@ -36,8 +37,9 @@ Turn the current Kelly Portfolio model into an accessible stock-selection system
 ## Phase 4: Market Scan
 
 - Add a repeatable workflow for collecting current analyst inputs.
-- Start with user-provided candidate lists and manual data entry.
-- Later add API/source integrations if a suitable data source is chosen.
+- Start with user-provided candidate lists and database import/export. **Done**
+- Add API/source integrations if a suitable data source is chosen.
+- Prefer a scheduled updater or lightweight backend over direct browser API calls, because GitHub Pages cannot safely store private API keys.
 - Keep source attribution visible for each input.
 
 ## Phase 5: Rebalancing

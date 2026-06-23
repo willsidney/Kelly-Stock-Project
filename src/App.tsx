@@ -27,6 +27,7 @@ const W_EP       = 0.10;  // Earnings proximity — binary event uncertainty
 
 const LAST_REVIEW = "May 25 2026";
 const NEXT_REVIEW = "Nov 2026";
+const STORAGE_KEY = "kelly-stock-database-v1";
 
 // ─────────────────────────────────────────────────────────────────────────────
 // STOCK DATA — May 2026 + Novo Nordisk replaces IonQ
@@ -44,8 +45,10 @@ const BASE_STOCKS = [
   { name:"Visa",         ticker:"V",     sector:"payments",    emoji:"💳",  color:"#818cf8", strongBuy:74, buy:18, hold:8,  sell:0,  upside:0.27, drawdown:0.18, shortInt:0.012, beta:0.78, fxExposed:true,  earningsDays:60,  ytd:+0.12, analystCount:22, analystSrc:"stockanalysis.com" },
 ];
 
-const SECTOR_LABELS  = { ai:"AI/Tech", travel:"Travel", consumer:"Consumer", semi:"Semiconductors", quantum:"Quantum", payments:"Payments", healthcare:"Healthcare" };
+const SECTOR_LABELS  = { ai:"AI/Tech", travel:"Travel", consumer:"Consumer", semi:"Semiconductors", quantum:"Quantum", payments:"Payments", healthcare:"Healthcare", software:"Software", industrial:"Industrial", financial:"Financial", energy:"Energy", other:"Other" };
 const EARNINGS_DATES = { RYAAY:"Nov 2026", NVDA:"Aug 26", ADDYY:"Aug 2026", ASML:"Jul 2026", AVGO:"Sep 2026", NET:"Aug 2026", PLTR:"Aug 2026", NVO:"Aug 2026", IREN:"Aug 2026", V:"Jul 2026" };
+const SECTOR_OPTIONS = Object.entries(SECTOR_LABELS);
+const STOCK_COLORS = ["#3b82f6","#84cc16","#94a3b8","#38bdf8","#f87171","#fb923c","#e879f9","#22d3ee","#34d399","#818cf8","#fbbf24","#a78bfa"];
 
 // ─────────────────────────────────────────────────────────────────────────────
 // BLENDED WIN PROBABILITY — 5 components
@@ -88,6 +91,47 @@ function blendedP(s) {
   const pep = pEarnings(s.earningsDays);
   const blend = W_ANALYST*pa + W_MOMENTUM*pm + W_RR*prr + W_SI*psi + W_EP*pep;
   return { pa, pm, prr, psi, pep, blend };
+}
+
+function normalizeStock(raw, idx=0){
+  const n = (v,f=0) => Number.isFinite(Number(v)) ? Number(v) : f;
+  const ticker = String(raw.ticker || `STK${idx+1}`).trim().toUpperCase();
+  return {
+    name: String(raw.name || ticker).trim(),
+    ticker,
+    sector: SECTOR_LABELS[raw.sector] ? raw.sector : "other",
+    emoji: raw.emoji || "◆",
+    color: raw.color || STOCK_COLORS[idx%STOCK_COLORS.length],
+    strongBuy: Math.max(0,n(raw.strongBuy,0)),
+    buy: Math.max(0,n(raw.buy,0)),
+    hold: Math.max(0,n(raw.hold,100)),
+    sell: Math.max(0,n(raw.sell,0)),
+    upside: Math.max(0,n(raw.upside,0.15)),
+    drawdown: Math.max(0.01,n(raw.drawdown,0.30)),
+    shortInt: Math.max(0,n(raw.shortInt,0.02)),
+    beta: Math.max(0.1,n(raw.beta,1)),
+    fxExposed: Boolean(raw.fxExposed),
+    earningsDays: Math.max(0,n(raw.earningsDays,90)),
+    ytd: n(raw.ytd,0),
+    analystCount: Math.max(0,n(raw.analystCount,0)),
+    analystSrc: raw.analystSrc || "database",
+  };
+}
+
+function loadStockDatabase(){
+  try{
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if(!raw) return BASE_STOCKS;
+    const parsed = JSON.parse(raw);
+    if(!Array.isArray(parsed) || !parsed.length) return BASE_STOCKS;
+    return parsed.map(normalizeStock);
+  }catch{
+    return BASE_STOCKS;
+  }
+}
+
+function saveStockDatabase(stocks){
+  localStorage.setItem(STORAGE_KEY,JSON.stringify(stocks,null,2));
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -134,6 +178,28 @@ function cholesky(C) {
 }
 const CHOL_BULL = cholesky(CORR_BULL);
 const CHOL_BEAR = cholesky(CORR_BEAR);
+function baseIndex(ticker){ return BASE_STOCKS.findIndex(s=>s.ticker===ticker); }
+function sectorCorr(a,b,bear){
+  if(a.ticker===b.ticker) return 1;
+  if(a.sector===b.sector) return bear ? 0.62 : 0.48;
+  if((a.sector==="ai"||a.sector==="semi"||a.sector==="software")&&(b.sector==="ai"||b.sector==="semi"||b.sector==="software")) return bear ? 0.72 : 0.58;
+  if(a.sector==="healthcare"||b.sector==="healthcare") return bear ? 0.18 : 0.14;
+  return bear ? 0.32 : 0.22;
+}
+function buildChol(stocks,bear){
+  if(stocks.length===BASE_STOCKS.length && stocks.every((s,i)=>s.ticker===BASE_STOCKS[i].ticker)) return bear ? CHOL_BEAR : CHOL_BULL;
+  const C=stocks.map((a,i)=>stocks.map((b,j)=>{
+    if(i===j) return 1;
+    const ai=baseIndex(a.ticker),bi=baseIndex(b.ticker);
+    if(ai>=0&&bi>=0) return bear ? CORR_BEAR[ai][bi] : CORR_BULL[ai][bi];
+    return sectorCorr(a,b,bear);
+  }));
+  return cholesky(C);
+}
+function fxCorrFor(stock){
+  const i=baseIndex(stock.ticker);
+  return i>=0 ? FX_CORR[i] : (stock.fxExposed ? -0.16 : 0);
+}
 
 function makeRng(seed) {
   let s = seed >>> 0;
@@ -153,13 +219,15 @@ function runMonteCarlo(stocks, seed, eurNow, eurFcast) {
   const rng=makeRng(seed);
   const sigmas=stocks.map(s=>s.beta*MARKET_VOL);
   const mus=stocks.map(s=>momentumMu(s.upside,s.ytd));
+  const cholBull=buildChol(stocks,false), cholBear=buildChol(stocks,true);
+  const fxCorrs=stocks.map(fxCorrFor);
   const fxDD=Math.log(eurFcast/eurNow)/TRADING_DAYS;
   const allR=stocks.map(()=>new Float64Array(MC_SIMS));
   for(let sim=0;sim<MC_SIMS;sim++){
     const logR=new Float64Array(n); let vr=0;
     for(let t=0;t<TRADING_DAYS;t++){
       if(vr===0&&rng.u()<P_LOW_HIGH) vr=1; else if(vr===1&&rng.u()<P_HIGH_LOW) vr=0;
-      const vm=vr===1?VOL_HIGH_MULT:1.0, CH=vr===1?CHOL_BEAR:CHOL_BULL;
+      const vm=vr===1?VOL_HIGH_MULT:1.0, CH=vr===1?cholBear:cholBull;
       const z=Array.from({length:n+1},()=>rng.tDist(T_DF));
       const zC=new Float64Array(n);
       for(let i=0;i<n;i++) for(let j=0;j<=i;j++) zC[i]+=CH[i][j]*z[j];
@@ -168,7 +236,7 @@ function runMonteCarlo(stocks, seed, eurNow, eurFcast) {
         const sig=sigmas[i]*vm;
         let step=(mus[i]-0.5*sig*sig)*dt+sig*zC[i]*sqdt;
         if(rng.u()<JUMP_LAMBDA*dt) step+=JUMP_MU*dt+JUMP_SIGMA*rng.normal()*sqdt;
-        if(stocks[i].fxExposed){step-=fxStep;step+=FX_CORR[i]*fxStep*0.3;}
+        if(stocks[i].fxExposed){step-=fxStep;step+=fxCorrs[i]*fxStep*0.3;}
         logR[i]+=step;
       }
     }
@@ -196,13 +264,15 @@ function runPortfolioSim(stocks,weights,budget,seed,eurNow,eurFcast){
   const rng=makeRng(seed);
   const sigmas=stocks.map(s=>s.beta*MARKET_VOL);
   const mus=stocks.map(s=>momentumMu(s.upside,s.ytd));
+  const cholBull=buildChol(stocks,false), cholBear=buildChol(stocks,true);
+  const fxCorrs=stocks.map(fxCorrFor);
   const fxDD=Math.log(eurFcast/eurNow)/PORT_STEPS;
   const paths=[];
   for(let sim=0;sim<PORT_SIMS;sim++){
     const path=[budget]; let val=budget,vr=0;
     for(let t=0;t<PORT_STEPS;t++){
       if(vr===0&&rng.u()<P_LOW_HIGH*7) vr=1; else if(vr===1&&rng.u()<P_HIGH_LOW*7) vr=0;
-      const vm=vr===1?VOL_HIGH_MULT:1.0,CH=vr===1?CHOL_BEAR:CHOL_BULL;
+      const vm=vr===1?VOL_HIGH_MULT:1.0,CH=vr===1?cholBear:cholBull;
       const z=Array.from({length:n+1},()=>rng.tDist(T_DF));
       const zC=new Float64Array(n);
       for(let i=0;i<n;i++) for(let j=0;j<=i;j++) zC[i]+=CH[i][j]*z[j];
@@ -212,7 +282,7 @@ function runPortfolioSim(stocks,weights,budget,seed,eurNow,eurFcast){
         const sig=sigmas[i]*vm;
         let step=(mus[i]-0.5*sig*sig)*dt+sig*zC[i]*sqdt;
         if(rng.u()<JUMP_LAMBDA*dt) step+=JUMP_MU*dt+JUMP_SIGMA*rng.normal()*sqdt;
-        if(stocks[i].fxExposed){step-=fxStep;step+=FX_CORR[i]*fxStep*0.3;}
+        if(stocks[i].fxExposed){step-=fxStep;step+=fxCorrs[i]*fxStep*0.3;}
         portR+=weights[i]*(Math.exp(step)-1);
       }
       val=val*(1+portR); path.push(val);
@@ -514,6 +584,149 @@ function StockSearch({portfolioResults}){
   );
 }
 
+function Scanner({results,setView}){
+  const [sector,setSector] = useState("all");
+  const [minWin,setMinWin] = useState(0);
+  const filtered = results.filter(s=>(sector==="all"||s.sector===sector) && s.pAdj*100>=minWin);
+  return(
+    <div style={{padding:"20px 22px"}}>
+      <div style={{display:"flex",justifyContent:"space-between",gap:12,alignItems:"flex-end",flexWrap:"wrap",marginBottom:12}}>
+        <div>
+          <div style={{fontSize:13,fontWeight:700,color:"#e2e8f0"}}>Optimal Stock Scanner</div>
+          <div style={{fontSize:9,color:"#475569",marginTop:2}}>Ranks every stock in the database using the active model settings</div>
+        </div>
+        <div style={{display:"flex",gap:8,alignItems:"center",flexWrap:"wrap"}}>
+          <select className="ni" style={{width:150}} value={sector} onChange={e=>setSector(e.target.value)}>
+            <option value="all">All sectors</option>
+            {SECTOR_OPTIONS.map(([v,l])=><option key={v} value={v}>{l}</option>)}
+          </select>
+          <input className="ni" type="number" min={0} max={100} value={minWin} onChange={e=>setMinWin(Number(e.target.value)||0)} title="Minimum win probability"/>
+          <button className="btn" onClick={()=>setView("database")}>Add Stocks</button>
+        </div>
+      </div>
+      <div style={{background:"#080f1e",border:"1px solid #1e293b",borderRadius:12,overflow:"hidden"}}>
+        <div style={{display:"grid",gridTemplateColumns:"42px 1.4fr 96px 96px 96px 96px 1fr",padding:"9px 14px",background:"#0f172a",borderBottom:"1px solid #1e293b"}}>
+          {["#","Stock","Score","Win Prob","Kelly","Allocation","Why"].map((h,i)=>(
+            <div key={h} style={{fontSize:8,fontWeight:700,color:"#1e3a5f",letterSpacing:".08em",textTransform:"uppercase",textAlign:i>1?"right":"left"}}>{h}</div>
+          ))}
+        </div>
+        {filtered.map((s,i)=>{
+          const score=Math.max(0,s.adj)*100;
+          const why=[
+            s.rawK>0?"positive Kelly":"floor only",
+            s.secMult<1?"sector penalty":"sector ok",
+            s.beta>1.5?"high beta":"beta ok",
+          ].join(" · ");
+          return(
+            <div key={s.ticker} style={{display:"grid",gridTemplateColumns:"42px 1.4fr 96px 96px 96px 96px 1fr",padding:"10px 14px",borderBottom:"1px solid #0f172a",alignItems:"center"}}>
+              <div className="mono" style={{fontSize:11,fontWeight:700,color:i<3?"#60a5fa":"#334155"}}>{i+1}</div>
+              <div style={{display:"flex",alignItems:"center",gap:7}}>
+                <span>{s.emoji}</span>
+                <div>
+                  <div style={{fontSize:12,fontWeight:700,color:"#f8fafc"}}>{s.name}</div>
+                  <div className="mono" style={{fontSize:8,color:"#475569"}}>{s.ticker} · {SECTOR_LABELS[s.sector]||s.sector}</div>
+                </div>
+              </div>
+              <div className="mono" style={{fontSize:13,fontWeight:700,color:"#4ade80",textAlign:"right"}}>{score.toFixed(1)}</div>
+              <div className="mono" style={{fontSize:12,fontWeight:700,color:"#22d3ee",textAlign:"right"}}>{(s.pAdj*100).toFixed(1)}%</div>
+              <div className="mono" style={{fontSize:12,fontWeight:700,color:s.rawK>0?"#94a3b8":"#f87171",textAlign:"right"}}>{s.rawK>0?(s.rawK*100).toFixed(1)+"%":"neg"}</div>
+              <div className="mono" style={{fontSize:12,fontWeight:700,color:"#60a5fa",textAlign:"right"}}>{(s.weight*100).toFixed(1)}%</div>
+              <div style={{fontSize:9,color:"#64748b",textAlign:"right"}}>{why}</div>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+function StockDatabase({stocks,setStocks,setView}){
+  const empty = { name:"", ticker:"", sector:"other", emoji:"◆", color:STOCK_COLORS[0], strongBuy:40, buy:30, hold:25, sell:5, upside:0.25, drawdown:0.30, shortInt:0.02, beta:1.1, fxExposed:true, earningsDays:90, ytd:0, analystCount:0, analystSrc:"owner entry" };
+  const [draft,setDraft] = useState(empty);
+  const [importText,setImportText] = useState("");
+  const update=(k,v)=>setDraft(d=>({...d,[k]:v}));
+  const pct=(k,v)=>update(k,(Number(v)||0)/100);
+  const upsert=()=>{
+    const next=normalizeStock(draft,stocks.length);
+    setStocks(prev=>{
+      const without=prev.filter(s=>s.ticker!==next.ticker);
+      return [...without,next].sort((a,b)=>a.ticker.localeCompare(b.ticker));
+    });
+    setDraft(empty);
+    setView("scanner");
+  };
+  const resetDb=()=>setStocks(BASE_STOCKS);
+  const exportDb=()=>{
+    const blob=new Blob([JSON.stringify(stocks,null,2)],{type:"application/json"});
+    const url=URL.createObjectURL(blob),a=document.createElement("a");
+    a.href=url;a.download="kelly-stock-database.json";a.click();URL.revokeObjectURL(url);
+  };
+  const importDb=()=>{
+    try{
+      const parsed=JSON.parse(importText);
+      if(!Array.isArray(parsed)) return;
+      setStocks(parsed.map(normalizeStock));
+      setImportText("");
+      setView("scanner");
+    }catch{}
+  };
+  const inputStyle={width:"100%",background:"#0f172a",border:"1px solid #1e293b",color:"#e2e8f0",fontFamily:"inherit",fontSize:12,padding:"8px 10px",borderRadius:8,outline:"none"};
+  const Field=({label,children})=><label><div style={{fontSize:8,fontWeight:700,color:"#334155",letterSpacing:".06em",textTransform:"uppercase",marginBottom:4}}>{label}</div>{children}</label>;
+  return(
+    <div style={{padding:"20px 22px"}}>
+      <div style={{display:"grid",gridTemplateColumns:"minmax(320px,1fr) minmax(320px,.9fr)",gap:16}} className="candidate-grid">
+        <div style={{background:"#080f1e",border:"1px solid #1e293b",borderRadius:12,padding:"16px 18px"}}>
+          <div style={{fontSize:13,fontWeight:700,color:"#e2e8f0",marginBottom:2}}>Add Stock To Database</div>
+          <div style={{fontSize:9,color:"#475569",marginBottom:14}}>Owner/admin model inputs until the live data updater is connected</div>
+          <div style={{display:"grid",gridTemplateColumns:"1.4fr .8fr 1fr",gap:10,marginBottom:10}}>
+            <Field label="Company"><input style={inputStyle} value={draft.name} onChange={e=>update("name",e.target.value)}/></Field>
+            <Field label="Ticker"><input style={{...inputStyle,fontFamily:"JetBrains Mono,monospace",textTransform:"uppercase"}} value={draft.ticker} onChange={e=>update("ticker",e.target.value.toUpperCase())}/></Field>
+            <Field label="Sector"><select style={inputStyle} value={draft.sector} onChange={e=>update("sector",e.target.value)}>{SECTOR_OPTIONS.map(([v,l])=><option key={v} value={v}>{l}</option>)}</select></Field>
+          </div>
+          <div style={{display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:8,marginBottom:10}}>
+            {["strongBuy","buy","hold","sell"].map(k=><Field key={k} label={k.replace(/([A-Z])/g," $1")}><input style={inputStyle} type="number" value={draft[k]} onChange={e=>update(k,Number(e.target.value)||0)}/></Field>)}
+          </div>
+          <div style={{display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:8,marginBottom:10}}>
+            <Field label="Upside %"><input style={inputStyle} type="number" value={(draft.upside*100).toFixed(0)} onChange={e=>pct("upside",e.target.value)}/></Field>
+            <Field label="Drawdown %"><input style={inputStyle} type="number" value={(draft.drawdown*100).toFixed(0)} onChange={e=>pct("drawdown",e.target.value)}/></Field>
+            <Field label="YTD %"><input style={inputStyle} type="number" value={(draft.ytd*100).toFixed(0)} onChange={e=>pct("ytd",e.target.value)}/></Field>
+            <Field label="Short %"><input style={inputStyle} type="number" value={(draft.shortInt*100).toFixed(1)} onChange={e=>pct("shortInt",e.target.value)}/></Field>
+          </div>
+          <div style={{display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:8,marginBottom:12}}>
+            <Field label="Beta"><input style={inputStyle} type="number" step="0.1" value={draft.beta} onChange={e=>update("beta",Number(e.target.value)||1)}/></Field>
+            <Field label="Earnings Days"><input style={inputStyle} type="number" value={draft.earningsDays} onChange={e=>update("earningsDays",Number(e.target.value)||90)}/></Field>
+            <Field label="Analysts"><input style={inputStyle} type="number" value={draft.analystCount} onChange={e=>update("analystCount",Number(e.target.value)||0)}/></Field>
+            <Field label="FX"><select style={inputStyle} value={draft.fxExposed?"usd":"native"} onChange={e=>update("fxExposed",e.target.value==="usd")}><option value="usd">USD exposed</option><option value="native">Native/EUR</option></select></Field>
+          </div>
+          <button className="btn active" onClick={upsert} disabled={!draft.ticker}>Add / Update Stock</button>
+        </div>
+        <div style={{background:"#080f1e",border:"1px solid #1e293b",borderRadius:12,padding:"16px 18px"}}>
+          <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",gap:8,marginBottom:10}}>
+            <div>
+              <div style={{fontSize:13,fontWeight:700,color:"#e2e8f0"}}>Database</div>
+              <div style={{fontSize:9,color:"#475569"}}>{stocks.length} stocks saved in this browser</div>
+            </div>
+            <div style={{display:"flex",gap:6}}>
+              <button className="btn" onClick={exportDb}>Export</button>
+              <button className="btn" onClick={resetDb}>Reset</button>
+            </div>
+          </div>
+          <textarea style={{...inputStyle,height:120,fontFamily:"JetBrains Mono,monospace",fontSize:10,resize:"vertical"}} placeholder="Paste exported JSON here to import..." value={importText} onChange={e=>setImportText(e.target.value)}/>
+          <button className="btn" style={{marginTop:8}} onClick={importDb}>Import JSON</button>
+          <div style={{marginTop:12,maxHeight:260,overflow:"auto",border:"1px solid #1e293b",borderRadius:8}}>
+            {stocks.map(s=>(
+              <div key={s.ticker} style={{display:"flex",justifyContent:"space-between",gap:8,padding:"8px 10px",borderBottom:"1px solid #0f172a"}}>
+                <span style={{fontSize:11,color:"#e2e8f0"}}>{s.emoji} {s.name}</span>
+                <span className="mono" style={{fontSize:10,color:"#60a5fa"}}>{s.ticker}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function Toggle({label,sub,on,onToggle,color="#00cc77"}){
   return(
     <div style={{background:on?color+"0a":"#0f172a",border:`1px solid ${on?color+"50":"#1e293b"}`,borderRadius:10,padding:"9px 12px",cursor:"pointer",transition:"all .15s",userSelect:"none"}}
@@ -533,6 +746,7 @@ function Toggle({label,sub,on,onToggle,color="#00cc77"}){
 // MAIN APP
 // ─────────────────────────────────────────────────────────────────────────────
 export default function App(){
+  const [stocks,         setStocks]         = useState(()=>loadStockDatabase());
   const [budget,         setBudget]         = useState(250);
   const [kellyMult,      setKellyMult]      = useState(0.5);
   const [marketBull,     setMarketBull]     = useState(true);
@@ -549,19 +763,21 @@ export default function App(){
 
   const runSim = useCallback((seed)=>{
     setRunning(true); setMcResults(null); setPortBands(null);
-    setTimeout(()=>{ const mc=runMonteCarlo(BASE_STOCKS,seed,eurUsdNow,eurUsdForecast); setMcResults(mc); setRunning(false); },50);
-  },[eurUsdNow,eurUsdForecast]);
+    setTimeout(()=>{ const mc=runMonteCarlo(stocks,seed,eurUsdNow,eurUsdForecast); setMcResults(mc); setRunning(false); },50);
+  },[stocks,eurUsdNow,eurUsdForecast]);
 
   useEffect(()=>{ runSim(mcSeed); },[]);
+  useEffect(()=>{ saveStockDatabase(stocks); },[stocks]);
+  useEffect(()=>{ runSim(mcSeed); },[stocks]);
 
-  const results       = runModel(BASE_STOCKS,mcResults,budget,kellyMult,flags,marketBull,eurUsdNow,eurUsdForecast);
-  const weightsByBase = BASE_STOCKS.map(s=>results.find(r=>r.ticker===s.ticker)?.weight??0.1);
+  const results       = runModel(stocks,mcResults,budget,kellyMult,flags,marketBull,eurUsdNow,eurUsdForecast);
+  const weightsByBase = stocks.map(s=>results.find(r=>r.ticker===s.ticker)?.weight??(1/stocks.length));
 
   useEffect(()=>{
     if(!mcResults) return;
-    const bands=runPortfolioSim(BASE_STOCKS,weightsByBase,budget,mcSeed+7,eurUsdNow,eurUsdForecast);
+    const bands=runPortfolioSim(stocks,weightsByBase,budget,mcSeed+7,eurUsdNow,eurUsdForecast);
     setPortBands(bands);
-  },[mcResults,budget]);
+  },[mcResults,budget,stocks]);
 
   const maxEuros   = results[0]?.euros||1;
   const totalFloor = results.reduce((s,x)=>s+x.floor,0);
@@ -613,7 +829,7 @@ export default function App(){
               </h1>
               <span className="pill" style={{background:"#1e293b",color:"#60a5fa",border:"1px solid #3b82f630"}}>v13</span>
               <span className="pill" style={{background:"#083344",color:"#22d3ee",border:"1px solid #22d3ee40"}}>🔀 Blended Win Prob</span>
-              <span className="pill" style={{background:"#052e16",color:"#4ade80",border:"1px solid #4ade8040"}}>💊 NVO Added</span>
+              <span className="pill" style={{background:"#052e16",color:"#4ade80",border:"1px solid #4ade8040"}}>{stocks.length} stocks loaded</span>
               {running&&<span className="pill pulsing" style={{background:"#451a03",color:"#fb923c",border:"1px solid #fb923c40"}}>⟳ MC Running</span>}
             </div>
             <p style={{fontSize:11,color:"#475569"}}>
@@ -687,15 +903,17 @@ export default function App(){
 
       {/* TABS */}
       <div style={{padding:"8px 22px",borderBottom:"1px solid #1e293b",display:"flex",gap:4,background:"#020617"}}>
-        {[{l:"Allocations",v:"table"},{l:"Portfolio Chart",v:"chart"},{l:"Stock Search",v:"search"},{l:"🔀 Win Prob Breakdown",v:"prob"}].map(o=>(
+        {[{l:"Allocations",v:"table"},{l:"Portfolio Chart",v:"chart"},{l:"Scanner",v:"scanner"},{l:"Database",v:"database"},{l:"Stock Search",v:"search"},{l:"🔀 Win Prob Breakdown",v:"prob"}].map(o=>(
           <button key={o.v} className={`view-btn${view===o.v?" active":""}`} onClick={()=>setView(o.v)}
             style={o.v==="prob"?{color:view==="prob"?"#e2e8f0":"#22d3ee"}:{}}>{o.l}</button>
         ))}
       </div>
 
       {view==="chart"&&<div style={{padding:"20px 22px"}}><PortfolioChart bands={portBands} budget={budget}/></div>}
+      {view==="scanner"&&<Scanner results={results} setView={setView}/>}
+      {view==="database"&&<StockDatabase stocks={stocks} setStocks={setStocks} setView={setView}/>}
       {view==="search"&&<StockSearch portfolioResults={results}/>}
-      {view==="prob"&&<ProbBreakdownPanel stocks={BASE_STOCKS}/>}
+      {view==="prob"&&<ProbBreakdownPanel stocks={stocks}/>}
 
       {view==="table"&&(
         <div>
