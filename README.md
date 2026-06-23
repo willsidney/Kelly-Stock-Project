@@ -62,6 +62,12 @@ The app now includes:
 
 GitHub Pages can run the model and save data in the browser, but it cannot safely hold private API keys. Yahoo Finance is the chosen primary source for analyst-style data and stock prices. The next step is a scheduled updater or lightweight backend that reads Yahoo Finance data and writes trusted model inputs into `data/stocks.json`.
 
+## Yahoo Finance Updates
+
+The repo includes a GitHub Actions workflow named `Update Yahoo Finance Data`.
+
+It refreshes `data/stocks.json` from Yahoo Finance on weekdays and can also be run manually from the Actions tab. It updates best-effort fields including price, currency, analyst recommendation mix, target-price upside, beta, short interest, earnings distance, YTD performance, and one-year drawdown when Yahoo returns those fields.
+
 ## Privacy Note
 
 The uploaded PDFs, Word files, extracted text, project notes, and scratch files are ignored by Git because they may contain personal project context. Only the app source and GitHub Pages viewer are intended for publishing.
