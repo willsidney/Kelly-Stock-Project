@@ -2,7 +2,7 @@
   {
     "ticker": "AAPL",
     "file": "AAPL.json",
-    "fetchedAt": "2026-06-24T21:44:34Z",
+    "fetchedAt": "2026-06-24T21:52:34Z",
     "rowCounts": {
       "gradesHistorical": 90,
       "dividendAdjustedPrices": 2130,
@@ -23,6 +23,16 @@
     "ticker": "AVGO",
     "file": "AVGO.json",
     "fetchedAt": "2026-06-24T21:44:44Z",
+    "rowCounts": {
+      "gradesHistorical": 0,
+      "dividendAdjustedPrices": 0,
+      "historicalMarketCap": 0
+    }
+  },
+  {
+    "ticker": "CELH",
+    "file": "CELH.json",
+    "fetchedAt": "2026-06-24T21:52:37Z",
     "rowCounts": {
       "gradesHistorical": 0,
       "dividendAdjustedPrices": 0,
@@ -62,7 +72,7 @@
   {
     "ticker": "MSFT",
     "file": "MSFT.json",
-    "fetchedAt": "2026-06-24T21:44:36Z",
+    "fetchedAt": "2026-06-24T21:52:36Z",
     "rowCounts": {
       "gradesHistorical": 88,
       "dividendAdjustedPrices": 2130,
@@ -82,7 +92,7 @@
   {
     "ticker": "SPY",
     "file": "SPY.json",
-    "fetchedAt": "2026-06-24T21:44:50Z",
+    "fetchedAt": "2026-06-24T21:52:38Z",
     "rowCounts": {
       "gradesHistorical": 0,
       "dividendAdjustedPrices": 2130,
