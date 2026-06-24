@@ -173,6 +173,8 @@ This workflow fetches FMP historical analyst grades and dividend-adjusted prices
 
 The free FMP access tested so far supports dated analyst grades and dated prices, but not dated price-target consensus or dated fundamentals. For that reason, this backtest is a genuine historical test of a separate `fmp_ratings_price_v1` model: historical analyst grades plus price momentum, drawdown, and volatility. It is not a full historical test of the current Yahoo target-upside model.
 
+If `tickers` is left blank, the workflow selects the largest current database stocks by market cap, up to `max_tickers`. It also fetches the benchmark first, usually `SPY`, so a free-account limit is less likely to leave the benchmark missing.
+
 Run it first with a small ticker set such as:
 
 ```text

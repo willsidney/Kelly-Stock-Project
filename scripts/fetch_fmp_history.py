@@ -60,22 +60,57 @@ def parse_tickers(value: str | None) -> list[str]:
     return out
 
 
+def market_cap_value(stock: dict) -> float:
+    try:
+        value = float(stock.get("marketCap") or 0)
+    except (TypeError, ValueError):
+        return 0.0
+    return value if value > 0 else 0.0
+
+
 def database_tickers(limit: int) -> list[str]:
     try:
         stocks = json.loads(STOCKS_PATH.read_text())
     except Exception:
         return []
-    tickers = [str(stock.get("ticker") or "").upper().strip() for stock in stocks if stock.get("ticker")]
+    ranked = sorted(enumerate(stocks), key=lambda item: (-market_cap_value(item[1]), item[0]))
+    tickers = [str(stock.get("ticker") or "").upper().strip() for _idx, stock in ranked if stock.get("ticker")]
     return [ticker for ticker in tickers if ticker][:limit]
+
+
+def build_fetch_tickers(source_tickers: list[str], benchmark: str, max_tickers: int) -> list[str]:
+    out = []
+    seen = set()
+
+    def add(ticker: str) -> None:
+        ticker = ticker.upper().strip()
+        if ticker and ticker not in seen:
+            seen.add(ticker)
+            out.append(ticker)
+
+    # Fetch the benchmark first so free-account limits cannot starve it.
+    if benchmark:
+        add(benchmark)
+    non_benchmark_count = 0
+    for ticker in source_tickers:
+        if ticker == benchmark:
+            continue
+        if non_benchmark_count >= max(1, max_tickers):
+            break
+        add(ticker)
+        non_benchmark_count += 1
+    return out
 
 
 def fetch_ticker(ticker: str, api_key: str, args: argparse.Namespace) -> dict:
     common = {"symbol": ticker, "apikey": api_key}
     price_params = {**common, "from": args.start, "to": args.end, "limit": str(args.limit)}
-    market_cap_params = {**common, "from": args.start, "to": args.end, "limit": str(args.limit)}
     grades = rows_from_response(fetch_json("grades-historical", common))
     prices = rows_from_response(fetch_json("historical-price-eod/dividend-adjusted", price_params))
-    market_caps = rows_from_response(fetch_json("historical-market-capitalization", market_cap_params))
+    market_caps = []
+    if args.include_market_cap:
+        market_cap_params = {**common, "from": args.start, "to": args.end, "limit": str(args.limit)}
+        market_caps = rows_from_response(fetch_json("historical-market-capitalization", market_cap_params))
     return {
         "ticker": ticker,
         "fetchedAt": datetime.now(UTC).replace(microsecond=0).isoformat().replace("+00:00", "Z"),
@@ -122,6 +157,11 @@ def main() -> int:
     parser.add_argument("--limit", type=int, default=5000)
     parser.add_argument("--output-dir", type=Path, default=OUT_DIR)
     parser.add_argument("--api-key", default="", help="Optional API key. Prefer FMP_API_KEY env var.")
+    parser.add_argument(
+        "--include-market-cap",
+        action="store_true",
+        help="Also fetch historical market cap. Not needed for the current FMP backtest and costs extra API calls.",
+    )
     args = parser.parse_args()
 
     api_key = args.api_key or os.environ.get("FMP_API_KEY")
@@ -129,11 +169,9 @@ def main() -> int:
         print("error: set FMP_API_KEY first, or pass --api-key locally.", file=sys.stderr)
         return 2
 
-    tickers = parse_tickers(args.tickers) or database_tickers(args.max_tickers)
     benchmark = args.benchmark.strip().upper()
-    if benchmark and benchmark not in tickers:
-        tickers.append(benchmark)
-    tickers = tickers[: max(1, args.max_tickers) + (1 if benchmark else 0)]
+    source_tickers = parse_tickers(args.tickers) or database_tickers(args.max_tickers)
+    tickers = build_fetch_tickers(source_tickers, benchmark, args.max_tickers)
     args.output_dir.mkdir(parents=True, exist_ok=True)
 
     print(f"fetching FMP history for {len(tickers)} tickers: {', '.join(tickers)}")

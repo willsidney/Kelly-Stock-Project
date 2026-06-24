@@ -326,6 +326,7 @@ def signal_stats(values: list[float]) -> dict:
 
 def run_backtest(universe: dict[str, dict], benchmark: str, top_n: int) -> dict:
     tradable = {ticker: item for ticker, item in universe.items() if ticker != benchmark and item.get("grades")}
+    benchmark_available = benchmark in universe
     all_dates = [d for item in tradable.values() for d, _ in item["prices"]]
     if not all_dates:
         return {"status": "insufficient_data", "reason": "No usable FMP price histories."}
@@ -352,7 +353,7 @@ def run_backtest(universe: dict[str, dict], benchmark: str, top_n: int) -> dict:
         top_return = sum(returns[row["ticker"]] for row in top) / len(top)
         bottom_return = sum(returns[row["ticker"]] for row in bottom) / len(bottom)
         equal_return = sum(returns[row["ticker"]] for row in scored) / len(scored)
-        benchmark_return = forward_return(universe[benchmark], start_date, end_date) if benchmark in universe else None
+        benchmark_return = forward_return(universe[benchmark], start_date, end_date) if benchmark_available else None
         ic = spearman([row["score"] for row in scored], [returns[row["ticker"]] for row in scored])
         if ic is not None:
             rank_ics.append(ic)
@@ -391,8 +392,10 @@ def run_backtest(universe: dict[str, dict], benchmark: str, top_n: int) -> dict:
         "benchmark": benchmark,
         "requestedTopN": top_n,
         "effectiveTopNRule": "Uses requested Top N, capped at half the tradable universe to prevent top/bottom overlap.",
+        "loadedTickerCount": len(universe),
         "tickerCount": len(tradable),
-        "benchmarkAvailable": benchmark in universe,
+        "benchmarkAvailable": benchmark_available,
+        "benchmarkIssue": None if benchmark_available else f"{benchmark} was not loaded with at least 30 usable price rows.",
         "periods": periods,
         "metrics": {
             "top": performance(periods, "topReturn"),
@@ -433,8 +436,12 @@ def print_markdown(result: dict) -> None:
         return
     print(result["description"])
     print()
+    print(f"Benchmark: {result.get('benchmark')}")
+    print(f"Loaded histories: {result.get('loadedTickerCount', result['tickerCount'])}")
     print(f"Ticker count: {result['tickerCount']}")
     print(f"Benchmark available: {'yes' if result.get('benchmarkAvailable') else 'no'}")
+    if result.get("benchmarkIssue"):
+        print(f"Benchmark issue: {result['benchmarkIssue']}")
     print(f"Periods: {len(result['periods'])}")
     print(f"Requested Top N: {result['requestedTopN']}")
     if result["periods"]:
@@ -480,7 +487,7 @@ def main() -> int:
     parser.add_argument("--format", choices=["json", "markdown"], default="markdown")
     args = parser.parse_args()
     universe = load_universe(args.history_dir)
-    result = run_backtest(universe, args.benchmark.upper(), args.top)
+    result = run_backtest(universe, args.benchmark.strip().upper(), args.top)
     args.output.parent.mkdir(parents=True, exist_ok=True)
     args.output.write_text(json.dumps(result, indent=2) + "\n")
     if args.format == "json":
