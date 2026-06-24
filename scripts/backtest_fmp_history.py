@@ -131,7 +131,7 @@ def load_ticker(path: Path) -> dict | None:
         if d and score is not None:
             grades.append((d, score))
     grades.sort()
-    if len(prices) < 30 or not grades:
+    if len(prices) < 30:
         return None
     return {"ticker": ticker, "prices": prices, "grades": grades, "rowCounts": raw.get("rowCounts") or {}}
 
@@ -285,7 +285,7 @@ def performance(periods: list[dict], key: str) -> dict:
 
 
 def run_backtest(universe: dict[str, dict], benchmark: str, top_n: int) -> dict:
-    tradable = {ticker: item for ticker, item in universe.items() if ticker != benchmark}
+    tradable = {ticker: item for ticker, item in universe.items() if ticker != benchmark and item.get("grades")}
     all_dates = [d for item in tradable.values() for d, _ in item["prices"]]
     if not all_dates:
         return {"status": "insufficient_data", "reason": "No usable FMP price histories."}
@@ -305,8 +305,9 @@ def run_backtest(universe: dict[str, dict], benchmark: str, top_n: int) -> dict:
         if len(scored) < 2:
             continue
         scored.sort(key=lambda row: row["score"], reverse=True)
-        top = scored[: min(top_n, len(scored))]
-        bottom = scored[-min(top_n, len(scored)) :]
+        side_n = min(top_n, max(1, len(scored) // 2))
+        top = scored[:side_n]
+        bottom = scored[-side_n:]
         top_return = sum(returns[row["ticker"]] for row in top) / len(top)
         bottom_return = sum(returns[row["ticker"]] for row in bottom) / len(bottom)
         equal_return = sum(returns[row["ticker"]] for row in scored) / len(scored)
@@ -319,6 +320,7 @@ def run_backtest(universe: dict[str, dict], benchmark: str, top_n: int) -> dict:
                 "startDate": start_date.isoformat(),
                 "endDate": end_date.isoformat(),
                 "stockCount": len(scored),
+                "effectiveTopN": side_n,
                 "topTickers": [row["ticker"] for row in top],
                 "topReturn": top_return,
                 "bottomReturn": bottom_return,
@@ -337,8 +339,10 @@ def run_backtest(universe: dict[str, dict], benchmark: str, top_n: int) -> dict:
         "model": "fmp_ratings_price_v1",
         "description": "Historical analyst grades + price momentum/risk. Excludes undated target prices and fundamentals.",
         "benchmark": benchmark,
-        "topN": top_n,
+        "requestedTopN": top_n,
+        "effectiveTopNRule": "Uses requested Top N, capped at half the tradable universe to prevent top/bottom overlap.",
         "tickerCount": len(tradable),
+        "benchmarkAvailable": benchmark in universe,
         "periods": periods,
         "metrics": {
             "top": performance(periods, "topReturn"),
@@ -367,8 +371,12 @@ def print_markdown(result: dict) -> None:
     print(result["description"])
     print()
     print(f"Ticker count: {result['tickerCount']}")
+    print(f"Benchmark available: {'yes' if result.get('benchmarkAvailable') else 'no'}")
     print(f"Periods: {len(result['periods'])}")
-    print(f"Top N: {result['topN']}")
+    print(f"Requested Top N: {result['requestedTopN']}")
+    if result["periods"]:
+        effective = sorted({row.get("effectiveTopN") for row in result["periods"] if row.get("effectiveTopN")})
+        print(f"Effective Top N used: {', '.join(str(x) for x in effective)}")
     print(f"Rank IC mean: {fmt_pct(result['metrics'].get('rankICMean'))}")
     print()
     print("| Portfolio | Periods | Cumulative | Annualized | Max DD | Hit Rate |")
