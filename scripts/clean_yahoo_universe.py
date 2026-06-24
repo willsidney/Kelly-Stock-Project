@@ -1,9 +1,11 @@
 #!/usr/bin/env python3
 """Clean bad auto-expanded Yahoo universe rows.
 
-This removes only stocks that were added by the universe expansion workflow,
-are not major-index seeds, and do not have market-cap proof above the configured
-threshold. Manual/original stocks are left alone.
+By default this removes only stocks that were added by the universe expansion
+workflow, are not major-index seeds, and do not have market-cap proof above the
+configured threshold. With --remove-non-index-auto it removes all auto-expanded
+non-index rows, which is useful when resetting an accidental filler batch.
+Manual/original stocks are left alone.
 """
 
 from __future__ import annotations
@@ -24,7 +26,7 @@ def number(value):
     return None
 
 
-def should_remove(stock: dict, min_market_cap: int, remove_unverified: bool) -> bool:
+def should_remove(stock: dict, min_market_cap: int, remove_unverified: bool, remove_non_index_auto: bool) -> bool:
     source = str(stock.get("universeSource") or "")
     if not source:
         return False
@@ -33,6 +35,8 @@ def should_remove(stock: dict, min_market_cap: int, remove_unverified: bool) -> 
     is_index_seed = bool(index_membership) or "index:" in source
     if is_index_seed:
         return False
+    if remove_non_index_auto:
+        return True
 
     market_cap = number(stock.get("marketCap")) or number(stock.get("universeMarketCap"))
     if market_cap is None:
@@ -44,6 +48,7 @@ def main() -> int:
     parser = argparse.ArgumentParser(description="Clean invalid Yahoo universe rows.")
     parser.add_argument("--min-market-cap", type=int, default=1_000_000_000)
     parser.add_argument("--keep-unverified", action="store_true", help="Keep non-index universe stocks with no market-cap value.")
+    parser.add_argument("--remove-non-index-auto", action="store_true", help="Remove all auto-expanded non-index rows, regardless of market cap.")
     parser.add_argument("--dry-run", action="store_true")
     args = parser.parse_args()
 
@@ -51,7 +56,12 @@ def main() -> int:
     kept = []
     removed = []
     for stock in stocks:
-        if should_remove(stock, args.min_market_cap, remove_unverified=not args.keep_unverified):
+        if should_remove(
+            stock,
+            args.min_market_cap,
+            remove_unverified=not args.keep_unverified,
+            remove_non_index_auto=args.remove_non_index_auto,
+        ):
             removed.append(stock)
         else:
             kept.append(stock)
