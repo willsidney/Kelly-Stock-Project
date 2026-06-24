@@ -18,10 +18,11 @@ ROOT = Path(__file__).resolve().parents[1]
 OUT_DIR = ROOT / "public" / "data" / "fmp-history"
 STOCKS_PATH = ROOT / "public" / "data" / "stocks.json"
 BASE_URL = "https://financialmodelingprep.com/stable"
+LEGACY_BASE_URL = "https://financialmodelingprep.com/api/v3"
 
 
-def fetch_json(path: str, params: dict[str, str]) -> object | None:
-    url = f"{BASE_URL}/{path}?{urllib.parse.urlencode(params)}"
+def fetch_json(path: str, params: dict[str, str], base_url: str = BASE_URL) -> object | None:
+    url = f"{base_url}/{path}?{urllib.parse.urlencode(params)}"
     request = urllib.request.Request(
         url,
         headers={"User-Agent": "KellyStockProject/1.0", "Accept": "application/json"},
@@ -45,6 +46,25 @@ def rows_from_response(data: object | None) -> list[dict]:
         if data and not any(key.lower().startswith("error") for key in data):
             return [data]
     return []
+
+
+def fetch_price_rows(ticker: str, api_key: str, args: argparse.Namespace) -> tuple[list[dict], str]:
+    params = {"symbol": ticker, "from": args.start, "to": args.end, "limit": str(args.limit), "apikey": api_key}
+    candidates = [
+        ("stable_dividend_adjusted", "historical-price-eod/dividend-adjusted", BASE_URL, params),
+        ("stable_full", "historical-price-eod/full", BASE_URL, params),
+        (
+            "legacy_historical_price_full",
+            f"historical-price-full/{urllib.parse.quote(ticker)}",
+            LEGACY_BASE_URL,
+            {"from": args.start, "to": args.end, "apikey": api_key},
+        ),
+    ]
+    for label, path, base_url, query in candidates:
+        rows = rows_from_response(fetch_json(path, query, base_url=base_url))
+        if rows:
+            return rows, label
+    return [], "none"
 
 
 def parse_tickers(value: str | None) -> list[str]:
@@ -104,9 +124,9 @@ def build_fetch_tickers(source_tickers: list[str], benchmark: str, max_tickers: 
 
 def fetch_ticker(ticker: str, api_key: str, args: argparse.Namespace) -> dict:
     common = {"symbol": ticker, "apikey": api_key}
-    price_params = {**common, "from": args.start, "to": args.end, "limit": str(args.limit)}
-    grades = rows_from_response(fetch_json("grades-historical", common))
-    prices = rows_from_response(fetch_json("historical-price-eod/dividend-adjusted", price_params))
+    benchmark = args.benchmark.strip().upper()
+    grades = [] if ticker == benchmark else rows_from_response(fetch_json("grades-historical", common))
+    prices, price_endpoint = fetch_price_rows(ticker, api_key, args)
     market_caps = []
     if args.include_market_cap:
         market_cap_params = {**common, "from": args.start, "to": args.end, "limit": str(args.limit)}
@@ -119,6 +139,10 @@ def fetch_ticker(ticker: str, api_key: str, args: argparse.Namespace) -> dict:
         "gradesHistorical": grades,
         "dividendAdjustedPrices": prices,
         "historicalMarketCap": market_caps,
+        "sourceEndpoints": {
+            "prices": price_endpoint,
+            "grades": "skipped_for_benchmark" if ticker == benchmark else ("stable_grades_historical" if grades else "none"),
+        },
         "rowCounts": {
             "gradesHistorical": len(grades),
             "dividendAdjustedPrices": len(prices),
@@ -182,7 +206,8 @@ def main() -> int:
         print(
             f"{ticker}: grades={data['rowCounts']['gradesHistorical']} "
             f"prices={data['rowCounts']['dividendAdjustedPrices']} "
-            f"marketCaps={data['rowCounts']['historicalMarketCap']}"
+            f"marketCaps={data['rowCounts']['historicalMarketCap']} "
+            f"priceEndpoint={data['sourceEndpoints']['prices']}"
         )
         time.sleep(0.35)
 

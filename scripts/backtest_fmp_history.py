@@ -427,6 +427,21 @@ def fmt_p(value) -> str:
     return "-" if value is None or not isinstance(value, (int, float)) else f"{value:.3f}"
 
 
+def validation_issues(result: dict, min_tickers: int, require_benchmark: bool) -> list[str]:
+    if result.get("status") != "ok":
+        return [result.get("reason") or "Backtest did not produce a usable result."]
+    issues = []
+    if require_benchmark and not result.get("benchmarkAvailable"):
+        issues.append(result.get("benchmarkIssue") or "Benchmark was not available.")
+    if min_tickers and result.get("tickerCount", 0) < min_tickers:
+        issues.append(f"Only {result.get('tickerCount', 0)} tradable tickers loaded; minimum requested is {min_tickers}.")
+    if result.get("periods"):
+        effective = [row.get("effectiveTopN") for row in result["periods"] if row.get("effectiveTopN")]
+        if effective and max(effective) < 2:
+            issues.append("Effective Top N is below 2, so top/bottom basket results are too noisy to trust.")
+    return issues
+
+
 def print_markdown(result: dict) -> None:
     print("# FMP Historical Backtest")
     print()
@@ -485,15 +500,27 @@ def main() -> int:
     parser.add_argument("--top", type=int, default=10)
     parser.add_argument("--output", type=Path, default=OUT_PATH)
     parser.add_argument("--format", choices=["json", "markdown"], default="markdown")
+    parser.add_argument("--min-tickers", type=int, default=0)
+    parser.add_argument("--require-benchmark", action="store_true")
     args = parser.parse_args()
     universe = load_universe(args.history_dir)
     result = run_backtest(universe, args.benchmark.strip().upper(), args.top)
+    issues = validation_issues(result, args.min_tickers, args.require_benchmark)
+    if issues:
+        result["validationIssues"] = issues
     args.output.parent.mkdir(parents=True, exist_ok=True)
     args.output.write_text(json.dumps(result, indent=2) + "\n")
     if args.format == "json":
         print(json.dumps(result, indent=2))
     else:
         print_markdown(result)
+    if issues:
+        print()
+        print("## Validation Issues")
+        print()
+        for issue in issues:
+            print(f"- {issue}")
+        return 2
     return 0
 
 
