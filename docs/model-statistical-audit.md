@@ -114,6 +114,8 @@ The current project does not store historical feature snapshots yet, so the clea
 
 Update: the project now saves compact daily snapshots in `public/data/history/`. Each snapshot includes prices, Yahoo inputs, and frozen v13/v14 model outputs, so future walk-forward tests can compare model expectation against later realized performance.
 
+FMP free-access update: dated historical analyst grades and dividend-adjusted prices are available, but dated price-target consensus and dated fundamentals are not available from the tested endpoints. This supports a genuine historical test of a ratings-and-price model, but not a clean historical test of the current target-upside/fundamental model.
+
 ## Recommendation
 
 Do not treat either v13 or v14 as fully validated yet.

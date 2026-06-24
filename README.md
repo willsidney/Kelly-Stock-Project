@@ -165,6 +165,22 @@ export FMP_API_KEY="your_key_here"
 python3 scripts/probe_fmp_access.py --tickers AAPL,MSFT,CELH --output public/data/fmp-access-report.json
 ```
 
+## FMP Historical Backtest
+
+The repo also includes a workflow named `FMP Historical Backtest`.
+
+This workflow fetches FMP historical analyst grades and dividend-adjusted prices, stores them in `public/data/fmp-history/`, and writes `public/data/fmp-backtest-results.json`.
+
+The free FMP access tested so far supports dated analyst grades and dated prices, but not dated price-target consensus or dated fundamentals. For that reason, this backtest is a genuine historical test of a separate `fmp_ratings_price_v1` model: historical analyst grades plus price momentum, drawdown, and volatility. It is not a full historical test of the current Yahoo target-upside model.
+
+Run it first with a small ticker set such as:
+
+```text
+AAPL,MSFT,CELH,SPY
+```
+
+Then expand carefully. Free API limits may make a full database pull too slow or unavailable.
+
 ## Privacy Note
 
 The uploaded PDFs, Word files, extracted text, project notes, and scratch files are ignored by Git because they may contain personal project context. Only the app source and GitHub Pages viewer are intended for publishing.

@@ -1,0 +1,73 @@
+name: FMP Historical Backtest
+
+on:
+  workflow_dispatch:
+    inputs:
+      tickers:
+        description: "Tickers to fetch. Blank uses current database tickers."
+        required: false
+        default: "AAPL,MSFT,CELH,SPY"
+      max_tickers:
+        description: "Maximum database tickers if tickers is blank"
+        required: false
+        default: "25"
+      top:
+        description: "Top-N portfolio size"
+        required: false
+        default: "10"
+      benchmark:
+        description: "Benchmark ticker"
+        required: false
+        default: "SPY"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: fmp-history
+  cancel-in-progress: false
+
+jobs:
+  backtest:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Fetch FMP history
+        env:
+          FMP_API_KEY: ${{ secrets.FMP_API_KEY }}
+        run: |
+          if [ -z "$FMP_API_KEY" ]; then
+            echo "FMP_API_KEY secret is missing. Add it in Settings > Secrets and variables > Actions."
+            exit 2
+          fi
+          python scripts/fetch_fmp_history.py \
+            --tickers "${{ github.event.inputs.tickers || 'AAPL,MSFT,CELH,SPY' }}" \
+            --max-tickers "${{ github.event.inputs.max_tickers || '25' }}" \
+            --benchmark "${{ github.event.inputs.benchmark || 'SPY' }}"
+
+      - name: Run FMP historical backtest
+        run: |
+          python scripts/backtest_fmp_history.py \
+            --benchmark "${{ github.event.inputs.benchmark || 'SPY' }}" \
+            --top "${{ github.event.inputs.top || '10' }}" \
+            --output public/data/fmp-backtest-results.json \
+            --format markdown
+
+      - name: Commit FMP historical data and backtest
+        run: |
+          if git diff --quiet -- public/data/fmp-history public/data/fmp-backtest-results.json; then
+            echo "No FMP historical changes."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add public/data/fmp-history public/data/fmp-backtest-results.json
+          git commit -m "Update FMP historical backtest"
+          git push

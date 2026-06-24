@@ -56,6 +56,8 @@ Turn the current Kelly Portfolio model into an accessible stock-selection system
 - Save compact point-in-time Yahoo snapshots for future backtesting. **Done**
 - Add a repeatable local/GitHub Actions backtester over saved snapshots. **Done**
 - Compare model-selected top-N portfolios against equal-weight universe and SPY benchmark. **Done; waits for history to accumulate**
+- Probe Financial Modeling Prep access for historical analyst and price data. **Done**
+- Add an FMP historical backtest for the dated data available on the current account. **Done; ratings and prices only**
 - Add a website tab for backtest results. **Pending**
 - Calibrate score/probability outputs against realized forward returns. **Pending**
 - Replace or rename the current Kelly-style formula after validation. **Pending**
