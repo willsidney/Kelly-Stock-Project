@@ -201,12 +201,14 @@ def quote_number(row: dict, *keys: str) -> float | None:
     return None
 
 
-def rank_candidates(candidates: dict[str, dict], limit: int, min_market_cap: int) -> list[dict]:
+def rank_candidates(candidates: dict[str, dict], limit: int, min_market_cap: int, allow_unquoted: bool = True) -> list[dict]:
     tickers = list(candidates.keys())
     print(f"quoting {len(tickers)} listed symbols")
     quotes = quote_batch(tickers)
     ranked = []
-    for ticker, candidate in candidates.items():
+    quoted = 0
+    unquoted = 0
+    for order, (ticker, candidate) in enumerate(candidates.items()):
         quote = quotes.get(ticker) or {}
         quote_type = str(quote.get("quoteType") or "EQUITY").upper()
         if quote_type and quote_type != "EQUITY":
@@ -214,13 +216,26 @@ def rank_candidates(candidates: dict[str, dict], limit: int, min_market_cap: int
         price = quote_number(quote, "regularMarketPrice", "postMarketPrice", "preMarketPrice")
         market_cap = quote_number(quote, "marketCap")
         volume = quote_number(quote, "averageDailyVolume3Month", "averageDailyVolume10Day", "regularMarketVolume")
-        if price is None or price <= 1:
-            continue
-        if market_cap is None or market_cap < min_market_cap:
-            continue
         index_sources = candidate.get("indexSources") or []
+        if quote:
+            quoted += 1
+        else:
+            unquoted += 1
+        if price is not None and price <= 1:
+            continue
+        if market_cap is not None and market_cap < min_market_cap:
+            continue
+        if not quote and not allow_unquoted:
+            continue
         index_priority = 1 if index_sources else 0
-        score = math.log10(max(market_cap, 1)) * 10 + math.log10(max(volume or 1, 1)) + index_priority * 1_000
+        quote_bonus = 10 if quote else 0
+        score = (
+            math.log10(max(market_cap or 1, 1)) * 10
+            + math.log10(max(volume or 1, 1))
+            + index_priority * 1_000
+            + quote_bonus
+            - order / 1_000_000
+        )
         ranked.append({
             **candidate,
             "quote": quote,
@@ -228,9 +243,12 @@ def rank_candidates(candidates: dict[str, dict], limit: int, min_market_cap: int
             "volume": volume or 0,
             "universeScore": score,
             "indexPriority": index_priority,
+            "quoteAvailable": bool(quote),
         })
 
-    ranked.sort(key=lambda row: (row["indexPriority"], row["universeScore"], row["marketCap"]), reverse=True)
+    ranked.sort(key=lambda row: (row["indexPriority"], row["universeScore"], row["marketCap"] or 0), reverse=True)
+    print(f"quote coverage: {quoted} quoted, {unquoted} unquoted")
+    print(f"ranked candidates: {len(ranked)}")
     return ranked[:limit]
 
 
@@ -247,6 +265,7 @@ def main() -> int:
     parser.add_argument("--candidate-limit", type=int, default=1600, help="How many liquid candidates to consider.")
     parser.add_argument("--min-market-cap", type=int, default=1_000_000_000)
     parser.add_argument("--no-index-seeds", action="store_true", help="Skip S&P 500, Nasdaq 100, and Dow 30 seed lists.")
+    parser.add_argument("--require-yahoo-quotes", action="store_true", help="Only add stocks that returned a Yahoo quote during candidate ranking.")
     args = parser.parse_args()
 
     stocks = load_database()
@@ -265,17 +284,19 @@ def main() -> int:
             merge_candidate(candidates, ticker, row.get("name") or ticker, row.get("source") or "listed")
         else:
             candidates[ticker] = row
-    ranked = rank_candidates(candidates, args.candidate_limit, args.min_market_cap)
+    print(f"candidate pool: {len(candidates)}")
+    ranked = rank_candidates(candidates, args.candidate_limit, args.min_market_cap, allow_unquoted=not args.require_yahoo_quotes)
     to_add = [row for row in ranked if row["ticker"] not in existing][:batch_size]
     if not to_add:
         print(
             f"error: no new candidates found. Database has {len(existing)} stocks, target is {args.target_size}.",
             file=sys.stderr,
         )
-        print("Try increasing candidate_limit or lowering min_market_cap.", file=sys.stderr)
+        print("Try increasing candidate_limit, lowering min_market_cap, or leaving require_yahoo_quotes disabled.", file=sys.stderr)
         return 2
 
     print(f"adding up to {len(to_add)} stocks toward target {args.target_size}")
+    print("selected tickers: " + ", ".join(row["ticker"] for row in to_add))
     added = []
     incomplete = []
     skipped = []
