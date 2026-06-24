@@ -474,6 +474,9 @@ def trim_for_output(stock: dict) -> dict:
         "expectedReturn",
         "expectedLoss",
         "modelVersion",
+        "modelReady",
+        "dataStatus",
+        "dataIssues",
         "scanSource",
     ]
     out = {key: stock.get(key) for key in keep if key in stock and stock.get(key) is not None}
@@ -511,8 +514,7 @@ def main() -> int:
             stock = update_stock(stock, quote)
             issues = model_data_issues(stock)
             if issues:
-                print(f"warn: skipped {ticker}; Yahoo data incomplete for model: {', '.join(issues)}", file=sys.stderr)
-                continue
+                print(f"warn: scanning tracked-incomplete ticker {ticker}: {', '.join(issues)}", file=sys.stderr)
             stock["scanSource"] = ", ".join(candidates[ticker].get("screeners") or [])
             stocks.append(stock)
         except Exception as exc:

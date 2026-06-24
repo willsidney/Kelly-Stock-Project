@@ -46,7 +46,7 @@ Turn the current Kelly Portfolio model into an accessible stock-selection system
 - Extend the Yahoo updater to capture valuation, profitability, growth, cash-flow, and balance-sheet metrics. **Done**
 - Add a scan-to-database save path so scan winners become permanent Yahoo-refreshed database stocks. **Done**
 - Split Yahoo refreshes into full data refreshes and faster price-only refreshes for larger databases. **Done**
-- Add a 1000-stock universe expansion workflow that grows the database in model-ready Yahoo batches. **Done; index-first using S&P 500, Nasdaq 100, and Dow 30**
+- Add a 1000-stock universe expansion workflow that grows the database in tracked Yahoo batches. **Done; index-first using S&P 500, Nasdaq 100, and Dow 30**
 - Rotate deep Yahoo refreshes across the database while updating prices multiple times daily. **Done**
 - Prefer a scheduled updater or lightweight backend over direct browser API calls, because GitHub Pages cannot safely store private API keys.
 - Keep source attribution visible for each input.

@@ -3,8 +3,8 @@
 
 The script seeds from major index constituent lists first, then discovers
 additional US-listed common stocks, ranks candidates with Yahoo quote data, and
-appends a model-ready batch to public/data/stocks.json. It is designed to be run
-repeatedly until the database reaches the target size.
+appends a tracked batch to public/data/stocks.json. Stocks with incomplete Yahoo
+model inputs are still kept so future refreshes can improve them.
 """
 
 from __future__ import annotations
@@ -268,11 +268,12 @@ def main() -> int:
     ranked = rank_candidates(candidates, args.candidate_limit, args.min_market_cap)
     to_add = [row for row in ranked if row["ticker"] not in existing][:batch_size]
     if not to_add:
-        print("no new model-ready candidates found before enrichment")
+        print("no new candidates found before enrichment")
         return 0
 
     print(f"adding up to {len(to_add)} stocks toward target {args.target_size}")
     added = []
+    incomplete = []
     skipped = []
     for row in to_add:
         ticker = row["ticker"]
@@ -282,9 +283,8 @@ def main() -> int:
             stock = update_stock(stock, row.get("quote"))
             issues = model_data_issues(stock)
             if issues:
-                skipped.append((ticker, issues))
-                print(f"warn: skipped {ticker}; Yahoo data incomplete: {', '.join(issues)}", file=sys.stderr)
-                continue
+                incomplete.append((ticker, issues))
+                print(f"warn: added tracked ticker {ticker}; Yahoo data incomplete: {', '.join(issues)}", file=sys.stderr)
             stock["universeSource"] = row["source"]
             if row.get("indexSources"):
                 stock["indexMembership"] = row["indexSources"]
@@ -297,16 +297,14 @@ def main() -> int:
             print(f"warn: failed to enrich {ticker}: {exc}", file=sys.stderr)
         time.sleep(0.5)
 
-    if not added:
-        print("error: no candidates had enough Yahoo data to add.", file=sys.stderr)
-        return 2
-
     stocks.extend(added)
     stocks.sort(key=lambda s: str(s.get("ticker") or ""))
     DATA_PATH.write_text(json.dumps(stocks, indent=2) + "\n")
     print(f"added {len(added)} stocks; database now has {len(stocks)}")
+    if incomplete:
+        print("tracked incomplete: " + ", ".join(f"{ticker} ({', '.join(issues)})" for ticker, issues in incomplete), file=sys.stderr)
     if skipped:
-        print("skipped: " + ", ".join(f"{ticker} ({', '.join(issues)})" for ticker, issues in skipped), file=sys.stderr)
+        print("skipped due to fetch errors: " + ", ".join(f"{ticker} ({', '.join(issues)})" for ticker, issues in skipped), file=sys.stderr)
     print(f"updated {DATA_PATH}")
     return 0
 

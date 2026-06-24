@@ -99,7 +99,7 @@ To save stocks from the broad market scan:
 3. Choose `Save Picks` in the app, or open GitHub Actions and choose `Save Scan Picks To Database`.
 4. Leave `tickers` blank to save the top scan results, or enter exact tickers such as `MSFT, AAPL, TEAM`.
 
-New tickers are only written to `public/data/stocks.json` after Yahoo returns model-ready data: current price, beta, analyst count, analyst rating mix, Yahoo source, and update timestamp. Once a ticker is in `public/data/stocks.json`, every scheduled Yahoo refresh updates it with the rest of the database.
+New tickers are written to `public/data/stocks.json` even when Yahoo has not returned every model input yet. Incomplete stocks are marked as `tracked-incomplete` with `dataIssues`, then future scheduled Yahoo refreshes keep trying to improve them.
 
 ## Large Database Mode
 
@@ -112,11 +112,11 @@ To build the universe:
 3. Run it with `target_size` set to `1000` and `batch_size` around `100`.
 4. Repeat the workflow until the database reaches the target size.
 
-The expansion workflow seeds from S&P 500, Nasdaq 100, and Dow 30 constituent lists first. After that, it discovers additional US-listed common stocks, filters out ETFs/warrants/units, ranks candidates by Yahoo market cap and liquidity, then enriches the next batch with model-ready Yahoo data before saving them into `public/data/stocks.json`.
+The expansion workflow seeds from S&P 500, Nasdaq 100, and Dow 30 constituent lists first. After that, it discovers additional US-listed common stocks, filters out ETFs/warrants/units, ranks candidates by Yahoo market cap and liquidity, then enriches the next batch before saving them into `public/data/stocks.json`. Stocks do not need to have every model field on day one; missing fields are tracked and refreshed over time.
 
 The right target structure is:
 
-- `public/data/stocks.json` - permanent database of model-ready stocks.
+- `public/data/stocks.json` - permanent database of tracked stocks, including incomplete names that Yahoo can improve over time.
 - `public/data/scan-results.json` - latest broad market scan shortlist.
 - `Scanner` - ranks the permanent database with filters and model score.
 - `Yahoo Scan` - reviews new scan candidates before saving them into the database.

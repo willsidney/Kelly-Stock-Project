@@ -123,6 +123,15 @@ def is_model_ready(stock: dict) -> bool:
     return not model_data_issues(stock)
 
 
+def apply_data_status(stock: dict) -> dict:
+    updated = dict(stock)
+    issues = model_data_issues(updated)
+    updated["modelReady"] = not issues
+    updated["dataIssues"] = issues
+    updated["dataStatus"] = "model-ready" if not issues else "tracked-incomplete"
+    return updated
+
+
 def quote_current_price(quote: dict | None) -> tuple[float | None, str | None, int | None]:
     """Prefer Yahoo's active quote fields over previous-close style fallbacks."""
     if not quote:
@@ -553,7 +562,7 @@ def update_stock(stock: dict, quote: dict | None) -> dict:
     updated["analystSrc"] = analyst_source
     updated["lastUpdated"] = datetime.now(timezone.utc).replace(microsecond=0).isoformat()
     updated["lastFullUpdated"] = updated["lastUpdated"]
-    return updated
+    return apply_data_status(updated)
 
 
 def refresh_price_only(stock: dict, quote: dict | None) -> dict:
@@ -580,7 +589,7 @@ def refresh_price_only(stock: dict, quote: dict | None) -> dict:
         updated["upside"] = clamp((float(target_mean) / float(current_price)) - 1, 0, 3)
 
     updated["lastUpdated"] = datetime.now(timezone.utc).replace(microsecond=0).isoformat()
-    return updated
+    return apply_data_status(updated)
 
 
 def main() -> int:
@@ -628,7 +637,6 @@ def main() -> int:
         } | new_tickers
         print(f"full-refresh limit: {len(full_refresh)} of {len(tickers)} stocks")
     refreshed = []
-    skipped_new = []
     print(f"update mode: {args.mode}")
     for stock in stocks:
         ticker = str(stock.get("ticker", "")).upper().strip()
@@ -640,26 +648,14 @@ def main() -> int:
         if ticker in new_tickers:
             issues = model_data_issues(refreshed_stock)
             if issues:
-                skipped_new.append((ticker, issues))
                 print(
-                    f"warn: skipped new ticker {ticker}; Yahoo did not return model-ready data: {', '.join(issues)}",
+                    f"warn: added tracked ticker {ticker}; Yahoo has not returned all model fields yet: {', '.join(issues)}",
                     file=sys.stderr,
                 )
-                time.sleep(0.5)
-                continue
         refreshed.append(refreshed_stock)
         time.sleep(0.5)
     DATA_PATH.write_text(json.dumps(refreshed, indent=2) + "\n")
     print("database tickers: " + ", ".join(s["ticker"] for s in refreshed))
-    if skipped_new:
-        print(
-            "skipped new tickers: "
-            + ", ".join(f"{ticker} ({', '.join(issues)})" for ticker, issues in skipped_new),
-            file=sys.stderr,
-        )
-        if len(skipped_new) == len(new_tickers):
-            print("error: no requested new tickers had enough Yahoo data to add.", file=sys.stderr)
-            return 2
     print(f"updated {DATA_PATH}")
     return 0
 

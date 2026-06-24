@@ -163,6 +163,9 @@ function normalizeStock(raw, idx=0){
     operatingCashflowYield: opt(raw.operatingCashflowYield),
     cashDebtRatio: opt(raw.cashDebtRatio),
     sourceUrl: raw.sourceUrl || `https://finance.yahoo.com/quote/${ticker}`,
+    modelReady: raw.modelReady !== undefined ? Boolean(raw.modelReady) : true,
+    dataStatus: raw.dataStatus || "model-ready",
+    dataIssues: Array.isArray(raw.dataIssues) ? raw.dataIssues : [],
   };
 }
 
