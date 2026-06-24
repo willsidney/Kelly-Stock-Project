@@ -51,6 +51,15 @@ Turn the current Kelly Portfolio model into an accessible stock-selection system
 - Prefer a scheduled updater or lightweight backend over direct browser API calls, because GitHub Pages cannot safely store private API keys.
 - Keep source attribution visible for each input.
 
+## Phase 4B: Model Validation
+
+- Save compact point-in-time Yahoo snapshots for future backtesting. **Done**
+- Add a repeatable local/GitHub Actions backtester over saved snapshots. **Done**
+- Compare model-selected top-N portfolios against equal-weight universe and SPY benchmark. **Done; waits for history to accumulate**
+- Add a website tab for backtest results. **Pending**
+- Calibrate score/probability outputs against realized forward returns. **Pending**
+- Replace or rename the current Kelly-style formula after validation. **Pending**
+
 ## Phase 5: Rebalancing
 
 - Add a Create Model section where the user selects database stocks and the app generates portfolio allocations from the active model settings. **Done**

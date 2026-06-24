@@ -1,0 +1,58 @@
+name: Backtest Kelly Model
+
+on:
+  workflow_dispatch:
+    inputs:
+      schedule:
+        description: "Rebalance schedule"
+        required: false
+        default: "weekly"
+        type: choice
+        options:
+          - every
+          - weekly
+          - monthly
+      top:
+        description: "Comma separated portfolio sizes"
+        required: false
+        default: "10,20"
+      benchmark:
+        description: "Benchmark ticker stored in snapshots"
+        required: false
+        default: "SPY"
+
+permissions:
+  contents: write
+
+jobs:
+  backtest:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Run snapshot backtest
+        run: |
+          python scripts/backtest_snapshots.py \
+            --schedule "${{ github.event.inputs.schedule || 'weekly' }}" \
+            --top "${{ github.event.inputs.top || '10,20' }}" \
+            --benchmark "${{ github.event.inputs.benchmark || 'SPY' }}" \
+            --output public/data/backtest-results.json \
+            --format markdown
+
+      - name: Commit backtest results
+        run: |
+          if git diff --quiet -- public/data/backtest-results.json; then
+            echo "No backtest result changes."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add public/data/backtest-results.json
+          git commit -m "Update Kelly model backtest results"
+          git push

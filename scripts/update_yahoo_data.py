@@ -23,6 +23,8 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 DATA_PATH = ROOT / "public" / "data" / "stocks.json"
+HISTORY_DIR = ROOT / "public" / "data" / "history"
+HISTORY_INDEX_PATH = HISTORY_DIR / "index.json"
 UA = "Mozilla/5.0 (compatible; KellyStockProject/1.0; +https://github.com/willsidney/Kelly-Stock-Project)"
 SECTOR_MAP = {
     "technology": "ai",
@@ -34,6 +36,54 @@ SECTOR_MAP = {
     "industrials": "industrial",
     "energy": "energy",
 }
+SNAPSHOT_STOCK_FIELDS = [
+    "ticker",
+    "name",
+    "sector",
+    "strongBuy",
+    "buy",
+    "hold",
+    "sell",
+    "upside",
+    "drawdown",
+    "shortInt",
+    "beta",
+    "currentPrice",
+    "priceCurrency",
+    "fxExposed",
+    "earningsDays",
+    "ytd",
+    "analystCount",
+    "targetMeanPrice",
+    "marketCap",
+    "forwardPE",
+    "trailingPE",
+    "pegRatio",
+    "priceToSales",
+    "priceToBook",
+    "enterpriseToEbitda",
+    "revenueGrowth",
+    "earningsGrowth",
+    "grossMargins",
+    "operatingMargins",
+    "profitMargins",
+    "returnOnEquity",
+    "returnOnAssets",
+    "debtToEquity",
+    "currentRatio",
+    "freeCashflowYield",
+    "cashDebtRatio",
+    "modelReady",
+    "dataStatus",
+    "dataIssues",
+    "dataProvider",
+    "lastUpdated",
+    "lastFullUpdated",
+    "priceSource",
+    "priceTime",
+    "universeSource",
+    "indexMembership",
+]
 
 
 def fetch_json(url: str) -> dict | None:
@@ -310,6 +360,117 @@ def quote_batch(tickers: list[str]) -> dict[str, dict]:
                 out[symbol.upper()] = row
         time.sleep(0.5)
     return out
+
+
+def compact_stock_snapshot(stock: dict) -> dict:
+    """Keep only fields needed to reproduce model rankings later."""
+    return {
+        key: stock[key]
+        for key in SNAPSHOT_STOCK_FIELDS
+        if key in stock and stock[key] is not None
+    }
+
+
+def parse_symbol_list(value: str | None) -> list[str]:
+    if not value:
+        return []
+    seen = set()
+    out = []
+    for token in value.replace("\n", ",").replace(" ", ",").split(","):
+        symbol = token.strip().upper()
+        if symbol and symbol not in seen:
+            seen.add(symbol)
+            out.append(symbol)
+    return out
+
+
+def benchmark_entry(symbol: str, quote: dict | None, stocks_by_ticker: dict[str, dict]) -> dict | None:
+    price, source, price_time = quote_current_price(quote)
+    currency = (quote or {}).get("currency")
+    if price is None and symbol in stocks_by_ticker:
+        stock = stocks_by_ticker[symbol]
+        if valid_price(stock.get("currentPrice")):
+            price = float(stock["currentPrice"])
+            source = stock.get("priceSource") or "stock database"
+            currency = stock.get("priceCurrency") or currency
+    if price is None:
+        return None
+    entry = {
+        "ticker": symbol,
+        "currentPrice": price,
+        "priceCurrency": currency or "USD",
+        "priceSource": source or "Yahoo Finance",
+    }
+    if price_time:
+        entry["priceTime"] = datetime.fromtimestamp(price_time, timezone.utc).replace(microsecond=0).isoformat()
+    return entry
+
+
+def write_history_snapshot(
+    stocks: list[dict],
+    *,
+    mode: str,
+    reason: str,
+    benchmarks: list[str] | None = None,
+    fetch_benchmarks: bool = True,
+) -> Path:
+    """Write one compact point-in-time snapshot per calendar day.
+
+    If the updater runs multiple times in a day, the latest run overwrites that
+    day's file. That keeps enough history for weekly/monthly backtests without
+    making the repository grow explosively.
+    """
+    now = datetime.now(timezone.utc).replace(microsecond=0)
+    snapshot_date = now.date().isoformat()
+    HISTORY_DIR.mkdir(parents=True, exist_ok=True)
+    path = HISTORY_DIR / f"{snapshot_date}.json"
+
+    stocks_by_ticker = {
+        str(stock.get("ticker") or "").upper().strip(): stock
+        for stock in stocks
+        if stock.get("ticker")
+    }
+    benchmark_symbols = benchmarks or []
+    benchmark_quotes = quote_batch(benchmark_symbols) if fetch_benchmarks and benchmark_symbols else {}
+    benchmark_entries = [
+        entry
+        for symbol in benchmark_symbols
+        if (entry := benchmark_entry(symbol, benchmark_quotes.get(symbol), stocks_by_ticker))
+    ]
+
+    snapshot = {
+        "snapshotDate": snapshot_date,
+        "snapshotTime": now.isoformat(),
+        "mode": mode,
+        "reason": reason,
+        "source": "Yahoo Finance",
+        "stockCount": len(stocks),
+        "modelReadyCount": sum(1 for stock in stocks if stock.get("modelReady")),
+        "benchmarks": benchmark_entries,
+        "stocks": [compact_stock_snapshot(stock) for stock in stocks if stock.get("ticker")],
+    }
+    path.write_text(json.dumps(snapshot, separators=(",", ":")) + "\n")
+
+    try:
+        index = json.loads(HISTORY_INDEX_PATH.read_text())
+        if not isinstance(index, list):
+            index = []
+    except Exception:
+        index = []
+    current_entry = {
+        "date": snapshot_date,
+        "file": f"{snapshot_date}.json",
+        "snapshotTime": snapshot["snapshotTime"],
+        "mode": mode,
+        "reason": reason,
+        "stockCount": snapshot["stockCount"],
+        "modelReadyCount": snapshot["modelReadyCount"],
+        "benchmarks": [entry["ticker"] for entry in benchmark_entries],
+    }
+    by_date = {str(entry.get("date")): entry for entry in index if isinstance(entry, dict)}
+    by_date[snapshot_date] = current_entry
+    HISTORY_INDEX_PATH.write_text(json.dumps([by_date[key] for key in sorted(by_date)], indent=2) + "\n")
+    return path
 
 
 def parse_tickers(value: str | None) -> list[str]:
@@ -597,9 +758,25 @@ def main() -> int:
     parser.add_argument("--tickers", default="", help="Comma or space separated ticker codes to add before refresh.")
     parser.add_argument("--mode", choices=["full", "prices"], default="full", help="Use full for fundamentals/analysts or prices for a fast quote refresh.")
     parser.add_argument("--max-full", type=int, default=0, help="Maximum stocks to deep-refresh in full mode. Remaining stocks receive a price refresh.")
+    parser.add_argument("--no-snapshot", action="store_true", help="Do not write a dated history snapshot after updating.")
+    parser.add_argument("--snapshot-only", action="store_true", help="Write a history snapshot from the current database without refreshing Yahoo.")
+    parser.add_argument("--benchmarks", default="SPY", help="Comma or space separated benchmark tickers to save with snapshots.")
+    parser.add_argument("--no-benchmark-fetch", action="store_true", help="Do not fetch separate benchmark quotes when writing snapshots.")
     args = parser.parse_args()
 
     stocks = json.loads(DATA_PATH.read_text())
+    benchmarks = parse_symbol_list(args.benchmarks)
+    if args.snapshot_only:
+        path = write_history_snapshot(
+            stocks,
+            mode="snapshot-only",
+            reason="manual snapshot",
+            benchmarks=benchmarks,
+            fetch_benchmarks=not args.no_benchmark_fetch,
+        )
+        print(f"wrote history snapshot {path}")
+        return 0
+
     requested = parse_tickers(args.tickers)
     if requested:
         print(f"requested tickers: {', '.join(requested)}")
@@ -655,6 +832,15 @@ def main() -> int:
         refreshed.append(refreshed_stock)
         time.sleep(0.5)
     DATA_PATH.write_text(json.dumps(refreshed, indent=2) + "\n")
+    if not args.no_snapshot:
+        path = write_history_snapshot(
+            refreshed,
+            mode=args.mode,
+            reason="Yahoo refresh",
+            benchmarks=benchmarks,
+            fetch_benchmarks=not args.no_benchmark_fetch,
+        )
+        print(f"wrote history snapshot {path}")
     print("database tickers: " + ", ".join(s["ticker"] for s in refreshed))
     print(f"updated {DATA_PATH}")
     return 0

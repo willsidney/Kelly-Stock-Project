@@ -1,0 +1,11 @@
+{
+  "status": "insufficient_history",
+  "reason": "At least two dated history snapshots are needed for a walk-forward backtest.",
+  "snapshotCount": 1,
+  "rebalanceSnapshotCount": 1,
+  "schedule": "weekly",
+  "benchmark": "SPY",
+  "models": {},
+  "baselines": {},
+  "periods": []
+}

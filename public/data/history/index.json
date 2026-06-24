@@ -1,0 +1,12 @@
+[
+  {
+    "date": "2026-06-24",
+    "file": "2026-06-24.json",
+    "snapshotTime": "2026-06-24T15:32:07+00:00",
+    "mode": "snapshot-only",
+    "reason": "manual snapshot",
+    "stockCount": 298,
+    "modelReadyCount": 293,
+    "benchmarks": []
+  }
+]

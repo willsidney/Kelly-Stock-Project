@@ -75,6 +75,8 @@ The repo includes a GitHub Actions workflow named `Update Yahoo Finance Data`.
 
 It refreshes `public/data/stocks.json` from Yahoo Finance on weekdays and can also be run manually from the Actions tab. It updates best-effort fields including price, currency, analyst recommendation mix, target-price upside, beta, short interest, earnings distance, YTD performance, one-year drawdown, valuation multiples, margins, growth, cash flow, and balance-sheet metrics when Yahoo returns those fields.
 
+Each successful update also writes a compact daily point-in-time snapshot in `public/data/history/`. If the updater runs multiple times in the same day, the latest run replaces that day's snapshot. This keeps the evidence trail useful for backtesting without making the repo grow too quickly.
+
 For a large database, the updater has two modes:
 
 - `full` - updates analyst data, targets, fundamentals, risk fields, and price. This is slower and is best for adding stocks or doing a daily deep refresh.
@@ -124,6 +126,22 @@ The right target structure is:
 - `Yahoo Scan` - reviews new scan candidates before saving them into the database.
 
 For large databases, individual-stock Monte Carlo is disabled in the main app once the universe becomes too large for a phone browser. The core model ranking still runs across the full database, and the portfolio chart uses a top-ranked shortlist.
+
+## Backtesting
+
+The repo includes a manual GitHub Actions workflow named `Backtest Kelly Model`.
+
+The backtester uses only saved files in `public/data/history/`, then compares model-selected top-N portfolios against the equal-weight tracked universe and the saved benchmark, currently `SPY`. This avoids the main statistical error of testing today's Yahoo analyst targets and fundamentals against returns that happened before those inputs existed.
+
+Early backtest results will be limited until enough dated snapshots have accumulated. The first useful checks start after at least two snapshots; weekly and monthly tests become more meaningful after several weeks or months.
+
+Local commands:
+
+```bash
+python3 scripts/update_yahoo_data.py --snapshot-only --no-benchmark-fetch
+python3 scripts/backtest_snapshots.py --schedule weekly --top 10,20 --output public/data/backtest-results.json
+python3 scripts/audit_model_stats.py --format markdown
+```
 
 ## Privacy Note
 

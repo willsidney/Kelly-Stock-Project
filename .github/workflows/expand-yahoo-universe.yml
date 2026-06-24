@@ -72,12 +72,12 @@ jobs:
 
       - name: Commit expanded database
         run: |
-          if git diff --quiet -- public/data/stocks.json; then
+          if git diff --quiet -- public/data/stocks.json public/data/history; then
             echo "No Yahoo universe changes."
             exit 0
           fi
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add public/data/stocks.json
+          git add public/data/stocks.json public/data/history
           git commit -m "Expand Yahoo stock universe"
           git push

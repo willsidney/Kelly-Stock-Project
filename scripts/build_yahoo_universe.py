@@ -18,7 +18,7 @@ import time
 import urllib.request
 from pathlib import Path
 
-from update_yahoo_data import DATA_PATH, UA, model_data_issues, quote_batch, seed_stock, update_stock
+from update_yahoo_data import DATA_PATH, UA, model_data_issues, quote_batch, seed_stock, update_stock, write_history_snapshot
 
 
 NASDAQ_LISTED_URL = "https://www.nasdaqtrader.com/dynamic/SymDir/nasdaqlisted.txt"
@@ -393,11 +393,18 @@ def main() -> int:
     stocks.extend(added)
     stocks.sort(key=lambda s: str(s.get("ticker") or ""))
     DATA_PATH.write_text(json.dumps(stocks, indent=2) + "\n")
+    snapshot_path = write_history_snapshot(
+        stocks,
+        mode="universe-expand",
+        reason="Yahoo universe expansion",
+        benchmarks=["SPY"],
+    )
     print(f"added {len(added)} stocks; database now has {len(stocks)}")
     if incomplete:
         print("tracked incomplete: " + ", ".join(f"{ticker} ({', '.join(issues)})" for ticker, issues in incomplete), file=sys.stderr)
     if skipped:
         print("skipped due to fetch errors: " + ", ".join(f"{ticker} ({', '.join(issues)})" for ticker, issues in skipped), file=sys.stderr)
+    print(f"wrote history snapshot {snapshot_path}")
     print(f"updated {DATA_PATH}")
     return 0
 
