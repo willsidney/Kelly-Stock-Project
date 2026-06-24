@@ -29,6 +29,13 @@ const LAST_REVIEW = "May 25 2026";
 const NEXT_REVIEW = "Nov 2026";
 const STORAGE_KEY = "kelly-stock-database-v1";
 const DATA_URL = "./data/stocks.json";
+const MODEL_V13 = "v13";
+const MODEL_V14 = "v14";
+const MODEL_OPTIONS = [
+  { value: MODEL_V13, label: "v13 Current", short: "v13", pill: "Blended Kelly" },
+  { value: MODEL_V14, label: "v14 Optimized", short: "v14", pill: "Optimized Risk" },
+];
+const MODEL_LABELS = Object.fromEntries(MODEL_OPTIONS.map(m=>[m.value,m]));
 
 // ─────────────────────────────────────────────────────────────────────────────
 // STOCK DATA — May 2026 + Novo Nordisk replaces IonQ
@@ -178,6 +185,7 @@ function priceLabel(s){
 }
 const modelScore = s => Math.max(0,Number(s.adj)||0)*100;
 const clamp01 = x => Math.max(0,Math.min(1,x));
+const clampRange = (x,lo,hi) => Math.max(lo,Math.min(hi,x));
 const isNum = v => Number.isFinite(Number(v));
 const scoreHigher = (value, weak, strong) => isNum(value) ? clamp01((Number(value)-weak)/(strong-weak)) : null;
 const scoreLower = (value, strong, weak) => isNum(value) && Number(value)>0 ? clamp01((weak-Number(value))/(weak-strong)) : null;
@@ -222,6 +230,54 @@ function fundamentalScores(s){
     qualityCount: qualityParts.filter(v=>v!==null).length,
     valuationCount: valuationParts.filter(v=>v!==null).length,
   };
+}
+
+function optimizedProfile(s,flags,eurNow,eurFcast,bp){
+  const fs = fundamentalScores(s);
+  const pct = (value,fallback=0.50) => value===null||value===undefined ? fallback : clamp01(Number(value)/100);
+  const quality = pct(fs.quality);
+  const valuation = pct(fs.valuation);
+  const growth = avgScore([
+    scoreHigher(s.revenueGrowth,-0.05,0.35),
+    scoreHigher(s.earningsGrowth,-0.10,0.45),
+    scoreHigher(s.operatingMargins,0.05,0.30),
+    scoreHigher(s.freeCashflowYield,-0.02,0.08),
+  ]) ?? 0.50;
+  const balance = avgScore([
+    scoreLower(debtRatio(s.debtToEquity),0.25,2.50),
+    scoreHigher(s.currentRatio,0.80,2.20),
+    scoreHigher(s.cashDebtRatio,0.20,1.50),
+  ]) ?? 0.50;
+  const analyst = bp.pa;
+  const analystCoverage = clamp01((Number(s.analystCount)||0)/25);
+  const fundamentalCoverage = clamp01((fs.qualityCount+fs.valuationCount)/14);
+  const dataConfidence = clampRange(0.35 + analystCoverage*0.35 + fundamentalCoverage*0.30,0.25,1);
+  const betaRisk = flags.beta ? clamp01((s.beta-0.80)/2.70) : 0.35;
+  const drawdownRisk = flags.drawdown ? clamp01((s.drawdown-0.15)/0.55) : 0.35;
+  const shortRisk = flags.shortInt ? clamp01(s.shortInt/0.20) : 0.25;
+  const balanceRisk = 1-balance;
+  const riskScore = avgScore([betaRisk,drawdownRisk,shortRisk,balanceRisk]) ?? 0.40;
+  const fxAdj = flags.fx&&s.fxExposed ? (eurFcast-eurNow)/eurNow : 0;
+  const fxAdjUpside = Math.max(0,s.upside*(1+fxAdj));
+  const upsideScore = clamp01(fxAdjUpside/0.60);
+  const optimizedP = clampRange(
+    0.38
+      + analyst*0.18
+      + quality*0.16
+      + valuation*0.13
+      + growth*0.12
+      + bp.prr*0.11
+      + balance*0.07
+      + upsideScore*0.07
+      - riskScore*0.14
+      - (1-dataConfidence)*0.08,
+    0.05,
+    0.90
+  );
+  const returnTilt = clampRange(0.72 + quality*0.22 + valuation*0.16 + growth*0.16 + balance*0.12 - riskScore*0.18,0.40,1.45);
+  const expectedReturn = clampRange(fxAdjUpside*returnTilt*(0.75+dataConfidence*0.25),0.005,2.50);
+  const expectedLoss = clampRange(s.drawdown*(0.70+riskScore*0.55),0.01,0.95);
+  return {fs,quality,valuation,growth,balance,analyst,dataConfidence,riskScore,optimizedP,expectedReturn,expectedLoss,fxAdj,fxAdjUpside};
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -394,19 +450,39 @@ function runPortfolioSim(stocks,weights,budget,seed,eurNow,eurFcast){
 // ─────────────────────────────────────────────────────────────────────────────
 const earningsMult=d=>d<=30?0.85:d<=60?0.92:d<=90?0.96:1.0;
 
-function runModel(stocks,mcResults,budget,kellyMult,flags,marketBull,eurNow,eurFcast){
+function runModel(stocks,mcResults,budget,kellyMult,flags,marketBull,eurNow,eurFcast,modelVersion=MODEL_V13){
   const n=stocks.length,hardMin=1/(2*n),meanInvB=stocks.reduce((s,x)=>s+1/x.beta,0)/n;
+  const meanInvRootB=stocks.reduce((s,x)=>s+(1/Math.sqrt(Math.max(0.1,x.beta))),0)/n;
   const CAP=0.20,regime=marketBull?1.0:0.7,fxDrift=(eurFcast-eurNow)/eurNow;
+  const optimized=modelVersion===MODEL_V14;
   const sectorCnt={};
   stocks.forEach(s=>sectorCnt[s.sector]=(sectorCnt[s.sector]||0)+1);
 
   const computed=stocks.map((s,i)=>{
     const mc=mcResults?.[i]??null;
 
-    // Blended win probability (new)
     const bp=blendedP(s);
+    if(optimized){
+      const opt=optimizedProfile(s,flags,eurNow,eurFcast,bp);
+      const pComposite = flags.blendedP ? opt.optimizedP : bp.pa;
+      const siP=flags.shortInt?Math.min(0.12,s.shortInt*0.45):0;
+      const pAdj=clampRange(pComposite*(1-siP),0.01,0.95);
+      const b=opt.expectedReturn,d=flags.drawdown?opt.expectedLoss:0.001,q=1-pAdj;
+      const rawK=flags.drawdown?(pAdj*b-q*d)/(b+d):(pAdj*b-q)/b;
+      const bm=flags.beta?clampRange(1/Math.sqrt(Math.max(0.1,s.beta)),0.55,1.25):1;
+      const sc=sectorCnt[s.sector];
+      const sm=flags.sector&&sc>1?Math.max(0.70,1-(sc-1)*0.06):1;
+      const em=flags.earnings?earningsMult(s.earningsDays):1;
+      const floor=flags.beta?Math.max(hardMin,hardMin*(bm/meanInvRootB)):hardMin;
+      const confidenceMult=0.75+opt.dataConfidence*0.25;
+      const adj=Math.max(0,rawK*kellyMult*bm*sm*em*regime*confidenceMult);
+
+      return{...s,bp,pAdj,pComposite,rawK,adj,floor,
+        fxAdjUpside:opt.fxAdjUpside,siP,secMult:sm,epMult:em,betaMult:bm,
+        isFloorOnly:adj===0,mc,modelVersion,opt,fs:opt.fs};
+    }
+
     const pComposite = flags.blendedP ? bp.blend : bp.pa;
-    // Short interest penalty applied on top of blend (existing factor)
     const siP=flags.shortInt?Math.min(0.15,s.shortInt*0.5):0;
     const pAdj=pComposite*(1-siP);
 
@@ -423,7 +499,7 @@ function runModel(stocks,mcResults,budget,kellyMult,flags,marketBull,eurNow,eurF
 
     return{...s,bp,pAdj,pComposite,rawK,adj,floor,
       fxAdjUpside:s.upside*(1+fxAdj),siP,secMult:sm,epMult:em,betaMult:bm,
-      isFloorOnly:adj===0,mc};
+      isFloorOnly:adj===0,mc,modelVersion};
   });
 
   const tFloor=computed.reduce((s,x)=>s+x.floor,0);
@@ -944,12 +1020,12 @@ function Fundamentals({results}){
   );
 }
 
-function CreateModel({stocks,results,budget,kellyMult,flags,marketBull,eurUsdNow,eurUsdForecast}){
+function CreateModel({stocks,results,budget,kellyMult,flags,marketBull,eurUsdNow,eurUsdForecast,modelVersion}){
   const [query,setQuery] = useState("");
   const [sector,setSector] = useState("all");
   const [selected,setSelected] = useState(()=>stocks.slice(0,Math.min(10,stocks.length)).map(s=>s.ticker));
   const selectedStocks = stocks.filter(s=>selected.includes(s.ticker));
-  const customResults = selectedStocks.length ? runModel(selectedStocks,null,budget,kellyMult,flags,marketBull,eurUsdNow,eurUsdForecast) : [];
+  const customResults = selectedStocks.length ? runModel(selectedStocks,null,budget,kellyMult,flags,marketBull,eurUsdNow,eurUsdForecast,modelVersion) : [];
   const available = stocks
     .filter(s=>(sector==="all"||s.sector===sector) && (!query || `${s.name} ${s.ticker}`.toUpperCase().includes(query.toUpperCase())))
     .sort((a,b)=>a.ticker.localeCompare(b.ticker));
@@ -1040,6 +1116,7 @@ export default function App(){
   const [budget,         setBudget]         = useState(250);
   const [kellyMult,      setKellyMult]      = useState(0.5);
   const [marketBull,     setMarketBull]     = useState(true);
+  const [modelVersion,   setModelVersion]   = useState(MODEL_V13);
   const [eurUsdNow,      setEurUsdNow]      = useState(1.1733);
   const [eurUsdForecast, setEurUsdForecast] = useState(1.175);
   const [flags, setFlags] = useState({blendedP:true,beta:true,drawdown:true,shortInt:true,sector:true,fx:true,earnings:true});
@@ -1068,8 +1145,8 @@ export default function App(){
   useEffect(()=>{ setMcResults(null); setPortBands(null); },[stocks,eurUsdNow,eurUsdForecast]);
 
   const results = useMemo(
-    ()=>runModel(stocks,mcResults,budget,kellyMult,flags,marketBull,eurUsdNow,eurUsdForecast),
-    [stocks,mcResults,budget,kellyMult,flags,marketBull,eurUsdNow,eurUsdForecast]
+    ()=>runModel(stocks,mcResults,budget,kellyMult,flags,marketBull,eurUsdNow,eurUsdForecast,modelVersion),
+    [stocks,mcResults,budget,kellyMult,flags,marketBull,eurUsdNow,eurUsdForecast,modelVersion]
   );
   const weightsByBase = useMemo(
     ()=>stocks.map(s=>results.find(r=>r.ticker===s.ticker)?.weight??(1/stocks.length)),
@@ -1078,7 +1155,7 @@ export default function App(){
 
   useEffect(()=>{
     setPortBands(null);
-  },[budget,kellyMult,flags,marketBull,stocks,mcResults,eurUsdNow,eurUsdForecast]);
+  },[budget,kellyMult,flags,marketBull,modelVersion,stocks,mcResults,eurUsdNow,eurUsdForecast]);
 
   useEffect(()=>{
     if(view!=="chart" || portBands) return;
@@ -1093,6 +1170,7 @@ export default function App(){
   const totalW     = results.reduce((s,x)=>s+x.weight,0);
   const totalE     = results.reduce((s,x)=>s+x.euros,0);
   const kellyLabel = kellyMult===1?"Full Kelly":kellyMult===0.5?"Half Kelly":"Quarter Kelly";
+  const modelLabel = MODEL_LABELS[modelVersion] || MODEL_LABELS[MODEL_V13];
   const portMed    = portBands?.p50[PORT_STEPS];
   const portP10    = portBands?.p10[PORT_STEPS];
   const fxPct      = ((eurUsdForecast-eurUsdNow)/eurUsdNow*100).toFixed(2);
@@ -1106,7 +1184,7 @@ export default function App(){
   };
 
   const flagDefs=[
-    {k:"blendedP",   label:"🔀 Blended Win Prob",sub:"Analyst+Momentum+R/R+SI+EP",color:"#22d3ee"},
+    {k:"blendedP",   label:modelVersion===MODEL_V14?"🔀 Optimized Conviction":"🔀 Blended Win Prob",sub:modelVersion===MODEL_V14?"Return+quality+value-risk":"Analyst+Momentum+R/R+SI+EP",color:"#22d3ee"},
     {k:"beta",       label:"β Beta Penalty",      sub:"1/β + dynamic floors",     color:"#34d399"},
     {k:"drawdown",   label:"📉 Drawdown",          sub:"Analytical loss floor",    color:"#f87171"},
     {k:"shortInt",   label:"🩳 Short Interest",    sub:"Penalty on top of blend",  color:"#fb923c"},
@@ -1143,14 +1221,16 @@ export default function App(){
               <h1 style={{fontFamily:"Inter",fontSize:23,fontWeight:700,letterSpacing:"-.02em",background:"linear-gradient(135deg,#60a5fa,#a78bfa,#34d399)",WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent"}}>
                 Kelly Criterion Portfolio
               </h1>
-              <span className="pill" style={{background:"#1e293b",color:"#60a5fa",border:"1px solid #3b82f630"}}>v13</span>
-              <span className="pill" style={{background:"#083344",color:"#22d3ee",border:"1px solid #22d3ee40"}}>🔀 Blended Win Prob</span>
+              <span className="pill" style={{background:"#1e293b",color:"#60a5fa",border:"1px solid #3b82f630"}}>{modelLabel.short}</span>
+              <span className="pill" style={{background:modelVersion===MODEL_V14?"#312e81":"#083344",color:modelVersion===MODEL_V14?"#c4b5fd":"#22d3ee",border:`1px solid ${modelVersion===MODEL_V14?"#a78bfa40":"#22d3ee40"}`}}>{modelLabel.pill}</span>
               <span className="pill" style={{background:"#052e16",color:"#4ade80",border:"1px solid #4ade8040"}}>{stocks.length} stocks · {dbMode}</span>
               {dbMode==="local"&&<button className="btn" onClick={usePublishedDatabase} style={{padding:"3px 9px",fontSize:9}}>Use Yahoo DB</button>}
               {running&&<span className="pill pulsing" style={{background:"#451a03",color:"#fb923c",border:"1px solid #fb923c40"}}>⟳ MC Running</span>}
             </div>
             <p style={{fontSize:11,color:"#475569"}}>
-              Win prob = Analyst(40%) + Momentum(20%) + R/R(20%) + Short Int(10%) + Earnings(10%) · {LAST_REVIEW}
+              {modelVersion===MODEL_V14
+                ? `Optimized = expected return + quality + valuation + growth - risk - data confidence penalty · ${LAST_REVIEW}`
+                : `Win prob = Analyst(40%) + Momentum(20%) + R/R(20%) + Short Int(10%) + Earnings(10%) · ${LAST_REVIEW}`}
             </p>
           </div>
           <button className="btn active" onClick={()=>{const s=(Date.now()%99997)+1;setMcSeed(s);runSim(s);}}
@@ -1180,6 +1260,14 @@ export default function App(){
 
       {/* CONTROLS */}
       <div style={{padding:"12px 22px",borderBottom:"1px solid #1e293b",display:"flex",gap:16,flexWrap:"wrap",alignItems:"flex-end",background:"#020617"}}>
+        <div>
+          <div style={{fontSize:9,fontWeight:600,color:"#334155",letterSpacing:".06em",textTransform:"uppercase",marginBottom:4}}>Model</div>
+          <div style={{display:"flex",gap:4}}>
+            {MODEL_OPTIONS.map(o=>(
+              <button key={o.value} className={`btn${modelVersion===o.value?" active":""}`} onClick={()=>setModelVersion(o.value)}>{o.label}</button>
+            ))}
+          </div>
+        </div>
         <div>
           <div style={{fontSize:9,fontWeight:600,color:"#334155",letterSpacing:".06em",textTransform:"uppercase",marginBottom:4}}>Budget (€)</div>
           <input className="ni" type="number" min={10} value={budget} onChange={e=>setBudget(Math.max(10,Number(e.target.value)))}/>
@@ -1230,7 +1318,7 @@ export default function App(){
       {view==="scanner"&&<Scanner results={results} setView={setView}/>}
       {view==="database"&&<StockDatabase stocks={stocks} results={results} setStocks={setStocks} setView={setView} setDbMode={setDbMode}/>}
       {view==="fundamentals"&&<Fundamentals results={results}/>}
-      {view==="create"&&<CreateModel stocks={stocks} results={results} budget={budget} kellyMult={kellyMult} flags={flags} marketBull={marketBull} eurUsdNow={eurUsdNow} eurUsdForecast={eurUsdForecast}/>}
+      {view==="create"&&<CreateModel stocks={stocks} results={results} budget={budget} kellyMult={kellyMult} flags={flags} marketBull={marketBull} eurUsdNow={eurUsdNow} eurUsdForecast={eurUsdForecast} modelVersion={modelVersion}/>}
       {view==="search"&&<StockSearch portfolioResults={results}/>}
       {view==="prob"&&<ProbBreakdownPanel stocks={stocks}/>}
 
@@ -1253,6 +1341,9 @@ export default function App(){
             const floorW  = Math.min(barW,(s.floor*budget/maxEuros)*100);
             const ytdColor= s.ytd>0.15?"#f87171":s.ytd<-0.15?"#4ade80":"#64748b";
             const paDelta  = (s.pAdj - s.bp.pa)*100;
+            const isV14 = s.modelVersion===MODEL_V14;
+            const opt = s.opt;
+            const pctV = v => v===null||v===undefined ? "—" : `${(v*100).toFixed(0)}%`;
 
             return(
               <div key={s.ticker}>
@@ -1276,7 +1367,7 @@ export default function App(){
                   </div>
                   <div className="mono" style={{fontSize:11,fontWeight:700,color:s.currentPrice?"#94a3b8":"#334155",textAlign:"right"}}>{priceLabel(s)}</div>
 
-                  {/* Win prob — blended */}
+                  {/* Win prob / conviction */}
                   <div>
                     <span className="pill" style={{background:pColor+"15",color:pColor,border:`1px solid ${pColor}30`,fontSize:11,fontWeight:700}}>
                       {(s.pAdj*100).toFixed(1)}%
@@ -1327,7 +1418,23 @@ export default function App(){
                   <div style={{background:"#080f1e",borderBottom:"1px solid #1e293b",padding:"14px 22px",display:"grid",gridTemplateColumns:"1fr 1.6fr",gap:20}}>
                     <div>
                       <div style={{fontSize:9,fontWeight:700,color:"#334155",letterSpacing:".06em",textTransform:"uppercase",marginBottom:8}}>Factor Breakdown</div>
-                      {[
+                      {(isV14?[
+                        {l:"Model",           v:"v14 Optimized Risk",                                                                  c:"#c4b5fd"},
+                        {l:"Analyst base",    v:`${(s.bp.pa*100).toFixed(0)}%`,                                                        c:"#60a5fa"},
+                        {l:"Optimized p",     v:`${pctV(opt?.optimizedP)}  (${(paDelta>0?"▲":"▼")+(Math.abs(paDelta).toFixed(0))}pp vs analyst)`, c:"#22d3ee"},
+                        {l:"Expected return", v:pctV(opt?.expectedReturn),                                                             c:"#4ade80"},
+                        {l:"Expected loss",   v:pctV(opt?.expectedLoss),                                                               c:"#f87171"},
+                        {l:"Quality",         v:`${fmtScore(opt?.fs?.quality)} / 100  (${opt?.fs?.qualityCount??0} fields)`,           c:"#a78bfa"},
+                        {l:"Valuation",       v:`${fmtScore(opt?.fs?.valuation)} / 100  (${opt?.fs?.valuationCount??0} fields)`,       c:"#fbbf24"},
+                        {l:"Growth",          v:pctV(opt?.growth),                                                                     c:"#34d399"},
+                        {l:"Risk score",      v:pctV(opt?.riskScore),                                                                  c:"#fb923c"},
+                        {l:"Data confidence", v:pctV(opt?.dataConfidence),                                                             c:"#94a3b8"},
+                        {l:"Raw Kelly f*",    v:s.rawK<0?"Negative — floor only":(s.rawK*100).toFixed(1)+"%",                          c:s.rawK<0?"#f87171":"#e2e8f0"},
+                        {l:"β Multiplier",    v:`×${s.betaMult.toFixed(3)}  (β=${s.beta})`,                                            c:"#34d399"},
+                        {l:"Sector",          v:`×${s.secMult.toFixed(2)}  (${SECTOR_LABELS[s.sector]})`,                             c:s.secMult<1?"#fb923c":"#34d399"},
+                        {l:"Source",          v:s.analystSrc,                                                                           c:"#64748b"},
+                      ]:[
+                        {l:"Model",           v:"v13 Blended Kelly",                                                                   c:"#60a5fa"},
                         {l:"p Analyst",       v:`${(s.bp.pa*100).toFixed(0)}%  (×${W_ANALYST})`,                                       c:"#60a5fa"},
                         {l:"p Momentum",      v:`${(s.bp.pm*100).toFixed(0)}%  YTD ${s.ytd>0?"+":""}${(s.ytd*100).toFixed(0)}%  (×${W_MOMENTUM})`, c:"#fbbf24"},
                         {l:"p Reward/Risk",   v:`${(s.bp.prr*100).toFixed(0)}%  ratio ${(s.upside/s.drawdown).toFixed(2)}  (×${W_RR})`,c:"#34d399"},
@@ -1338,7 +1445,7 @@ export default function App(){
                         {l:"β Multiplier",    v:`×${s.betaMult.toFixed(3)}  (β=${s.beta})`,                                            c:"#34d399"},
                         {l:"Sector",          v:`×${s.secMult.toFixed(2)}  (${SECTOR_LABELS[s.sector]})`,                             c:s.secMult<1?"#fb923c":"#34d399"},
                         {l:"Source",          v:s.analystSrc,                                                                           c:"#64748b"},
-                      ].map((d,j)=>(
+                      ]).map((d,j)=>(
                         <div key={j} style={{display:"flex",justifyContent:"space-between",padding:"3px 0",borderBottom:"1px solid #0f172a"}}>
                           <span style={{fontSize:9,color:"#475569"}}>{d.l}</span>
                           <span style={{fontFamily:"monospace",fontSize:9,fontWeight:600,color:d.c,textAlign:"right",maxWidth:"60%"}}>{d.v}</span>
@@ -1392,7 +1499,7 @@ export default function App(){
       )}
 
       <div style={{padding:"8px 22px",borderTop:"1px solid #1e293b",background:"#020617",fontSize:7,color:"#1e293b",display:"flex",gap:8,flexWrap:"wrap"}}>
-        <span style={{color:"#22d3ee"}}>▪ Blended p: analyst×0.4+momentum×0.2+R/R×0.2+SI×0.1+earnings×0.1</span>
+        <span style={{color:"#22d3ee"}}>{modelVersion===MODEL_V14?"▪ v14: expected return + fundamentals - risk, then Kelly allocation":"▪ v13: analyst×0.4+momentum×0.2+R/R×0.2+SI×0.1+earnings×0.1"}</span>
         {["t(5) fat tails","Merton jumps","vol regime","bear corr","momentum drift","full FX"].map(t=><span key={t} style={{color:"#1e3a5f"}}>▪ {t}</span>)}
         <span style={{marginLeft:"auto",color:"#f59e0b44"}}>Not financial advice</span>
       </div>
