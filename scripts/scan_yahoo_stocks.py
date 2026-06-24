@@ -21,6 +21,7 @@ from update_yahoo_data import (
     ROOT,
     DATA_PATH,
     fetch_json,
+    model_data_issues,
     quote_batch,
     seed_stock,
     update_stock,
@@ -508,6 +509,10 @@ def main() -> int:
         try:
             stock = seed_stock(ticker, quote, idx)
             stock = update_stock(stock, quote)
+            issues = model_data_issues(stock)
+            if issues:
+                print(f"warn: skipped {ticker}; Yahoo data incomplete for model: {', '.join(issues)}", file=sys.stderr)
+                continue
             stock["scanSource"] = ", ".join(candidates[ticker].get("screeners") or [])
             stocks.append(stock)
         except Exception as exc:

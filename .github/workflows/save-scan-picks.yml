@@ -1,0 +1,94 @@
+name: Save Scan Picks To Database
+
+on:
+  workflow_dispatch:
+    inputs:
+      tickers:
+        description: "Optional ticker codes to save. Leave blank to save the top scan results."
+        required: false
+        default: ""
+      top_count:
+        description: "How many top scan results to save when tickers is blank"
+        required: false
+        default: "10"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: yahoo-data
+  cancel-in-progress: false
+
+jobs:
+  save:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install Yahoo updater dependencies
+        run: python -m pip install --upgrade yfinance
+
+      - name: Choose tickers
+        env:
+          INPUT_TICKERS: ${{ inputs.tickers }}
+          INPUT_TOP_COUNT: ${{ inputs.top_count }}
+        run: |
+          python - <<'PY'
+          import json
+          import os
+          import re
+          import sys
+          from pathlib import Path
+
+          def parse_tickers(value):
+              out = []
+              seen = set()
+              for token in re.split(r"[\s,]+", (value or "").upper()):
+                  ticker = token.strip()
+                  if ticker and ticker not in seen:
+                      seen.add(ticker)
+                      out.append(ticker)
+              return out
+
+          tickers = parse_tickers(os.environ.get("INPUT_TICKERS"))
+          if not tickers:
+              try:
+                  top_count = max(1, int(os.environ.get("INPUT_TOP_COUNT") or "10"))
+              except ValueError:
+                  top_count = 10
+              path = Path("public/data/scan-results.json")
+              if not path.exists():
+                  sys.exit("No scan-results.json file exists yet. Run Scan Yahoo Stocks first.")
+              scan = json.loads(path.read_text())
+              rows = scan.get("results") or []
+              tickers = [str(row.get("ticker", "")).upper().strip() for row in rows[:top_count] if row.get("ticker")]
+
+          if not tickers:
+              sys.exit("No tickers selected. Run a scan first or enter tickers manually.")
+
+          selected = ",".join(dict.fromkeys(tickers))
+          print(f"Saving tickers: {selected}")
+          with open(os.environ["GITHUB_ENV"], "a") as env:
+              env.write(f"PROMOTE_TICKERS={selected}\n")
+          PY
+
+      - name: Refresh selected stocks into database
+        run: python scripts/update_yahoo_data.py --tickers "$PROMOTE_TICKERS"
+
+      - name: Commit refreshed database
+        run: |
+          if git diff --quiet -- public/data/stocks.json; then
+            echo "No database changes."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add public/data/stocks.json
+          git commit -m "Save Yahoo scan picks to database"
+          git push

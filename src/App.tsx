@@ -30,6 +30,9 @@ const NEXT_REVIEW = "Nov 2026";
 const STORAGE_KEY = "kelly-stock-database-v1";
 const DATA_URL = "./data/stocks.json";
 const SCAN_URL = "./data/scan-results.json";
+const ACTION_URL = "https://github.com/willsidney/Kelly-Stock-Project/actions/workflows";
+const RUN_SCAN_URL = `${ACTION_URL}/scan-yahoo-stocks.yml`;
+const SAVE_SCAN_URL = `${ACTION_URL}/save-scan-picks.yml`;
 const MODEL_V13 = "v13";
 const MODEL_V14 = "v14";
 const MODEL_OPTIONS = [
@@ -895,7 +898,8 @@ function YahooScan({scanData,setStocks,setDbMode,setView}){
             <option value="confidence">Sort confidence</option>
             <option value="price">Sort price</option>
           </select>
-          <a className="btn" href="https://github.com/willsidney/Kelly-Stock-Project/actions/workflows/scan-yahoo-stocks.yml" target="_blank" rel="noreferrer" style={{textDecoration:"none"}}>Run Scan</a>
+          <a className="btn" href={RUN_SCAN_URL} target="_blank" rel="noreferrer" style={{textDecoration:"none"}}>Run Scan</a>
+          <a className="btn active" href={SAVE_SCAN_URL} target="_blank" rel="noreferrer" style={{textDecoration:"none"}}>Save Picks</a>
         </div>
       </div>
       <div style={{background:"#080f1e",border:"1px solid #1e293b",borderRadius:12,overflow:"hidden"}}>
@@ -918,7 +922,7 @@ function YahooScan({scanData,setStocks,setDbMode,setView}){
             <div className="mono" style={{fontSize:12,fontWeight:700,color:s.qualityScore===undefined?"#334155":"#a78bfa",textAlign:"right"}}>{fmtScore(s.qualityScore)}</div>
             <div className="mono" style={{fontSize:12,fontWeight:700,color:s.valuationScore===undefined?"#334155":"#fbbf24",textAlign:"right"}}>{fmtScore(s.valuationScore)}</div>
             <div className="mono" style={{fontSize:12,fontWeight:700,color:"#94a3b8",textAlign:"right"}}>{fmtPct(s.dataConfidence)}</div>
-            <button className="btn" onClick={()=>addCandidate(s)} style={{padding:"5px 8px"}}>Add</button>
+            <button className="btn" onClick={()=>addCandidate(s)} style={{padding:"5px 8px"}}>Preview</button>
           </div>
         ))}
         {!filtered.length&&(

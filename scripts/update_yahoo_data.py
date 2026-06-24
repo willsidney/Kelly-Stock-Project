@@ -92,6 +92,37 @@ def valid_price(value) -> bool:
     return isinstance(value, (int, float)) and math.isfinite(value) and value > 0
 
 
+def model_data_issues(stock: dict) -> list[str]:
+    issues = []
+    ticker = str(stock.get("ticker") or "").strip()
+    if not ticker:
+        issues.append("ticker")
+    if stock.get("dataProvider") != "Yahoo Finance":
+        issues.append("Yahoo source")
+    if not valid_price(stock.get("currentPrice")):
+        issues.append("price")
+    beta = stock.get("beta")
+    if not isinstance(beta, (int, float)) or not math.isfinite(beta) or beta <= 0:
+        issues.append("beta")
+    analyst_count = stock.get("analystCount")
+    if not isinstance(analyst_count, (int, float)) or analyst_count <= 0:
+        issues.append("analyst count")
+    rating_total = sum(
+        float(stock.get(key) or 0)
+        for key in ("strongBuy", "buy", "hold", "sell")
+        if isinstance(stock.get(key), (int, float))
+    )
+    if rating_total <= 0:
+        issues.append("analyst rating mix")
+    if not stock.get("lastUpdated"):
+        issues.append("update timestamp")
+    return issues
+
+
+def is_model_ready(stock: dict) -> bool:
+    return not model_data_issues(stock)
+
+
 def quote_current_price(quote: dict | None) -> tuple[float | None, str | None, int | None]:
     """Prefer Yahoo's active quote fields over previous-close style fallbacks."""
     if not quote:
@@ -536,6 +567,7 @@ def main() -> int:
         print("requested tickers: none")
     existing = {str(s.get("ticker", "")).upper().strip() for s in stocks if s.get("ticker")}
     missing = [ticker for ticker in requested if ticker not in existing]
+    new_tickers = set(missing)
     if missing:
         print(f"adding tickers: {', '.join(missing)}")
         missing_quotes = quote_batch(missing)
@@ -547,13 +579,34 @@ def main() -> int:
     tickers = [str(s.get("ticker", "")).upper().strip() for s in stocks if s.get("ticker")]
     quotes = quote_batch(tickers)
     refreshed = []
+    skipped_new = []
     for stock in stocks:
         ticker = str(stock.get("ticker", "")).upper().strip()
         print(f"refreshing {ticker}")
-        refreshed.append(update_stock(stock, quotes.get(ticker)))
+        refreshed_stock = update_stock(stock, quotes.get(ticker))
+        if ticker in new_tickers:
+            issues = model_data_issues(refreshed_stock)
+            if issues:
+                skipped_new.append((ticker, issues))
+                print(
+                    f"warn: skipped new ticker {ticker}; Yahoo did not return model-ready data: {', '.join(issues)}",
+                    file=sys.stderr,
+                )
+                time.sleep(0.5)
+                continue
+        refreshed.append(refreshed_stock)
         time.sleep(0.5)
     DATA_PATH.write_text(json.dumps(refreshed, indent=2) + "\n")
     print("database tickers: " + ", ".join(s["ticker"] for s in refreshed))
+    if skipped_new:
+        print(
+            "skipped new tickers: "
+            + ", ".join(f"{ticker} ({', '.join(issues)})" for ticker, issues in skipped_new),
+            file=sys.stderr,
+        )
+        if len(skipped_new) == len(new_tickers):
+            print("error: no requested new tickers had enough Yahoo data to add.", file=sys.stderr)
+            return 2
     print(f"updated {DATA_PATH}")
     return 0
 

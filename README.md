@@ -60,6 +60,7 @@ The app now includes:
 
 - `Database` - add or update model stock records, export the database, import a saved JSON database, or reset to the original model stocks.
 - `Scanner` - ranks every stock in the saved database using the active model settings, with filters for score, win probability, upside, drawdown, sector, and search.
+- `Yahoo Scan` - shows the latest broad Yahoo Finance scan. `Preview` tests a scan result in the browser model only; `Save Picks` writes selected scan stocks into the permanent Yahoo database.
 - `Fundamentals` - compares quality and valuation metrics from Yahoo Finance without changing the allocation model.
 - `Create Model` - select stocks from the database and generate a fresh allocation table using the same Kelly model settings.
 - `Stock Search` - looks up stocks already loaded into the saved database.
@@ -83,6 +84,15 @@ To add new stocks:
 5. Run the workflow. It adds missing tickers to `public/data/stocks.json`, refreshes Yahoo data, commits the database, and redeploys the site.
 
 In the workflow log, the `Refresh Yahoo data` step prints `Requested tickers` and `database tickers`. If the new ticker is not in `database tickers`, the workflow did not receive the ticker input.
+
+To save stocks from the broad market scan:
+
+1. Run `Scan Yahoo Stocks`.
+2. Open the website's `Yahoo Scan` tab to review the ranked results.
+3. Choose `Save Picks` in the app, or open GitHub Actions and choose `Save Scan Picks To Database`.
+4. Leave `tickers` blank to save the top scan results, or enter exact tickers such as `MSFT, AAPL, TEAM`.
+
+New tickers are only written to `public/data/stocks.json` after Yahoo returns model-ready data: current price, beta, analyst count, analyst rating mix, Yahoo source, and update timestamp. Once a ticker is in `public/data/stocks.json`, every scheduled Yahoo refresh updates it with the rest of the database.
 
 ## Privacy Note
 
