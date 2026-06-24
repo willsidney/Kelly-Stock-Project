@@ -75,7 +75,7 @@ The repo includes a GitHub Actions workflow named `Update Yahoo Finance Data`.
 
 It refreshes `public/data/stocks.json` from Yahoo Finance on weekdays and can also be run manually from the Actions tab. It updates best-effort fields including price, currency, analyst recommendation mix, target-price upside, beta, short interest, earnings distance, YTD performance, one-year drawdown, valuation multiples, margins, growth, cash flow, and balance-sheet metrics when Yahoo returns those fields.
 
-Each successful update also writes a compact daily point-in-time snapshot in `public/data/history/`. If the updater runs multiple times in the same day, the latest run replaces that day's snapshot. This keeps the evidence trail useful for backtesting without making the repo grow too quickly.
+Each successful update also writes a compact daily point-in-time snapshot in `public/data/history/`. Each snapshot stores the stock price, Yahoo model inputs, and frozen v13/v14 model outputs for each stock, so future backtests can compare what the model expected on that day with what actually happened afterward. If the updater runs multiple times in the same day, the latest run replaces that day's snapshot. This keeps the evidence trail useful for backtesting without making the repo grow too quickly.
 
 For a large database, the updater has two modes:
 
@@ -131,7 +131,7 @@ For large databases, individual-stock Monte Carlo is disabled in the main app on
 
 The repo includes a manual GitHub Actions workflow named `Backtest Kelly Model`.
 
-The backtester uses only saved files in `public/data/history/`, then compares model-selected top-N portfolios against the equal-weight tracked universe and the saved benchmark, currently `SPY`. This avoids the main statistical error of testing today's Yahoo analyst targets and fundamentals against returns that happened before those inputs existed.
+The backtester uses only saved files in `public/data/history/`, then compares model-selected top-N portfolios against the equal-weight tracked universe and the saved benchmark, currently `SPY`. It prefers the frozen model outputs saved inside each snapshot, so later formula changes do not rewrite old expectations. This avoids the main statistical error of testing today's Yahoo analyst targets and fundamentals against returns that happened before those inputs existed.
 
 Early backtest results will be limited until enough dated snapshots have accumulated. The first useful checks start after at least two snapshots; weekly and monthly tests become more meaningful after several weeks or months.
 
@@ -141,6 +141,26 @@ Local commands:
 python3 scripts/update_yahoo_data.py --snapshot-only --no-benchmark-fetch
 python3 scripts/backtest_snapshots.py --schedule weekly --top 10,20 --output public/data/backtest-results.json
 python3 scripts/audit_model_stats.py --format markdown
+```
+
+## FMP Historical Data Probe
+
+For deeper historical backtests, the repo includes a workflow named `Probe FMP Access`. It checks which Financial Modeling Prep endpoints your account can access and writes `public/data/fmp-access-report.json`.
+
+Set up once:
+
+1. Open GitHub repo settings.
+2. Go to `Secrets and variables` > `Actions`.
+3. Add a repository secret named `FMP_API_KEY`.
+4. Paste your FMP key there. Do not commit or share the key.
+
+Then run `Probe FMP Access` from the Actions tab. The default test tickers are `AAPL,MSFT,CELH`. The report tells us whether the account has dated analyst ratings, target-price consensus, historical prices, market caps, and fundamentals.
+
+Local version:
+
+```bash
+export FMP_API_KEY="your_key_here"
+python3 scripts/probe_fmp_access.py --tickers AAPL,MSFT,CELH --output public/data/fmp-access-report.json
 ```
 
 ## Privacy Note

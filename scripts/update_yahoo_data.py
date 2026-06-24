@@ -371,6 +371,44 @@ def compact_stock_snapshot(stock: dict) -> dict:
     }
 
 
+def snapshot_model_outputs(stocks: list[dict]) -> dict[str, dict[str, dict]]:
+    """Freeze model expectations for each ticker at snapshot time."""
+    try:
+        import scan_yahoo_stocks as model
+    except Exception as exc:
+        print(f"warn: could not freeze model outputs in snapshot: {exc}", file=sys.stderr)
+        return {}
+
+    outputs: dict[str, dict[str, dict]] = {}
+    for model_name in (model.MODEL_V13, model.MODEL_V14):
+        try:
+            rows = model.run_model(stocks, model_name, budget=100, kelly_mult=0.5)
+        except Exception as exc:
+            print(f"warn: could not run {model_name} for snapshot: {exc}", file=sys.stderr)
+            continue
+        for row in rows:
+            ticker = str(row.get("ticker") or "").upper().strip()
+            if not ticker:
+                continue
+            fields = {
+                "score": row.get("score"),
+                "pAdj": row.get("pAdj"),
+                "rawK": row.get("rawK"),
+                "weight": row.get("weight"),
+                "fxAdjUpside": row.get("fxAdjUpside"),
+                "isFloorOnly": bool(row.get("isFloorOnly")),
+            }
+            for key in ("expectedReturn", "expectedLoss", "dataConfidence", "riskScore", "qualityScore", "valuationScore"):
+                if row.get(key) is not None:
+                    fields[key] = row.get(key)
+            outputs.setdefault(ticker, {})[model_name] = {
+                key: value
+                for key, value in fields.items()
+                if value is not None
+            }
+    return outputs
+
+
 def parse_symbol_list(value: str | None) -> list[str]:
     if not value:
         return []
@@ -444,11 +482,21 @@ def write_history_snapshot(
         "mode": mode,
         "reason": reason,
         "source": "Yahoo Finance",
+        "modelOutputVersion": "scan_yahoo_stocks.run_model v13/v14",
         "stockCount": len(stocks),
         "modelReadyCount": sum(1 for stock in stocks if stock.get("modelReady")),
         "benchmarks": benchmark_entries,
-        "stocks": [compact_stock_snapshot(stock) for stock in stocks if stock.get("ticker")],
+        "stocks": [],
     }
+    model_outputs = snapshot_model_outputs(stocks)
+    for stock in stocks:
+        ticker = str(stock.get("ticker") or "").upper().strip()
+        if not ticker:
+            continue
+        row = compact_stock_snapshot(stock)
+        if ticker in model_outputs:
+            row["modelOutputs"] = model_outputs[ticker]
+        snapshot["stocks"].append(row)
     path.write_text(json.dumps(snapshot, separators=(",", ":")) + "\n")
 
     try:

@@ -1,0 +1,54 @@
+name: Probe FMP Access
+
+on:
+  workflow_dispatch:
+    inputs:
+      tickers:
+        description: "Sample tickers to test"
+        required: false
+        default: "AAPL,MSFT,CELH"
+      limit:
+        description: "Maximum rows to request per historical endpoint"
+        required: false
+        default: "120"
+
+permissions:
+  contents: write
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Probe FMP endpoints
+        env:
+          FMP_API_KEY: ${{ secrets.FMP_API_KEY }}
+        run: |
+          if [ -z "$FMP_API_KEY" ]; then
+            echo "FMP_API_KEY secret is missing. Add it in Settings > Secrets and variables > Actions."
+            exit 2
+          fi
+          python scripts/probe_fmp_access.py \
+            --tickers "${{ github.event.inputs.tickers || 'AAPL,MSFT,CELH' }}" \
+            --limit "${{ github.event.inputs.limit || '120' }}" \
+            --output public/data/fmp-access-report.json \
+            --format markdown
+
+      - name: Commit FMP access report
+        run: |
+          if git diff --quiet -- public/data/fmp-access-report.json; then
+            echo "No FMP report changes."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add public/data/fmp-access-report.json
+          git commit -m "Update FMP access report"
+          git push

@@ -112,6 +112,8 @@ A proper backtest needs point-in-time features:
 
 The current project does not store historical feature snapshots yet, so the clean backtest cannot be completed from the existing database alone.
 
+Update: the project now saves compact daily snapshots in `public/data/history/`. Each snapshot includes prices, Yahoo inputs, and frozen v13/v14 model outputs, so future walk-forward tests can compare model expectation against later realized performance.
+
 ## Recommendation
 
 Do not treat either v13 or v14 as fully validated yet.

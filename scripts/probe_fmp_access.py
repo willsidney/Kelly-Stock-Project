@@ -1,0 +1,297 @@
+#!/usr/bin/env python3
+"""Probe Financial Modeling Prep access for historical backtesting data.
+
+Set FMP_API_KEY in your local shell or GitHub secret. The script writes a small
+capability report and does not print or store the API key.
+"""
+
+from __future__ import annotations
+
+import argparse
+import json
+import os
+import sys
+import time
+import urllib.parse
+import urllib.request
+from datetime import datetime
+from pathlib import Path
+
+
+ROOT = Path(__file__).resolve().parents[1]
+OUT_PATH = ROOT / "public" / "data" / "fmp-access-report.json"
+BASE_URL = "https://financialmodelingprep.com/stable"
+
+ENDPOINTS = [
+    {
+        "name": "grades_historical",
+        "path": "grades-historical",
+        "params": {},
+        "purpose": "Historical analyst rating positions",
+        "must_have": True,
+    },
+    {
+        "name": "grades_consensus",
+        "path": "grades-consensus",
+        "params": {},
+        "purpose": "Current analyst rating consensus",
+        "must_have": False,
+    },
+    {
+        "name": "price_target_consensus",
+        "path": "price-target-consensus",
+        "params": {},
+        "purpose": "Analyst target-price consensus",
+        "must_have": True,
+    },
+    {
+        "name": "price_target_summary",
+        "path": "price-target-summary",
+        "params": {},
+        "purpose": "Analyst target-price summary",
+        "must_have": False,
+    },
+    {
+        "name": "dividend_adjusted_prices",
+        "path": "historical-price-eod/dividend-adjusted",
+        "params": {},
+        "purpose": "Historical total-return-ish price series",
+        "must_have": True,
+    },
+    {
+        "name": "historical_market_cap",
+        "path": "historical-market-capitalization",
+        "params": {},
+        "purpose": "Historical market-cap universe filters",
+        "must_have": False,
+    },
+    {
+        "name": "ratios_annual",
+        "path": "ratios",
+        "params": {"period": "annual"},
+        "purpose": "Historical valuation/profitability ratios",
+        "must_have": False,
+    },
+    {
+        "name": "key_metrics_annual",
+        "path": "key-metrics",
+        "params": {"period": "annual"},
+        "purpose": "Historical financial quality metrics",
+        "must_have": False,
+    },
+    {
+        "name": "income_statement_annual",
+        "path": "income-statement",
+        "params": {"period": "annual"},
+        "purpose": "Historical revenue/earnings growth inputs",
+        "must_have": False,
+    },
+]
+
+
+def fetch_json(url: str) -> tuple[int | None, object | None, str | None]:
+    request = urllib.request.Request(
+        url,
+        headers={
+            "User-Agent": "KellyStockProject/1.0",
+            "Accept": "application/json",
+        },
+    )
+    try:
+        with urllib.request.urlopen(request, timeout=30) as response:
+            body = response.read().decode("utf-8", errors="replace")
+            return response.status, json.loads(body), None
+    except Exception as exc:
+        return None, None, str(exc)
+
+
+def make_url(endpoint: dict, ticker: str, api_key: str, limit: int) -> str:
+    params = {"symbol": ticker, "apikey": api_key}
+    params.update(endpoint.get("params") or {})
+    if endpoint["name"] not in {"grades_consensus", "price_target_consensus", "price_target_summary"}:
+        params.setdefault("limit", str(limit))
+    return f"{BASE_URL}/{endpoint['path']}?{urllib.parse.urlencode(params)}"
+
+
+def classify_response(data: object) -> tuple[list[dict], str | None]:
+    if isinstance(data, list):
+        return [row for row in data if isinstance(row, dict)], None
+    if isinstance(data, dict):
+        if "Error Message" in data:
+            return [], str(data.get("Error Message"))
+        if "error" in data:
+            return [], str(data.get("error"))
+        if "message" in data and len(data) <= 2:
+            return [], str(data.get("message"))
+        return [data], None
+    return [], "unexpected response shape"
+
+
+def value_kind(value) -> str:
+    if value is None:
+        return "null"
+    if isinstance(value, bool):
+        return "bool"
+    if isinstance(value, int):
+        return "int"
+    if isinstance(value, float):
+        return "float"
+    if isinstance(value, str):
+        return "date/string" if looks_like_date(value) else "string"
+    return type(value).__name__
+
+
+def looks_like_date(value: str) -> bool:
+    try:
+        datetime.fromisoformat(value[:10])
+        return len(value) >= 10 and value[4] == "-" and value[7] == "-"
+    except Exception:
+        return False
+
+
+def summarize_rows(rows: list[dict]) -> dict:
+    fields = sorted({key for row in rows for key in row.keys()})
+    date_fields = [
+        field
+        for field in fields
+        if any(looks_like_date(str(row.get(field))) for row in rows[:20] if row.get(field) is not None)
+    ]
+    dates = []
+    for field in date_fields:
+        for row in rows:
+            value = row.get(field)
+            if value and looks_like_date(str(value)):
+                dates.append(str(value)[:10])
+    field_types = {}
+    for field in fields:
+        for row in rows:
+            value = row.get(field)
+            if value is not None:
+                field_types[field] = value_kind(value)
+                break
+        else:
+            field_types[field] = "null"
+    return {
+        "rowCount": len(rows),
+        "fields": fields,
+        "fieldTypes": field_types,
+        "dateFields": sorted(date_fields),
+        "minDate": min(dates) if dates else None,
+        "maxDate": max(dates) if dates else None,
+        "sample": rows[:2],
+    }
+
+
+def probe_endpoint(endpoint: dict, ticker: str, api_key: str, limit: int) -> dict:
+    url = make_url(endpoint, ticker, api_key, limit)
+    status, data, error = fetch_json(url)
+    rows, message = classify_response(data)
+    result = {
+        "endpoint": endpoint["name"],
+        "path": endpoint["path"],
+        "purpose": endpoint["purpose"],
+        "mustHave": endpoint["must_have"],
+        "ticker": ticker,
+        "httpStatus": status,
+        "accessible": bool(rows),
+        "error": error or message,
+    }
+    if rows:
+        result.update(summarize_rows(rows))
+    else:
+        result.update({"rowCount": 0, "fields": [], "dateFields": [], "minDate": None, "maxDate": None, "sample": []})
+    return result
+
+
+def capability_summary(results: list[dict]) -> dict:
+    by_endpoint: dict[str, list[dict]] = {}
+    for row in results:
+        by_endpoint.setdefault(row["endpoint"], []).append(row)
+    endpoints = {}
+    for name, rows in by_endpoint.items():
+        accessible_rows = [row for row in rows if row["accessible"]]
+        dated_rows = [row for row in accessible_rows if row.get("dateFields")]
+        endpoints[name] = {
+            "accessibleTickers": [row["ticker"] for row in accessible_rows],
+            "hasDatedRows": bool(dated_rows),
+            "earliestDate": min((row["minDate"] for row in dated_rows if row.get("minDate")), default=None),
+            "latestDate": max((row["maxDate"] for row in dated_rows if row.get("maxDate")), default=None),
+            "fields": sorted({field for row in accessible_rows for field in row.get("fields", [])}),
+        }
+    return {
+        "historicalAnalystRatings": bool(endpoints.get("grades_historical", {}).get("hasDatedRows")),
+        "targetPriceAvailable": bool(endpoints.get("price_target_consensus", {}).get("accessibleTickers")),
+        "historicalPrices": bool(endpoints.get("dividend_adjusted_prices", {}).get("hasDatedRows")),
+        "historicalFundamentals": any(
+            endpoints.get(name, {}).get("hasDatedRows")
+            for name in ("ratios_annual", "key_metrics_annual", "income_statement_annual")
+        ),
+        "endpointSummary": endpoints,
+    }
+
+
+def print_markdown(report: dict) -> None:
+    print("# FMP Access Probe")
+    print()
+    print(f"Generated: {report['generatedAt']}")
+    print(f"Tickers: {', '.join(report['tickers'])}")
+    print()
+    cap = report["capabilities"]
+    print("## Capability Summary")
+    print(f"- Historical analyst ratings: {'yes' if cap['historicalAnalystRatings'] else 'no'}")
+    print(f"- Target-price consensus: {'yes' if cap['targetPriceAvailable'] else 'no'}")
+    print(f"- Historical prices: {'yes' if cap['historicalPrices'] else 'no'}")
+    print(f"- Historical fundamentals: {'yes' if cap['historicalFundamentals'] else 'no'}")
+    print()
+    print("| Endpoint | Accessible | Dated | Earliest | Latest | Fields |")
+    print("| --- | ---: | ---: | ---: | ---: | ---: |")
+    for name, row in cap["endpointSummary"].items():
+        print(
+            f"| {name} | {len(row['accessibleTickers'])} | "
+            f"{'yes' if row['hasDatedRows'] else 'no'} | {row['earliestDate'] or '-'} | "
+            f"{row['latestDate'] or '-'} | {len(row['fields'])} |"
+        )
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser(description="Probe FMP endpoint access for backtesting.")
+    parser.add_argument("--tickers", default="AAPL,MSFT,CELH", help="Comma separated sample tickers.")
+    parser.add_argument("--limit", type=int, default=120)
+    parser.add_argument("--output", type=Path, default=OUT_PATH)
+    parser.add_argument("--format", choices=["json", "markdown"], default="markdown")
+    parser.add_argument("--api-key", default="", help="Optional API key. Prefer FMP_API_KEY env var.")
+    args = parser.parse_args()
+
+    api_key = args.api_key or os.environ.get("FMP_API_KEY")
+    if not api_key:
+        print("error: set FMP_API_KEY first, or pass --api-key locally.", file=sys.stderr)
+        return 2
+
+    tickers = [token.strip().upper() for token in args.tickers.split(",") if token.strip()]
+    results = []
+    for ticker in tickers:
+        for endpoint in ENDPOINTS:
+            print(f"probing {endpoint['name']} for {ticker}", file=sys.stderr)
+            results.append(probe_endpoint(endpoint, ticker, api_key, args.limit))
+            time.sleep(0.25)
+
+    report = {
+        "generatedAt": datetime.utcnow().replace(microsecond=0).isoformat() + "Z",
+        "provider": "Financial Modeling Prep",
+        "tickers": tickers,
+        "capabilities": capability_summary(results),
+        "results": results,
+    }
+    args.output.parent.mkdir(parents=True, exist_ok=True)
+    args.output.write_text(json.dumps(report, indent=2) + "\n")
+
+    if args.format == "json":
+        print(json.dumps(report, indent=2))
+    else:
+        print_markdown(report)
+    print(f"wrote {args.output}", file=sys.stderr)
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

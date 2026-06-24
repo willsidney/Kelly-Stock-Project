@@ -117,13 +117,65 @@ def equal_weight_return(tickers: list[str], returns_by_ticker: dict[str, float])
     return sum(clean) / len(clean)
 
 
+def frozen_output(stock: dict, model_name: str) -> dict:
+    outputs = stock.get("modelOutputs")
+    if not isinstance(outputs, dict):
+        return {}
+    value = outputs.get(model_name)
+    return value if isinstance(value, dict) else {}
+
+
 def score_then_allocate(start_stocks: list[dict], model_name: str, top_n: int) -> list[dict]:
+    frozen_rows = [
+        stock
+        for stock in start_stocks
+        if is_num(frozen_output(stock, model_name).get("score"))
+    ]
+    if frozen_rows:
+        ranked = sorted(
+            frozen_rows,
+            key=lambda stock: (
+                float(frozen_output(stock, model_name).get("score") or 0),
+                float(frozen_output(stock, model_name).get("weight") or 0),
+            ),
+            reverse=True,
+        )
+        selected = ranked[:top_n]
+        total_weight = sum(float(frozen_output(stock, model_name).get("weight") or 0) for stock in selected)
+        if total_weight > 0:
+            return [
+                {
+                    **stock,
+                    "weight": float(frozen_output(stock, model_name).get("weight") or 0) / total_weight,
+                    "score": frozen_output(stock, model_name).get("score"),
+                }
+                for stock in selected
+            ]
+        equal_weight = 1 / len(selected) if selected else 0
+        return [{**stock, "weight": equal_weight, "score": frozen_output(stock, model_name).get("score")} for stock in selected]
+
     scored = model.run_model(start_stocks, model_name, budget=100, kelly_mult=0.5)
     ranked = sorted(scored, key=lambda row: (float(row.get("score") or 0), float(row.get("weight") or 0)), reverse=True)
     top_tickers = [row["ticker"] for row in ranked[:top_n]]
     by_ticker = {str(stock.get("ticker") or "").upper().strip(): stock for stock in start_stocks}
     selected = [by_ticker[ticker] for ticker in top_tickers if ticker in by_ticker]
     return model.run_model(selected, model_name, budget=100, kelly_mult=0.5) if selected else []
+
+
+def weighted_model_expectation(rows: list[dict], model_name: str) -> float | None:
+    pairs = []
+    for row in rows:
+        output = frozen_output(row, model_name)
+        expected = output.get("expectedReturn")
+        if expected is None:
+            expected = output.get("fxAdjUpside")
+        weight = row.get("weight")
+        if is_num(expected) and is_num(weight):
+            pairs.append((float(weight), float(expected)))
+    total_weight = sum(weight for weight, _ in pairs)
+    if total_weight <= 0:
+        return None
+    return sum((weight / total_weight) * expected for weight, expected in pairs)
 
 
 def period_days(start: dict, end: dict) -> int:
@@ -192,10 +244,15 @@ def run_backtest(snapshots: list[dict], models: list[str], top_ns: list[int], be
                 if portfolio_ret is None:
                     continue
                 model_periods[key].append({"return": portfolio_ret, "days": period["days"]})
-                period[key] = {
+                period_row = {
                     "return": portfolio_ret,
                     "tickers": [row["ticker"] for row in selected_rows],
                 }
+                expected = weighted_model_expectation(selected_rows, model_name)
+                if expected is not None:
+                    period_row["expectedReturn"] = expected
+                    period_row["expectedMinusActual"] = expected - portfolio_ret
+                period[key] = period_row
         result["periods"].append(period)
 
     result["baselines"]["equal_universe"] = metrics(universe_periods)
