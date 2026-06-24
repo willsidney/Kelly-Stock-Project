@@ -116,6 +116,16 @@ Update: the project now saves compact daily snapshots in `public/data/history/`.
 
 FMP free-access update: dated historical analyst grades and dividend-adjusted prices are available, but dated price-target consensus and dated fundamentals are not available from the tested endpoints. This supports a genuine historical test of a ratings-and-price model, but not a clean historical test of the current target-upside/fundamental model.
 
+First FMP historical result, using 9 large-cap tickers plus `SPY` from 2019 to 2026:
+
+- Benchmark was available and the top/bottom split was corrected to avoid overlap.
+- The combined FMP proxy score had a negative mean rank IC of -4.49%.
+- The top-ranked basket underperformed both the equal-weight universe and the bottom-ranked basket.
+- Analyst consensus was negative in this sample, with mean rank IC of -8.93%.
+- The low-risk composite was also negative, with mean rank IC of -10.02%.
+
+This is not enough evidence to invert the model or call the result final. The sample is tiny, current-winner-biased, and cannot test historical Yahoo target-price upside or dated fundamentals. It is enough evidence to reject the idea that the current score is already statistically optimized. It also supports reducing or redesigning the volatility/drawdown penalty, because this test punished exactly the kind of high-upside stocks the model is meant to allow when the expected return is strong enough.
+
 ## Recommendation
 
 Do not treat either v13 or v14 as fully validated yet.

@@ -31,6 +31,15 @@ GRADE_ALIASES = {
 }
 PRICE_ALIASES = ("adjClose", "adjclose", "adjClosePrice", "close", "price")
 DATE_ALIASES = ("date", "publishedDate", "calendarDate")
+FACTOR_SPECS = (
+    ("score", "Combined score"),
+    ("analystScore", "Analyst consensus"),
+    ("momentum6m", "6m momentum"),
+    ("momentum12m", "12m momentum"),
+    ("lowDrawdownScore", "Low drawdown"),
+    ("lowVolatilityScore", "Low volatility"),
+    ("lowRiskScore", "Low risk composite"),
+)
 
 
 def is_num(value) -> bool:
@@ -190,6 +199,8 @@ def stock_features(item: dict, d: date) -> dict | None:
     momentum_score = clamp((momentum_6m + 0.30) / 0.80)
     trend_score = clamp((momentum_12m + 0.40) / 1.20)
     risk_score = 0.60 * clamp(drawdown / 0.60) + 0.40 * clamp(vol / 0.80)
+    low_drawdown_score = 1 - clamp(drawdown / 0.60)
+    low_volatility_score = 1 - clamp(vol / 0.80)
     score = clamp(0.55 * analyst + 0.20 * momentum_score + 0.10 * trend_score + 0.15 * (1 - risk_score))
     return {
         "ticker": item["ticker"],
@@ -199,6 +210,10 @@ def stock_features(item: dict, d: date) -> dict | None:
         "momentum12m": momentum_12m,
         "drawdown1y": drawdown,
         "volatility": vol,
+        "riskScore": risk_score,
+        "lowDrawdownScore": low_drawdown_score,
+        "lowVolatilityScore": low_volatility_score,
+        "lowRiskScore": 1 - risk_score,
     }
 
 
@@ -284,6 +299,31 @@ def performance(periods: list[dict], key: str) -> dict:
     }
 
 
+def normal_two_sided_p(z_score: float | None) -> float | None:
+    if z_score is None or not math.isfinite(z_score):
+        return None
+    return math.erfc(abs(z_score) / math.sqrt(2))
+
+
+def signal_stats(values: list[float]) -> dict:
+    clean = [value for value in values if isinstance(value, (int, float)) and math.isfinite(value)]
+    if not clean:
+        return {"periods": 0}
+    mean_value = sum(clean) / len(clean)
+    t_stat = None
+    if len(clean) > 2 and statistics.stdev(clean) > 0:
+        t_stat = mean_value / (statistics.stdev(clean) / math.sqrt(len(clean)))
+    return {
+        "periods": len(clean),
+        "meanRankIC": mean_value,
+        "tStat": t_stat,
+        "roughPValue": normal_two_sided_p(t_stat),
+        "positiveRate": sum(1 for value in clean if value > 0) / len(clean),
+        "bestMonth": max(clean),
+        "worstMonth": min(clean),
+    }
+
+
 def run_backtest(universe: dict[str, dict], benchmark: str, top_n: int) -> dict:
     tradable = {ticker: item for ticker, item in universe.items() if ticker != benchmark and item.get("grades")}
     all_dates = [d for item in tradable.values() for d, _ in item["prices"]]
@@ -294,6 +334,7 @@ def run_backtest(universe: dict[str, dict], benchmark: str, top_n: int) -> dict:
     rebalance_dates = month_starts(start, end)
     periods = []
     rank_ics = []
+    factor_ics = {key: [] for key, _ in FACTOR_SPECS}
     for start_date, end_date in zip(rebalance_dates, rebalance_dates[1:]):
         features = [row for item in tradable.values() if (row := stock_features(item, start_date))]
         returns = {
@@ -315,6 +356,14 @@ def run_backtest(universe: dict[str, dict], benchmark: str, top_n: int) -> dict:
         ic = spearman([row["score"] for row in scored], [returns[row["ticker"]] for row in scored])
         if ic is not None:
             rank_ics.append(ic)
+        period_factor_ics = {}
+        for key, _label in FACTOR_SPECS:
+            xs = [row[key] for row in scored if is_num(row.get(key))]
+            ys = [returns[row["ticker"]] for row in scored if is_num(row.get(key))]
+            factor_ic = spearman(xs, ys)
+            if factor_ic is not None:
+                factor_ics[key].append(factor_ic)
+                period_factor_ics[key] = factor_ic
         periods.append(
             {
                 "startDate": start_date.isoformat(),
@@ -328,6 +377,7 @@ def run_backtest(universe: dict[str, dict], benchmark: str, top_n: int) -> dict:
                 "benchmarkReturn": benchmark_return,
                 "spreadReturn": top_return - bottom_return,
                 "rankIC": ic,
+                "factorRankIC": period_factor_ics,
             }
         )
     mean_ic = sum(rank_ics) / len(rank_ics) if rank_ics else None
@@ -352,13 +402,26 @@ def run_backtest(universe: dict[str, dict], benchmark: str, top_n: int) -> dict:
             "spread": performance(periods, "spreadReturn"),
             "rankICMean": mean_ic,
             "rankICTStat": ic_t_stat,
+            "rankICPValueApprox": normal_two_sided_p(ic_t_stat),
             "rankICPeriods": len(rank_ics),
+        },
+        "factorDiagnostics": {
+            key: {"label": label, **signal_stats(factor_ics[key])}
+            for key, label in FACTOR_SPECS
         },
     }
 
 
 def fmt_pct(value) -> str:
     return "-" if value is None or not isinstance(value, (int, float)) else f"{value * 100:.2f}%"
+
+
+def fmt_num(value) -> str:
+    return "-" if value is None or not isinstance(value, (int, float)) else f"{value:.2f}"
+
+
+def fmt_p(value) -> str:
+    return "-" if value is None or not isinstance(value, (int, float)) else f"{value:.3f}"
 
 
 def print_markdown(result: dict) -> None:
@@ -378,6 +441,8 @@ def print_markdown(result: dict) -> None:
         effective = sorted({row.get("effectiveTopN") for row in result["periods"] if row.get("effectiveTopN")})
         print(f"Effective Top N used: {', '.join(str(x) for x in effective)}")
     print(f"Rank IC mean: {fmt_pct(result['metrics'].get('rankICMean'))}")
+    print(f"Rank IC t-stat: {fmt_num(result['metrics'].get('rankICTStat'))}")
+    print(f"Rank IC rough p-value: {fmt_p(result['metrics'].get('rankICPValueApprox'))}")
     print()
     print("| Portfolio | Periods | Cumulative | Annualized | Max DD | Hit Rate |")
     print("| --- | ---: | ---: | ---: | ---: | ---: |")
@@ -388,6 +453,22 @@ def print_markdown(result: dict) -> None:
             f"| {name} | {row.get('periods', 0)} | {fmt_pct(row.get('cumulativeReturn'))} | "
             f"{fmt_pct(row.get('annualizedReturn'))} | {fmt_pct(row.get('maxDrawdown'))} | {fmt_pct(row.get('hitRate'))} |"
         )
+    diagnostics = result.get("factorDiagnostics") or {}
+    if diagnostics:
+        print()
+        print("## Signal Diagnostics")
+        print()
+        print("Rank IC measures whether each signal's ranking matched next month's return ranking. Positive is good.")
+        print()
+        print("| Signal | Periods | Mean Rank IC | t-stat | Rough p-value | Positive Months |")
+        print("| --- | ---: | ---: | ---: | ---: | ---: |")
+        for key, _label in FACTOR_SPECS:
+            row = diagnostics.get(key) or {}
+            print(
+                f"| {row.get('label', key)} | {row.get('periods', 0)} | "
+                f"{fmt_pct(row.get('meanRankIC'))} | {fmt_num(row.get('tStat'))} | "
+                f"{fmt_p(row.get('roughPValue'))} | {fmt_pct(row.get('positiveRate'))} |"
+            )
 
 
 def main() -> int:

@@ -24,7 +24,16 @@
       "equalUniverseReturn": 0.07100884205000699,
       "benchmarkReturn": 0.080597548975758,
       "spreadReturn": -0.027941754243075545,
-      "rankIC": -0.3333333333333333
+      "rankIC": -0.3333333333333333,
+      "factorRankIC": {
+        "score": -0.3333333333333333,
+        "analystScore": 0.4666666666666667,
+        "momentum6m": -0.6833333333333333,
+        "momentum12m": -0.6833333333333333,
+        "lowDrawdownScore": -0.7333333333333333,
+        "lowVolatilityScore": -0.05,
+        "lowRiskScore": -0.5
+      }
     },
     {
       "startDate": "2019-02-01",
@@ -42,7 +51,16 @@
       "equalUniverseReturn": 0.03230895019952023,
       "benchmarkReturn": 0.038369205298013354,
       "spreadReturn": 0.021370488380218378,
-      "rankIC": 0.25
+      "rankIC": 0.25,
+      "factorRankIC": {
+        "score": 0.25,
+        "analystScore": 0.06666666666666667,
+        "momentum6m": 0.016666666666666666,
+        "momentum12m": 0.36666666666666664,
+        "lowDrawdownScore": 0.1,
+        "lowVolatilityScore": 0.16666666666666666,
+        "lowRiskScore": 0.1
+      }
     },
     {
       "startDate": "2019-03-01",
@@ -60,7 +78,16 @@
       "equalUniverseReturn": 0.057710557328096,
       "benchmarkReturn": 0.023797185793438702,
       "spreadReturn": -0.012030900718548343,
-      "rankIC": -0.13333333333333333
+      "rankIC": -0.13333333333333333,
+      "factorRankIC": {
+        "score": -0.13333333333333333,
+        "analystScore": 0.08333333333333333,
+        "momentum6m": -0.5833333333333334,
+        "momentum12m": 0.15,
+        "lowDrawdownScore": -0.26666666666666666,
+        "lowVolatilityScore": -0.18333333333333332,
+        "lowRiskScore": -0.11666666666666667
+      }
     },
     {
       "startDate": "2019-04-01",
@@ -78,7 +105,16 @@
       "equalUniverseReturn": 0.03268978686298052,
       "benchmarkReturn": 0.020907958261952908,
       "spreadReturn": 0.05618222065358819,
-      "rankIC": 0.15
+      "rankIC": 0.15,
+      "factorRankIC": {
+        "score": 0.15,
+        "analystScore": 0.23333333333333334,
+        "momentum6m": -0.23333333333333334,
+        "momentum12m": -0.03333333333333333,
+        "lowDrawdownScore": 0.1,
+        "lowVolatilityScore": 0.3333333333333333,
+        "lowRiskScore": 0.2
+      }
     },
     {
       "startDate": "2019-05-01",
@@ -96,7 +132,16 @@
       "equalUniverseReturn": -0.10536157329795455,
       "benchmarkReturn": -0.05667213302314933,
       "spreadReturn": 0.12838236752591892,
-      "rankIC": 0.8
+      "rankIC": 0.8,
+      "factorRankIC": {
+        "score": 0.8,
+        "analystScore": 0.55,
+        "momentum6m": 0.6166666666666667,
+        "momentum12m": 0.7666666666666667,
+        "lowDrawdownScore": 0.7166666666666667,
+        "lowVolatilityScore": 0.7333333333333333,
+        "lowRiskScore": 0.8166666666666667
+      }
     },
     {
       "startDate": "2019-06-01",
@@ -114,7 +159,16 @@
       "equalUniverseReturn": 0.11298427460778705,
       "benchmarkReturn": 0.07932080048514267,
       "spreadReturn": -0.08285429789689558,
-      "rankIC": -0.55
+      "rankIC": -0.55,
+      "factorRankIC": {
+        "score": -0.55,
+        "analystScore": -0.5333333333333333,
+        "momentum6m": -0.43333333333333335,
+        "momentum12m": -0.55,
+        "lowDrawdownScore": -0.6666666666666666,
+        "lowVolatilityScore": -0.7333333333333333,
+        "lowRiskScore": -0.7166666666666667
+      }
     },
     {
       "startDate": "2019-07-01",
@@ -132,7 +186,16 @@
       "equalUniverseReturn": 0.01891522059027109,
       "benchmarkReturn": -0.002771847024010232,
       "spreadReturn": -0.028290588407408473,
-      "rankIC": -0.03333333333333333
+      "rankIC": -0.03333333333333333,
+      "factorRankIC": {
+        "score": -0.03333333333333333,
+        "analystScore": 0.13333333333333333,
+        "momentum6m": -0.31666666666666665,
+        "momentum12m": -0.06666666666666667,
+        "lowDrawdownScore": 0.0,
+        "lowVolatilityScore": 0.25,
+        "lowRiskScore": 0.06666666666666667
+      }
     },
     {
       "startDate": "2019-08-01",
@@ -150,7 +213,16 @@
       "equalUniverseReturn": -0.013547271342021518,
       "benchmarkReturn": -0.008113285505014556,
       "spreadReturn": 0.011027439306181497,
-      "rankIC": 0.18333333333333332
+      "rankIC": 0.18333333333333332,
+      "factorRankIC": {
+        "score": 0.18333333333333332,
+        "analystScore": -0.23333333333333334,
+        "momentum6m": 0.4,
+        "momentum12m": 0.0,
+        "lowDrawdownScore": -0.03333333333333333,
+        "lowVolatilityScore": 0.1,
+        "lowRiskScore": 0.03333333333333333
+      }
     },
     {
       "startDate": "2019-09-01",
@@ -168,7 +240,16 @@
       "equalUniverseReturn": 0.01616082043857694,
       "benchmarkReturn": 0.007308668156170706,
       "spreadReturn": -0.058473637441466414,
-      "rankIC": -0.7333333333333333
+      "rankIC": -0.7333333333333333,
+      "factorRankIC": {
+        "score": -0.7333333333333333,
+        "analystScore": -0.8333333333333334,
+        "momentum6m": -0.4166666666666667,
+        "momentum12m": -0.5666666666666667,
+        "lowDrawdownScore": -0.31666666666666665,
+        "lowVolatilityScore": -0.35,
+        "lowRiskScore": -0.31666666666666665
+      }
     },
     {
       "startDate": "2019-10-01",
@@ -186,7 +267,16 @@
       "equalUniverseReturn": 0.10793672990773268,
       "benchmarkReturn": 0.043984962406014905,
       "spreadReturn": -0.08664182528703085,
-      "rankIC": -0.6
+      "rankIC": -0.6,
+      "factorRankIC": {
+        "score": -0.6,
+        "analystScore": -0.7,
+        "momentum6m": -0.13333333333333333,
+        "momentum12m": -0.5166666666666667,
+        "lowDrawdownScore": -0.31666666666666665,
+        "lowVolatilityScore": -0.6666666666666666,
+        "lowRiskScore": -0.4166666666666667
+      }
     },
     {
       "startDate": "2019-11-01",
@@ -204,7 +294,16 @@
       "equalUniverseReturn": 0.039499904066625686,
       "benchmarkReturn": 0.026683471371984346,
       "spreadReturn": -0.004542138912046079,
-      "rankIC": -0.3
+      "rankIC": -0.3,
+      "factorRankIC": {
+        "score": -0.3,
+        "analystScore": -0.5833333333333334,
+        "momentum6m": 0.5,
+        "momentum12m": -0.18333333333333332,
+        "lowDrawdownScore": 0.0,
+        "lowVolatilityScore": -0.5666666666666667,
+        "lowRiskScore": -0.2
+      }
     },
     {
       "startDate": "2019-12-01",
@@ -222,7 +321,16 @@
       "equalUniverseReturn": 0.071013728042115,
       "benchmarkReturn": 0.02904142260881759,
       "spreadReturn": -0.034246447899058396,
-      "rankIC": -0.15
+      "rankIC": -0.15,
+      "factorRankIC": {
+        "score": -0.15,
+        "analystScore": -0.9,
+        "momentum6m": 0.9333333333333333,
+        "momentum12m": -0.11666666666666667,
+        "lowDrawdownScore": -0.05,
+        "lowVolatilityScore": -0.4166666666666667,
+        "lowRiskScore": -0.26666666666666666
+      }
     },
     {
       "startDate": "2020-01-01",
@@ -240,7 +348,16 @@
       "equalUniverseReturn": 0.09429707060080507,
       "benchmarkReturn": -0.0003749275708102573,
       "spreadReturn": -0.11207165791618828,
-      "rankIC": -0.36666666666666664
+      "rankIC": -0.36666666666666664,
+      "factorRankIC": {
+        "score": -0.36666666666666664,
+        "analystScore": -0.11666666666666667,
+        "momentum6m": 0.0,
+        "momentum12m": -0.5833333333333334,
+        "lowDrawdownScore": -0.6610936529170212,
+        "lowVolatilityScore": 0.06666666666666667,
+        "lowRiskScore": -0.4666666666666667
+      }
     },
     {
       "startDate": "2020-02-01",
@@ -258,7 +375,16 @@
       "equalUniverseReturn": -0.04145125285634802,
       "benchmarkReturn": -0.0791734860883796,
       "spreadReturn": 0.05851077880135594,
-      "rankIC": 0.18333333333333332
+      "rankIC": 0.18333333333333332,
+      "factorRankIC": {
+        "score": 0.18333333333333332,
+        "analystScore": -0.26666666666666666,
+        "momentum6m": 0.2833333333333333,
+        "momentum12m": 0.21666666666666667,
+        "lowDrawdownScore": 0.16666666666666666,
+        "lowVolatilityScore": -0.5166666666666667,
+        "lowRiskScore": -0.31666666666666665
+      }
     },
     {
       "startDate": "2020-03-01",
@@ -276,7 +402,16 @@
       "equalUniverseReturn": -0.14718844166609188,
       "benchmarkReturn": -0.16425979411982528,
       "spreadReturn": 0.060266916599432535,
-      "rankIC": 0.31666666666666665
+      "rankIC": 0.31666666666666665,
+      "factorRankIC": {
+        "score": 0.31666666666666665,
+        "analystScore": 0.15,
+        "momentum6m": -0.11666666666666667,
+        "momentum12m": -0.11666666666666667,
+        "lowDrawdownScore": 0.4666666666666667,
+        "lowVolatilityScore": -0.05,
+        "lowRiskScore": 0.35
+      }
     },
     {
       "startDate": "2020-04-01",
@@ -294,7 +429,16 @@
       "equalUniverseReturn": 0.21022488859387897,
       "benchmarkReturn": 0.148870181657067,
       "spreadReturn": 0.059961176537163874,
-      "rankIC": 0.3333333333333333
+      "rankIC": 0.3333333333333333,
+      "factorRankIC": {
+        "score": 0.3333333333333333,
+        "analystScore": 0.05,
+        "momentum6m": 0.48333333333333334,
+        "momentum12m": 0.4,
+        "lowDrawdownScore": -0.15,
+        "lowVolatilityScore": 0.06666666666666667,
+        "lowRiskScore": 0.016666666666666666
+      }
     },
     {
       "startDate": "2020-05-01",
@@ -312,7 +456,16 @@
       "equalUniverseReturn": 0.1306566460129397,
       "benchmarkReturn": 0.08048592364057083,
       "spreadReturn": -0.025034365449488283,
-      "rankIC": -0.25
+      "rankIC": -0.25,
+      "factorRankIC": {
+        "score": -0.25,
+        "analystScore": -0.5166666666666667,
+        "momentum6m": 0.48333333333333334,
+        "momentum12m": 0.4166666666666667,
+        "lowDrawdownScore": -0.23333333333333334,
+        "lowVolatilityScore": -0.4166666666666667,
+        "lowRiskScore": -0.3333333333333333
+      }
     },
     {
       "startDate": "2020-06-01",
@@ -330,7 +483,16 @@
       "equalUniverseReturn": 0.07966657786296703,
       "benchmarkReturn": 0.02073740942998903,
       "spreadReturn": 0.0491032608019156,
-      "rankIC": 0.38333333333333336
+      "rankIC": 0.38333333333333336,
+      "factorRankIC": {
+        "score": 0.38333333333333336,
+        "analystScore": -0.15,
+        "momentum6m": 0.8833333333333333,
+        "momentum12m": 0.85,
+        "lowDrawdownScore": 0.75,
+        "lowVolatilityScore": 0.016666666666666666,
+        "lowRiskScore": 0.3
+      }
     },
     {
       "startDate": "2020-07-01",
@@ -348,7 +510,16 @@
       "equalUniverseReturn": 0.08748467580373581,
       "benchmarkReturn": 0.05154206587873289,
       "spreadReturn": 0.010547858378956526,
-      "rankIC": 0.38333333333333336
+      "rankIC": 0.38333333333333336,
+      "factorRankIC": {
+        "score": 0.38333333333333336,
+        "analystScore": -0.65,
+        "momentum6m": 0.6833333333333333,
+        "momentum12m": 0.7166666666666667,
+        "lowDrawdownScore": 0.5222329678670935,
+        "lowVolatilityScore": -0.25,
+        "lowRiskScore": 0.08333333333333333
+      }
     },
     {
       "startDate": "2020-08-01",
@@ -366,7 +537,16 @@
       "equalUniverseReturn": 0.20894029723382157,
       "benchmarkReturn": 0.07984171322160138,
       "spreadReturn": -0.03644943565453096,
-      "rankIC": 0.21666666666666667
+      "rankIC": 0.21666666666666667,
+      "factorRankIC": {
+        "score": 0.21666666666666667,
+        "analystScore": -0.5,
+        "momentum6m": 0.6833333333333333,
+        "momentum12m": 0.7166666666666667,
+        "lowDrawdownScore": 0.33903175181040524,
+        "lowVolatilityScore": -0.4666666666666667,
+        "lowRiskScore": -0.08333333333333333
+      }
     },
     {
       "startDate": "2020-09-01",
@@ -384,7 +564,16 @@
       "equalUniverseReturn": -0.06920753925044157,
       "benchmarkReturn": -0.040310411726665274,
       "spreadReturn": -0.033942602028660895,
-      "rankIC": -0.6
+      "rankIC": -0.6,
+      "factorRankIC": {
+        "score": -0.6,
+        "analystScore": -0.4,
+        "momentum6m": -0.08333333333333333,
+        "momentum12m": -0.05,
+        "lowDrawdownScore": -0.40037860869810504,
+        "lowVolatilityScore": -0.6666666666666666,
+        "lowRiskScore": -0.7
+      }
     },
     {
       "startDate": "2020-10-01",
@@ -402,7 +591,16 @@
       "equalUniverseReturn": -0.04437645837571201,
       "benchmarkReturn": -0.03112565781029386,
       "spreadReturn": -0.012857011736283758,
-      "rankIC": -0.05
+      "rankIC": -0.05,
+      "factorRankIC": {
+        "score": -0.05,
+        "analystScore": 0.25,
+        "momentum6m": -0.6,
+        "momentum12m": -0.6166666666666667,
+        "lowDrawdownScore": -0.65,
+        "lowVolatilityScore": 0.38333333333333336,
+        "lowRiskScore": -0.23333333333333334
+      }
     },
     {
       "startDate": "2020-11-01",
@@ -420,7 +618,16 @@
       "equalUniverseReturn": 0.15797581712929315,
       "benchmarkReturn": 0.12088494402861505,
       "spreadReturn": -0.1537846528628813,
-      "rankIC": -0.8
+      "rankIC": -0.8,
+      "factorRankIC": {
+        "score": -0.8,
+        "analystScore": -0.43333333333333335,
+        "momentum6m": -0.13333333333333333,
+        "momentum12m": -0.2,
+        "lowDrawdownScore": -0.6833333333333333,
+        "lowVolatilityScore": -0.1,
+        "lowRiskScore": -0.5
+      }
     },
     {
       "startDate": "2020-12-01",
@@ -438,7 +645,16 @@
       "equalUniverseReturn": 0.03662678910054657,
       "benchmarkReturn": 0.025824370641768235,
       "spreadReturn": -0.0720408781543092,
-      "rankIC": -0.55
+      "rankIC": -0.55,
+      "factorRankIC": {
+        "score": -0.55,
+        "analystScore": -0.7,
+        "momentum6m": 0.3333333333333333,
+        "momentum12m": 0.15,
+        "lowDrawdownScore": -0.1,
+        "lowVolatilityScore": -0.08333333333333333,
+        "lowRiskScore": -0.4666666666666667
+      }
     },
     {
       "startDate": "2021-01-01",
@@ -456,7 +672,16 @@
       "equalUniverseReturn": 0.03247695754145394,
       "benchmarkReturn": 0.006279163546287325,
       "spreadReturn": 0.011257600602463419,
-      "rankIC": -0.23333333333333334
+      "rankIC": -0.23333333333333334,
+      "factorRankIC": {
+        "score": -0.23333333333333334,
+        "analystScore": -0.06666666666666667,
+        "momentum6m": 0.3,
+        "momentum12m": 0.23333333333333334,
+        "lowDrawdownScore": 0.1673654817511446,
+        "lowVolatilityScore": -0.13333333333333333,
+        "lowRiskScore": -0.2
+      }
     },
     {
       "startDate": "2021-02-01",
@@ -474,7 +699,16 @@
       "equalUniverseReturn": 0.016283044594038325,
       "benchmarkReturn": 0.035493473780627394,
       "spreadReturn": -0.03549516384033738,
-      "rankIC": -0.03333333333333333
+      "rankIC": -0.03333333333333333,
+      "factorRankIC": {
+        "score": -0.03333333333333333,
+        "analystScore": -0.016666666666666666,
+        "momentum6m": -0.06666666666666667,
+        "momentum12m": -0.7666666666666667,
+        "lowDrawdownScore": -0.4,
+        "lowVolatilityScore": 0.5666666666666667,
+        "lowRiskScore": 0.35
+      }
     },
     {
       "startDate": "2021-03-01",
@@ -492,7 +726,16 @@
       "equalUniverseReturn": 0.009761372748883926,
       "benchmarkReturn": 0.031650818222025645,
       "spreadReturn": -0.003791486988277054,
-      "rankIC": 0.4166666666666667
+      "rankIC": 0.4166666666666667,
+      "factorRankIC": {
+        "score": 0.4166666666666667,
+        "analystScore": 0.6,
+        "momentum6m": -0.3333333333333333,
+        "momentum12m": -0.6166666666666667,
+        "lowDrawdownScore": 0.23333333333333334,
+        "lowVolatilityScore": 0.55,
+        "lowRiskScore": 0.43333333333333335
+      }
     },
     {
       "startDate": "2021-04-01",
@@ -510,7 +753,16 @@
       "equalUniverseReturn": 0.07141554760048383,
       "benchmarkReturn": 0.04166555022641405,
       "spreadReturn": -0.021102952858407575,
-      "rankIC": 0.1
+      "rankIC": 0.1,
+      "factorRankIC": {
+        "score": 0.1,
+        "analystScore": 0.5666666666666667,
+        "momentum6m": -0.4166666666666667,
+        "momentum12m": 0.0,
+        "lowDrawdownScore": 0.16666666666666666,
+        "lowVolatilityScore": -0.05,
+        "lowRiskScore": -0.03333333333333333
+      }
     },
     {
       "startDate": "2021-05-01",
@@ -528,7 +780,16 @@
       "equalUniverseReturn": -0.011513770874490669,
       "benchmarkReturn": 0.005684741228521473,
       "spreadReturn": -0.006808876131726843,
-      "rankIC": 0.21666666666666667
+      "rankIC": 0.21666666666666667,
+      "factorRankIC": {
+        "score": 0.21666666666666667,
+        "analystScore": 0.016666666666666666,
+        "momentum6m": -0.06666666666666667,
+        "momentum12m": 0.016666666666666666,
+        "lowDrawdownScore": 0.3,
+        "lowVolatilityScore": -0.18333333333333332,
+        "lowRiskScore": -0.1
+      }
     },
     {
       "startDate": "2021-06-01",
@@ -546,7 +807,16 @@
       "equalUniverseReturn": 0.0764043716595281,
       "benchmarkReturn": 0.02900478297567588,
       "spreadReturn": -0.0880121956547685,
-      "rankIC": -0.48333333333333334
+      "rankIC": -0.48333333333333334,
+      "factorRankIC": {
+        "score": -0.48333333333333334,
+        "analystScore": -0.23333333333333334,
+        "momentum6m": -0.31666666666666665,
+        "momentum12m": 0.2,
+        "lowDrawdownScore": -0.31799441532717476,
+        "lowVolatilityScore": -0.5666666666666667,
+        "lowRiskScore": -0.8166666666666667
+      }
     },
     {
       "startDate": "2021-07-01",
@@ -564,7 +834,16 @@
       "equalUniverseReturn": 0.02051454789804699,
       "benchmarkReturn": 0.018766622753598083,
       "spreadReturn": 0.025512502165723455,
-      "rankIC": 0.26666666666666666
+      "rankIC": 0.26666666666666666,
+      "factorRankIC": {
+        "score": 0.26666666666666666,
+        "analystScore": 0.13333333333333333,
+        "momentum6m": -0.2,
+        "momentum12m": -0.1,
+        "lowDrawdownScore": 0.050209644525343385,
+        "lowVolatilityScore": 0.13333333333333333,
+        "lowRiskScore": 0.4
+      }
     },
     {
       "startDate": "2021-08-01",
@@ -582,7 +861,16 @@
       "equalUniverseReturn": 0.05682447018971167,
       "benchmarkReturn": 0.030303030303030276,
       "spreadReturn": 0.005909660726529875,
-      "rankIC": 0.35
+      "rankIC": 0.35,
+      "factorRankIC": {
+        "score": 0.35,
+        "analystScore": -0.23333333333333334,
+        "momentum6m": 0.5833333333333334,
+        "momentum12m": 0.8166666666666667,
+        "lowDrawdownScore": 0.08333333333333333,
+        "lowVolatilityScore": -0.48333333333333334,
+        "lowRiskScore": -0.3333333333333333
+      }
     },
     {
       "startDate": "2021-09-01",
@@ -600,7 +888,16 @@
       "equalUniverseReturn": -0.03302575122827948,
       "benchmarkReturn": -0.03580562659846531,
       "spreadReturn": -0.08194869264195709,
-      "rankIC": -0.7666666666666667
+      "rankIC": -0.7666666666666667,
+      "factorRankIC": {
+        "score": -0.7666666666666667,
+        "analystScore": -0.4666666666666667,
+        "momentum6m": -0.8833333333333333,
+        "momentum12m": 0.08333333333333333,
+        "lowDrawdownScore": -0.7615129419677079,
+        "lowVolatilityScore": 0.26666666666666666,
+        "lowRiskScore": -0.15
+      }
     },
     {
       "startDate": "2021-10-01",
@@ -618,7 +915,16 @@
       "equalUniverseReturn": 0.10623409662893016,
       "benchmarkReturn": 0.05941153354946449,
       "spreadReturn": -0.028882957247052865,
-      "rankIC": 0.13333333333333333
+      "rankIC": 0.13333333333333333,
+      "factorRankIC": {
+        "score": 0.13333333333333333,
+        "analystScore": -0.7666666666666667,
+        "momentum6m": 0.8,
+        "momentum12m": 0.5833333333333334,
+        "lowDrawdownScore": -0.11666666666666667,
+        "lowVolatilityScore": -0.31666666666666665,
+        "lowRiskScore": -0.2833333333333333
+      }
     },
     {
       "startDate": "2021-11-01",
@@ -636,7 +942,16 @@
       "equalUniverseReturn": 0.0025982500997060332,
       "benchmarkReturn": -0.020725628839689314,
       "spreadReturn": 0.12654415201966607,
-      "rankIC": 0.5
+      "rankIC": 0.5,
+      "factorRankIC": {
+        "score": 0.5,
+        "analystScore": -0.08333333333333333,
+        "momentum6m": 0.38333333333333336,
+        "momentum12m": 0.016666666666666666,
+        "lowDrawdownScore": 0.25941649671427414,
+        "lowVolatilityScore": 0.15,
+        "lowRiskScore": 0.26666666666666666
+      }
     },
     {
       "startDate": "2021-12-01",
@@ -654,7 +969,16 @@
       "equalUniverseReturn": 0.024208472727348076,
       "benchmarkReturn": 0.058000520821003265,
       "spreadReturn": -0.03287813063869252,
-      "rankIC": -0.2
+      "rankIC": -0.2,
+      "factorRankIC": {
+        "score": -0.2,
+        "analystScore": 0.7,
+        "momentum6m": -0.7333333333333333,
+        "momentum12m": -0.6833333333333333,
+        "lowDrawdownScore": -0.2833333333333333,
+        "lowVolatilityScore": 0.45,
+        "lowRiskScore": -0.1
+      }
     },
     {
       "startDate": "2022-01-01",
@@ -672,7 +996,16 @@
       "equalUniverseReturn": -0.060170409423728546,
       "benchmarkReturn": -0.046340426484079655,
       "spreadReturn": -0.032729233490832815,
-      "rankIC": -0.18333333333333332
+      "rankIC": -0.18333333333333332,
+      "factorRankIC": {
+        "score": -0.18333333333333332,
+        "analystScore": 0.3333333333333333,
+        "momentum6m": -0.55,
+        "momentum12m": -0.5,
+        "lowDrawdownScore": 0.2833333333333333,
+        "lowVolatilityScore": 0.45,
+        "lowRiskScore": 0.48333333333333334
+      }
     },
     {
       "startDate": "2022-02-01",
@@ -690,7 +1023,16 @@
       "equalUniverseReturn": -0.09010159744098789,
       "benchmarkReturn": -0.050703894885030576,
       "spreadReturn": 0.07485427716815626,
-      "rankIC": 0.26666666666666666
+      "rankIC": 0.26666666666666666,
+      "factorRankIC": {
+        "score": 0.26666666666666666,
+        "analystScore": -0.1,
+        "momentum6m": 0.21666666666666667,
+        "momentum12m": 0.16666666666666666,
+        "lowDrawdownScore": -0.1,
+        "lowVolatilityScore": 0.31666666666666665,
+        "lowRiskScore": 0.11666666666666667
+      }
     },
     {
       "startDate": "2022-03-01",
@@ -708,7 +1050,16 @@
       "equalUniverseReturn": 0.09083513642196656,
       "benchmarkReturn": 0.056625225536963475,
       "spreadReturn": -0.060908925676092684,
-      "rankIC": -0.38333333333333336
+      "rankIC": -0.38333333333333336,
+      "factorRankIC": {
+        "score": -0.38333333333333336,
+        "analystScore": -0.016666666666666666,
+        "momentum6m": 0.3333333333333333,
+        "momentum12m": 0.03333333333333333,
+        "lowDrawdownScore": -0.6333333333333333,
+        "lowVolatilityScore": -0.9166666666666666,
+        "lowRiskScore": -0.7
+      }
     },
     {
       "startDate": "2022-04-01",
@@ -726,7 +1077,16 @@
       "equalUniverseReturn": -0.15618533509319044,
       "benchmarkReturn": -0.0903625730994152,
       "spreadReturn": -0.008275541186778895,
-      "rankIC": 0.26666666666666666
+      "rankIC": 0.26666666666666666,
+      "factorRankIC": {
+        "score": 0.26666666666666666,
+        "analystScore": 0.4166666666666667,
+        "momentum6m": -0.23333333333333334,
+        "momentum12m": -0.31666666666666665,
+        "lowDrawdownScore": 0.43333333333333335,
+        "lowVolatilityScore": 0.55,
+        "lowRiskScore": 0.48333333333333334
+      }
     },
     {
       "startDate": "2022-05-01",
@@ -744,7 +1104,16 @@
       "equalUniverseReturn": -0.02669254454801078,
       "benchmarkReturn": -0.005837426389281752,
       "spreadReturn": 0.011600929071321237,
-      "rankIC": -0.03333333333333333
+      "rankIC": -0.03333333333333333,
+      "factorRankIC": {
+        "score": -0.03333333333333333,
+        "analystScore": 0.08333333333333333,
+        "momentum6m": -0.2,
+        "momentum12m": -0.03333333333333333,
+        "lowDrawdownScore": 0.03333333333333333,
+        "lowVolatilityScore": 0.5,
+        "lowRiskScore": 0.21666666666666667
+      }
     },
     {
       "startDate": "2022-06-01",
@@ -762,7 +1131,16 @@
       "equalUniverseReturn": -0.09652627906563603,
       "benchmarkReturn": -0.06518365235385426,
       "spreadReturn": 0.087644578709968,
-      "rankIC": 0.6666666666666666
+      "rankIC": 0.6666666666666666,
+      "factorRankIC": {
+        "score": 0.6666666666666666,
+        "analystScore": 0.55,
+        "momentum6m": 0.6,
+        "momentum12m": 0.26666666666666666,
+        "lowDrawdownScore": 0.6666666666666666,
+        "lowVolatilityScore": 0.4,
+        "lowRiskScore": 0.6666666666666666
+      }
     },
     {
       "startDate": "2022-07-01",
@@ -780,7 +1158,16 @@
       "equalUniverseReturn": 0.13048779585595946,
       "benchmarkReturn": 0.07744881018262317,
       "spreadReturn": -0.059187157633794396,
-      "rankIC": -0.18333333333333332
+      "rankIC": -0.18333333333333332,
+      "factorRankIC": {
+        "score": -0.18333333333333332,
+        "analystScore": -0.08333333333333333,
+        "momentum6m": -0.1,
+        "momentum12m": 0.35,
+        "lowDrawdownScore": -0.1,
+        "lowVolatilityScore": -0.5,
+        "lowRiskScore": -0.1
+      }
     },
     {
       "startDate": "2022-08-01",
@@ -798,7 +1185,16 @@
       "equalUniverseReturn": -0.056564484467035436,
       "benchmarkReturn": -0.03492642338015861,
       "spreadReturn": 0.021468546243602893,
-      "rankIC": -0.06666666666666667
+      "rankIC": -0.06666666666666667,
+      "factorRankIC": {
+        "score": -0.06666666666666667,
+        "analystScore": 0.06666666666666667,
+        "momentum6m": -0.43333333333333335,
+        "momentum12m": -0.6333333333333333,
+        "lowDrawdownScore": -0.03333333333333333,
+        "lowVolatilityScore": 0.26666666666666666,
+        "lowRiskScore": 0.1
+      }
     },
     {
       "startDate": "2022-09-01",
@@ -816,7 +1212,16 @@
       "equalUniverseReturn": -0.11401022924180154,
       "benchmarkReturn": -0.09529258362383242,
       "spreadReturn": -0.008201905289540096,
-      "rankIC": 0.2833333333333333
+      "rankIC": 0.2833333333333333,
+      "factorRankIC": {
+        "score": 0.2833333333333333,
+        "analystScore": -0.18333333333333332,
+        "momentum6m": 0.6,
+        "momentum12m": 0.65,
+        "lowDrawdownScore": 0.23333333333333334,
+        "lowVolatilityScore": 0.43333333333333335,
+        "lowRiskScore": 0.2833333333333333
+      }
     },
     {
       "startDate": "2022-10-01",
@@ -834,7 +1239,16 @@
       "equalUniverseReturn": -0.005507438650654938,
       "benchmarkReturn": 0.07656332725454429,
       "spreadReturn": 0.06675556812006686,
-      "rankIC": 0.26666666666666666
+      "rankIC": 0.26666666666666666,
+      "factorRankIC": {
+        "score": 0.26666666666666666,
+        "analystScore": -0.03333333333333333,
+        "momentum6m": 0.5,
+        "momentum12m": 0.05,
+        "lowDrawdownScore": 0.3347309635022892,
+        "lowVolatilityScore": 0.65,
+        "lowRiskScore": 0.5
+      }
     },
     {
       "startDate": "2022-11-01",
@@ -852,7 +1266,16 @@
       "equalUniverseReturn": 0.07866747511315386,
       "benchmarkReturn": 0.059424605885085136,
       "spreadReturn": -0.03812088910160008,
-      "rankIC": -0.18333333333333332
+      "rankIC": -0.18333333333333332,
+      "factorRankIC": {
+        "score": -0.18333333333333332,
+        "analystScore": -0.016666666666666666,
+        "momentum6m": -0.4,
+        "momentum12m": -0.45,
+        "lowDrawdownScore": -0.45,
+        "lowVolatilityScore": -0.03333333333333333,
+        "lowRiskScore": -0.4166666666666667
+      }
     },
     {
       "startDate": "2022-12-01",
@@ -870,7 +1293,16 @@
       "equalUniverseReturn": -0.11142912019923286,
       "benchmarkReturn": -0.056916649473901404,
       "spreadReturn": 0.07119371577109646,
-      "rankIC": 0.25
+      "rankIC": 0.25,
+      "factorRankIC": {
+        "score": 0.25,
+        "analystScore": 0.23333333333333334,
+        "momentum6m": 0.18333333333333332,
+        "momentum12m": 0.23333333333333334,
+        "lowDrawdownScore": 0.3,
+        "lowVolatilityScore": 0.2833333333333333,
+        "lowRiskScore": 0.3
+      }
     },
     {
       "startDate": "2023-01-01",
@@ -888,7 +1320,16 @@
       "equalUniverseReturn": 0.21132058280458826,
       "benchmarkReturn": 0.07418852033142831,
       "spreadReturn": -0.2742995279821685,
-      "rankIC": -0.9
+      "rankIC": -0.9,
+      "factorRankIC": {
+        "score": -0.9,
+        "analystScore": -0.3333333333333333,
+        "momentum6m": -0.6833333333333333,
+        "momentum12m": -0.9,
+        "lowDrawdownScore": -0.9205101496312953,
+        "lowVolatilityScore": -0.9,
+        "lowRiskScore": -0.9
+      }
     },
     {
       "startDate": "2023-02-01",
@@ -906,7 +1347,16 @@
       "equalUniverseReturn": 0.006285971214912996,
       "benchmarkReturn": -0.03910187872307935,
       "spreadReturn": -0.020090607386086118,
-      "rankIC": -0.3333333333333333
+      "rankIC": -0.3333333333333333,
+      "factorRankIC": {
+        "score": -0.3333333333333333,
+        "analystScore": -0.7333333333333333,
+        "momentum6m": 0.26666666666666666,
+        "momentum12m": -0.25,
+        "lowDrawdownScore": -0.3333333333333333,
+        "lowVolatilityScore": -0.48333333333333334,
+        "lowRiskScore": -0.4
+      }
     },
     {
       "startDate": "2023-03-01",
@@ -924,7 +1374,16 @@
       "equalUniverseReturn": 0.10998811853723395,
       "benchmarkReturn": 0.0410639537964288,
       "spreadReturn": -0.043174972224403946,
-      "rankIC": 0.13333333333333333
+      "rankIC": 0.13333333333333333,
+      "factorRankIC": {
+        "score": 0.13333333333333333,
+        "analystScore": 0.13333333333333333,
+        "momentum6m": 0.31666666666666665,
+        "momentum12m": -0.15,
+        "lowDrawdownScore": -0.13333333333333333,
+        "lowVolatilityScore": -0.36666666666666664,
+        "lowRiskScore": -0.2
+      }
     },
     {
       "startDate": "2023-04-01",
@@ -942,7 +1401,16 @@
       "equalUniverseReturn": 0.022364917422380018,
       "benchmarkReturn": 0.014963355048859928,
       "spreadReturn": 0.09642947768062793,
-      "rankIC": 0.5166666666666667
+      "rankIC": 0.5166666666666667,
+      "factorRankIC": {
+        "score": 0.5166666666666667,
+        "analystScore": -0.3,
+        "momentum6m": 0.7333333333333333,
+        "momentum12m": 0.4666666666666667,
+        "lowDrawdownScore": 0.3333333333333333,
+        "lowVolatilityScore": 0.13333333333333333,
+        "lowRiskScore": 0.4
+      }
     },
     {
       "startDate": "2023-05-01",
@@ -960,7 +1428,16 @@
       "equalUniverseReturn": 0.13786994891646698,
       "benchmarkReturn": 0.015168990071206423,
       "spreadReturn": 0.010115936368065098,
-      "rankIC": 0.05
+      "rankIC": 0.05,
+      "factorRankIC": {
+        "score": 0.05,
+        "analystScore": 0.08333333333333333,
+        "momentum6m": -0.15,
+        "momentum12m": -0.25,
+        "lowDrawdownScore": -0.15062893357603013,
+        "lowVolatilityScore": -0.85,
+        "lowRiskScore": -0.8
+      }
     },
     {
       "startDate": "2023-06-01",
@@ -978,7 +1455,16 @@
       "equalUniverseReturn": 0.0682096260748521,
       "benchmarkReturn": 0.054780310701672,
       "spreadReturn": -0.08403286093404813,
-      "rankIC": -0.3333333333333333
+      "rankIC": -0.3333333333333333,
+      "factorRankIC": {
+        "score": -0.3333333333333333,
+        "analystScore": -0.5333333333333333,
+        "momentum6m": -0.08333333333333333,
+        "momentum12m": -0.11666666666666667,
+        "lowDrawdownScore": -0.23431167445160245,
+        "lowVolatilityScore": -0.38333333333333336,
+        "lowRiskScore": -0.36666666666666664
+      }
     },
     {
       "startDate": "2023-07-01",
@@ -996,7 +1482,16 @@
       "equalUniverseReturn": 0.04715733800699976,
       "benchmarkReturn": 0.02978434448685241,
       "spreadReturn": 0.006469024585281313,
-      "rankIC": 0.36666666666666664
+      "rankIC": 0.36666666666666664,
+      "factorRankIC": {
+        "score": 0.36666666666666664,
+        "analystScore": 0.08333333333333333,
+        "momentum6m": 0.2833333333333333,
+        "momentum12m": 0.3,
+        "lowDrawdownScore": 0.05085476277156078,
+        "lowVolatilityScore": -0.2833333333333333,
+        "lowRiskScore": -0.21666666666666667
+      }
     },
     {
       "startDate": "2023-08-01",
@@ -1014,7 +1509,16 @@
       "equalUniverseReturn": -0.011128318460110396,
       "benchmarkReturn": -0.011596443757247776,
       "spreadReturn": -0.011863302082006727,
-      "rankIC": 0.03333333333333333
+      "rankIC": 0.03333333333333333,
+      "factorRankIC": {
+        "score": 0.03333333333333333,
+        "analystScore": 0.6,
+        "momentum6m": -0.2,
+        "momentum12m": -0.25,
+        "lowDrawdownScore": -0.45,
+        "lowVolatilityScore": -0.05,
+        "lowRiskScore": -0.08333333333333333
+      }
     },
     {
       "startDate": "2023-09-01",
@@ -1032,7 +1536,16 @@
       "equalUniverseReturn": -0.04498404763411644,
       "benchmarkReturn": -0.04920748119349416,
       "spreadReturn": -0.01128385154865616,
-      "rankIC": -0.2
+      "rankIC": -0.2,
+      "factorRankIC": {
+        "score": -0.2,
+        "analystScore": -0.3,
+        "momentum6m": -0.3333333333333333,
+        "momentum12m": -0.13333333333333333,
+        "lowDrawdownScore": -0.6333333333333333,
+        "lowVolatilityScore": -0.15,
+        "lowRiskScore": -0.38333333333333336
+      }
     },
     {
       "startDate": "2023-10-01",
@@ -1050,7 +1563,16 @@
       "equalUniverseReturn": -0.0008230829277921206,
       "benchmarkReturn": -0.011275102830873518,
       "spreadReturn": 0.053902526189241656,
-      "rankIC": 0.4666666666666667
+      "rankIC": 0.4666666666666667,
+      "factorRankIC": {
+        "score": 0.4666666666666667,
+        "analystScore": 0.85,
+        "momentum6m": -0.13333333333333333,
+        "momentum12m": 0.1,
+        "lowDrawdownScore": 0.03333333333333333,
+        "lowVolatilityScore": 0.13333333333333333,
+        "lowRiskScore": 0.03333333333333333
+      }
     },
     {
       "startDate": "2023-11-01",
@@ -1068,7 +1590,16 @@
       "equalUniverseReturn": 0.09053070590439057,
       "benchmarkReturn": 0.08621280344557558,
       "spreadReturn": -0.04098978091617611,
-      "rankIC": -0.6666666666666666
+      "rankIC": -0.6666666666666666,
+      "factorRankIC": {
+        "score": -0.6666666666666666,
+        "analystScore": -0.6666666666666666,
+        "momentum6m": -0.25,
+        "momentum12m": -0.6333333333333333,
+        "lowDrawdownScore": -0.7,
+        "lowVolatilityScore": -0.08333333333333333,
+        "lowRiskScore": -0.38333333333333336
+      }
     },
     {
       "startDate": "2023-12-01",
@@ -1086,7 +1617,16 @@
       "equalUniverseReturn": 0.043562674827100994,
       "benchmarkReturn": 0.03949354540743899,
       "spreadReturn": -0.01217200300183724,
-      "rankIC": -0.03333333333333333
+      "rankIC": -0.03333333333333333,
+      "factorRankIC": {
+        "score": -0.03333333333333333,
+        "analystScore": -0.5333333333333333,
+        "momentum6m": 0.48333333333333334,
+        "momentum12m": 0.11666666666666667,
+        "lowDrawdownScore": -0.18333333333333332,
+        "lowVolatilityScore": -0.23333333333333334,
+        "lowRiskScore": -0.3333333333333333
+      }
     },
     {
       "startDate": "2024-01-01",
@@ -1104,7 +1644,16 @@
       "equalUniverseReturn": 0.03814896379189449,
       "benchmarkReturn": 0.029237104464672647,
       "spreadReturn": 0.10637038204163779,
-      "rankIC": 0.6333333333333333
+      "rankIC": 0.6333333333333333,
+      "factorRankIC": {
+        "score": 0.6333333333333333,
+        "analystScore": 0.4,
+        "momentum6m": 0.6,
+        "momentum12m": 0.3333333333333333,
+        "lowDrawdownScore": 0.3,
+        "lowVolatilityScore": -0.03333333333333333,
+        "lowRiskScore": -0.03333333333333333
+      }
     },
     {
       "startDate": "2024-02-01",
@@ -1122,7 +1671,16 @@
       "equalUniverseReturn": 0.09186189204276528,
       "benchmarkReturn": 0.048326980985070156,
       "spreadReturn": 0.1638051822314135,
-      "rankIC": 0.4666666666666667
+      "rankIC": 0.4666666666666667,
+      "factorRankIC": {
+        "score": 0.4666666666666667,
+        "analystScore": -0.05,
+        "momentum6m": 0.7,
+        "momentum12m": 0.5166666666666667,
+        "lowDrawdownScore": 0.4,
+        "lowVolatilityScore": -0.5166666666666667,
+        "lowRiskScore": -0.2
+      }
     },
     {
       "startDate": "2024-03-01",
@@ -1140,7 +1698,16 @@
       "equalUniverseReturn": 0.01276363607123527,
       "benchmarkReturn": 0.02131206813434039,
       "spreadReturn": 0.023765707400995345,
-      "rankIC": 0.23333333333333334
+      "rankIC": 0.23333333333333334,
+      "factorRankIC": {
+        "score": 0.23333333333333334,
+        "analystScore": 0.0,
+        "momentum6m": 0.35,
+        "momentum12m": 0.5333333333333333,
+        "lowDrawdownScore": 0.23732222626728364,
+        "lowVolatilityScore": 0.18333333333333332,
+        "lowRiskScore": 0.11666666666666667
+      }
     },
     {
       "startDate": "2024-04-01",
@@ -1158,7 +1725,16 @@
       "equalUniverseReturn": -0.02893560866621224,
       "benchmarkReturn": -0.04175435146032047,
       "spreadReturn": -0.0786261054328739,
-      "rankIC": -0.6833333333333333
+      "rankIC": -0.6833333333333333,
+      "factorRankIC": {
+        "score": -0.6833333333333333,
+        "analystScore": -0.26666666666666666,
+        "momentum6m": -0.7833333333333333,
+        "momentum12m": -0.6,
+        "lowDrawdownScore": 0.07531446678801507,
+        "lowVolatilityScore": -0.016666666666666666,
+        "lowRiskScore": -0.05
+      }
     },
     {
       "startDate": "2024-05-01",
@@ -1176,7 +1752,16 @@
       "equalUniverseReturn": 0.07537770050529848,
       "benchmarkReturn": 0.054000246295307974,
       "spreadReturn": 0.054428490970343385,
-      "rankIC": 0.05
+      "rankIC": 0.05,
+      "factorRankIC": {
+        "score": 0.05,
+        "analystScore": -0.3333333333333333,
+        "momentum6m": 0.45,
+        "momentum12m": 0.23333333333333334,
+        "lowDrawdownScore": -0.21666666666666667,
+        "lowVolatilityScore": -0.08333333333333333,
+        "lowRiskScore": -0.25
+      }
     },
     {
       "startDate": "2024-06-01",
@@ -1194,7 +1779,16 @@
       "equalUniverseReturn": 0.08688674678663572,
       "benchmarkReturn": 0.037388273323856636,
       "spreadReturn": 0.00589073096413692,
-      "rankIC": -0.13333333333333333
+      "rankIC": -0.13333333333333333,
+      "factorRankIC": {
+        "score": -0.13333333333333333,
+        "analystScore": -0.26666666666666666,
+        "momentum6m": -0.2,
+        "momentum12m": -0.16666666666666666,
+        "lowDrawdownScore": -0.35,
+        "lowVolatilityScore": -0.7333333333333333,
+        "lowRiskScore": -0.7
+      }
     },
     {
       "startDate": "2024-07-01",
@@ -1212,7 +1806,16 @@
       "equalUniverseReturn": -0.03183857855710919,
       "benchmarkReturn": -0.004261070335817352,
       "spreadReturn": -0.08435145471634983,
-      "rankIC": -0.7166666666666667
+      "rankIC": -0.7166666666666667,
+      "factorRankIC": {
+        "score": -0.7166666666666667,
+        "analystScore": -0.5666666666666667,
+        "momentum6m": -0.7,
+        "momentum12m": -0.7,
+        "lowDrawdownScore": -0.2034190510862431,
+        "lowVolatilityScore": 0.16666666666666666,
+        "lowRiskScore": -0.03333333333333333
+      }
     },
     {
       "startDate": "2024-08-01",
@@ -1230,7 +1833,16 @@
       "equalUniverseReturn": 0.025379745832004322,
       "benchmarkReturn": 0.03806130528220786,
       "spreadReturn": -0.023143254011830483,
-      "rankIC": 0.15
+      "rankIC": 0.15,
+      "factorRankIC": {
+        "score": 0.15,
+        "analystScore": -0.4666666666666667,
+        "momentum6m": 0.4,
+        "momentum12m": 0.35,
+        "lowDrawdownScore": 0.31666666666666665,
+        "lowVolatilityScore": 0.05,
+        "lowRiskScore": 0.18333333333333332
+      }
     },
     {
       "startDate": "2024-09-01",
@@ -1248,7 +1860,16 @@
       "equalUniverseReturn": 0.030497591033926477,
       "benchmarkReturn": 0.01185871243076364,
       "spreadReturn": -0.06482309490021412,
-      "rankIC": -0.5
+      "rankIC": -0.5,
+      "factorRankIC": {
+        "score": -0.5,
+        "analystScore": 0.16666666666666666,
+        "momentum6m": -0.5,
+        "momentum12m": -0.36666666666666664,
+        "lowDrawdownScore": -0.5333333333333333,
+        "lowVolatilityScore": -0.4666666666666667,
+        "lowRiskScore": -0.5166666666666667
+      }
     },
     {
       "startDate": "2024-10-01",
@@ -1266,7 +1887,16 @@
       "equalUniverseReturn": 0.03250569161858631,
       "benchmarkReturn": 0.004253562583007353,
       "spreadReturn": 0.018541953031794123,
-      "rankIC": 0.16666666666666666
+      "rankIC": 0.16666666666666666,
+      "factorRankIC": {
+        "score": 0.16666666666666666,
+        "analystScore": 0.016666666666666666,
+        "momentum6m": -0.18333333333333332,
+        "momentum12m": 0.5333333333333333,
+        "lowDrawdownScore": -0.5666666666666667,
+        "lowVolatilityScore": 0.1,
+        "lowRiskScore": -0.1
+      }
     },
     {
       "startDate": "2024-11-01",
@@ -1284,7 +1914,16 @@
       "equalUniverseReturn": 0.08471975839597472,
       "benchmarkReturn": 0.05518720400321686,
       "spreadReturn": -0.09421446122772234,
-      "rankIC": -0.4
+      "rankIC": -0.4,
+      "factorRankIC": {
+        "score": -0.4,
+        "analystScore": -0.4166666666666667,
+        "momentum6m": 0.3333333333333333,
+        "momentum12m": -0.48333333333333334,
+        "lowDrawdownScore": 0.35,
+        "lowVolatilityScore": 0.05,
+        "lowRiskScore": 0.23333333333333334
+      }
     },
     {
       "startDate": "2024-12-01",
@@ -1302,7 +1941,16 @@
       "equalUniverseReturn": 0.039129183299741244,
       "benchmarkReturn": -0.02406720525718531,
       "spreadReturn": -0.08381466568951004,
-      "rankIC": -0.5666666666666667
+      "rankIC": -0.5666666666666667,
+      "factorRankIC": {
+        "score": -0.5666666666666667,
+        "analystScore": -0.26666666666666666,
+        "momentum6m": -0.1,
+        "momentum12m": -0.16666666666666666,
+        "lowDrawdownScore": -0.06694619270045785,
+        "lowVolatilityScore": -0.26666666666666666,
+        "lowRiskScore": -0.3
+      }
     },
     {
       "startDate": "2025-01-01",
@@ -1320,7 +1968,16 @@
       "equalUniverseReturn": 0.04040833762017958,
       "benchmarkReturn": 0.026864739162125506,
       "spreadReturn": 0.04654396269885416,
-      "rankIC": 0.4666666666666667
+      "rankIC": 0.4666666666666667,
+      "factorRankIC": {
+        "score": 0.4666666666666667,
+        "analystScore": -0.05,
+        "momentum6m": 0.38333333333333336,
+        "momentum12m": 0.11666666666666667,
+        "lowDrawdownScore": 0.23333333333333334,
+        "lowVolatilityScore": 0.03333333333333333,
+        "lowRiskScore": 0.06666666666666667
+      }
     },
     {
       "startDate": "2025-02-01",
@@ -1338,7 +1995,16 @@
       "equalUniverseReturn": -0.05564744962420019,
       "benchmarkReturn": -0.01269224269055258,
       "spreadReturn": 0.002878225028642073,
-      "rankIC": -0.05
+      "rankIC": -0.05,
+      "factorRankIC": {
+        "score": -0.05,
+        "analystScore": 0.0,
+        "momentum6m": -0.43333333333333335,
+        "momentum12m": -0.25,
+        "lowDrawdownScore": -0.22594340036404523,
+        "lowVolatilityScore": 0.5666666666666667,
+        "lowRiskScore": 0.36666666666666664
+      }
     },
     {
       "startDate": "2025-03-01",
@@ -1356,7 +2022,16 @@
       "equalUniverseReturn": -0.0815744661999167,
       "benchmarkReturn": -0.05306492750646197,
       "spreadReturn": -0.016713729501074276,
-      "rankIC": -0.21666666666666667
+      "rankIC": -0.21666666666666667,
+      "factorRankIC": {
+        "score": -0.21666666666666667,
+        "analystScore": 0.08333333333333333,
+        "momentum6m": -0.3333333333333333,
+        "momentum12m": -0.5,
+        "lowDrawdownScore": 0.16666666666666666,
+        "lowVolatilityScore": 0.5,
+        "lowRiskScore": 0.36666666666666664
+      }
     },
     {
       "startDate": "2025-04-01",
@@ -1374,7 +2049,16 @@
       "equalUniverseReturn": 0.014259242326924708,
       "benchmarkReturn": -0.0044469350494406035,
       "spreadReturn": -0.01657369776338022,
-      "rankIC": -0.26666666666666666
+      "rankIC": -0.26666666666666666,
+      "factorRankIC": {
+        "score": -0.26666666666666666,
+        "analystScore": 0.2,
+        "momentum6m": -0.3333333333333333,
+        "momentum12m": -0.3333333333333333,
+        "lowDrawdownScore": -0.4,
+        "lowVolatilityScore": -0.26666666666666666,
+        "lowRiskScore": -0.45
+      }
     },
     {
       "startDate": "2025-05-01",
@@ -1392,7 +2076,16 @@
       "equalUniverseReturn": 0.09826764544962913,
       "benchmarkReturn": 0.05536288199299122,
       "spreadReturn": -0.03846690533444372,
-      "rankIC": -0.35
+      "rankIC": -0.35,
+      "factorRankIC": {
+        "score": -0.35,
+        "analystScore": -0.016666666666666666,
+        "momentum6m": 0.016666666666666666,
+        "momentum12m": 0.65,
+        "lowDrawdownScore": -0.6166666666666667,
+        "lowVolatilityScore": -0.65,
+        "lowRiskScore": -0.6666666666666666
+      }
     },
     {
       "startDate": "2025-06-01",
@@ -1410,7 +2103,16 @@
       "equalUniverseReturn": 0.043510909128003455,
       "benchmarkReturn": 0.0510477960152782,
       "spreadReturn": 0.0417359458157065,
-      "rankIC": 0.08333333333333333
+      "rankIC": 0.08333333333333333,
+      "factorRankIC": {
+        "score": 0.08333333333333333,
+        "analystScore": 0.31799441532717476,
+        "momentum6m": -0.11666666666666667,
+        "momentum12m": -0.016666666666666666,
+        "lowDrawdownScore": 0.3,
+        "lowVolatilityScore": -0.15,
+        "lowRiskScore": 0.13333333333333333
+      }
     },
     {
       "startDate": "2025-07-01",
@@ -1428,7 +2130,16 @@
       "equalUniverseReturn": 0.025210946471474444,
       "benchmarkReturn": 0.006580562785444055,
       "spreadReturn": 0.008471677893628154,
-      "rankIC": 0.1
+      "rankIC": 0.1,
+      "factorRankIC": {
+        "score": 0.1,
+        "analystScore": 0.38333333333333336,
+        "momentum6m": 0.06666666666666667,
+        "momentum12m": -0.08333333333333333,
+        "lowDrawdownScore": 0.21666666666666667,
+        "lowVolatilityScore": -0.38333333333333336,
+        "lowRiskScore": -0.11666666666666667
+      }
     },
     {
       "startDate": "2025-08-01",
@@ -1446,7 +2157,16 @@
       "equalUniverseReturn": 0.053294848067029256,
       "benchmarkReturn": 0.03753394805743926,
       "spreadReturn": -0.11151989541635574,
-      "rankIC": -0.8833333333333333
+      "rankIC": -0.8833333333333333,
+      "factorRankIC": {
+        "score": -0.8833333333333333,
+        "analystScore": -0.31666666666666665,
+        "momentum6m": -0.85,
+        "momentum12m": -0.6333333333333333,
+        "lowDrawdownScore": -0.8333333333333334,
+        "lowVolatilityScore": -0.21666666666666667,
+        "lowRiskScore": -0.5833333333333334
+      }
     },
     {
       "startDate": "2025-09-01",
@@ -1464,7 +2184,16 @@
       "equalUniverseReturn": 0.07594292520877112,
       "benchmarkReturn": 0.039154218718161715,
       "spreadReturn": -0.07017553524164821,
-      "rankIC": -0.25
+      "rankIC": -0.25,
+      "factorRankIC": {
+        "score": -0.25,
+        "analystScore": -0.5166666666666667,
+        "momentum6m": 0.26666666666666666,
+        "momentum12m": 0.26666666666666666,
+        "lowDrawdownScore": -0.04184137043778615,
+        "lowVolatilityScore": -0.38333333333333336,
+        "lowRiskScore": -0.26666666666666666
+      }
     },
     {
       "startDate": "2025-10-01",
@@ -1482,7 +2211,16 @@
       "equalUniverseReturn": 0.030510107506671998,
       "benchmarkReturn": 0.020362912348975026,
       "spreadReturn": 0.07416829235544004,
-      "rankIC": 0.55
+      "rankIC": 0.55,
+      "factorRankIC": {
+        "score": 0.55,
+        "analystScore": 0.35,
+        "momentum6m": 0.2,
+        "momentum12m": -0.08333333333333333,
+        "lowDrawdownScore": 0.4166666666666667,
+        "lowVolatilityScore": 0.0,
+        "lowRiskScore": 0.11666666666666667
+      }
     },
     {
       "startDate": "2025-11-01",
@@ -1500,7 +2238,16 @@
       "equalUniverseReturn": -0.01656163962415749,
       "benchmarkReturn": -0.0026313066359188175,
       "spreadReturn": -0.023313567434032734,
-      "rankIC": -0.2
+      "rankIC": -0.2,
+      "factorRankIC": {
+        "score": -0.2,
+        "analystScore": -0.4,
+        "momentum6m": -0.06666666666666667,
+        "momentum12m": -0.18333333333333332,
+        "lowDrawdownScore": 0.31666666666666665,
+        "lowVolatilityScore": 0.13333333333333333,
+        "lowRiskScore": 0.25
+      }
     },
     {
       "startDate": "2025-12-01",
@@ -1518,7 +2265,16 @@
       "equalUniverseReturn": 0.01699950492828279,
       "benchmarkReturn": 0.0053950703285954305,
       "spreadReturn": -0.05060808247992643,
-      "rankIC": -0.6333333333333333
+      "rankIC": -0.6333333333333333,
+      "factorRankIC": {
+        "score": -0.6333333333333333,
+        "analystScore": -0.4166666666666667,
+        "momentum6m": -0.3333333333333333,
+        "momentum12m": -0.03333333333333333,
+        "lowDrawdownScore": -0.5333333333333333,
+        "lowVolatilityScore": -0.15,
+        "lowRiskScore": -0.4166666666666667
+      }
     },
     {
       "startDate": "2026-01-01",
@@ -1536,7 +2292,16 @@
       "equalUniverseReturn": -0.011187420203383678,
       "benchmarkReturn": 0.01472734509751894,
       "spreadReturn": 0.029352187549790243,
-      "rankIC": 0.0
+      "rankIC": 0.0,
+      "factorRankIC": {
+        "score": 0.0,
+        "analystScore": 0.11666666666666667,
+        "momentum6m": 0.18333333333333332,
+        "momentum12m": 0.08333333333333333,
+        "lowDrawdownScore": -0.2,
+        "lowVolatilityScore": -0.7166666666666667,
+        "lowRiskScore": -0.6
+      }
     },
     {
       "startDate": "2026-02-01",
@@ -1554,7 +2319,16 @@
       "equalUniverseReturn": -0.05785419058618749,
       "benchmarkReturn": -0.008644235239423592,
       "spreadReturn": -0.020608873514671305,
-      "rankIC": -0.21666666666666667
+      "rankIC": -0.21666666666666667,
+      "factorRankIC": {
+        "score": -0.21666666666666667,
+        "analystScore": -0.7666666666666667,
+        "momentum6m": 0.1,
+        "momentum12m": 0.2,
+        "lowDrawdownScore": -0.35,
+        "lowVolatilityScore": 0.55,
+        "lowRiskScore": 0.23333333333333334
+      }
     },
     {
       "startDate": "2026-03-01",
@@ -1572,7 +2346,16 @@
       "equalUniverseReturn": -0.04278067489591846,
       "benchmarkReturn": -0.04222049621173274,
       "spreadReturn": 0.03777458880227075,
-      "rankIC": 0.5833333333333334
+      "rankIC": 0.5833333333333334,
+      "factorRankIC": {
+        "score": 0.5833333333333334,
+        "analystScore": 0.23333333333333334,
+        "momentum6m": 0.4,
+        "momentum12m": 0.45,
+        "lowDrawdownScore": 0.3333333333333333,
+        "lowVolatilityScore": -0.13333333333333333,
+        "lowRiskScore": 0.36666666666666664
+      }
     },
     {
       "startDate": "2026-04-01",
@@ -1590,7 +2373,16 @@
       "equalUniverseReturn": 0.12845854220859884,
       "benchmarkReturn": 0.099837811371565,
       "spreadReturn": 0.12474670974535962,
-      "rankIC": 0.7666666666666667
+      "rankIC": 0.7666666666666667,
+      "factorRankIC": {
+        "score": 0.7666666666666667,
+        "analystScore": 0.7333333333333333,
+        "momentum6m": 0.5,
+        "momentum12m": 0.2,
+        "lowDrawdownScore": 0.21666666666666667,
+        "lowVolatilityScore": 0.18333333333333332,
+        "lowRiskScore": 0.21666666666666667
+      }
     },
     {
       "startDate": "2026-05-01",
@@ -1608,7 +2400,16 @@
       "equalUniverseReturn": 0.030446241284269364,
       "benchmarkReturn": 0.05255909071938358,
       "spreadReturn": 0.015372313095586038,
-      "rankIC": -0.26666666666666666
+      "rankIC": -0.26666666666666666,
+      "factorRankIC": {
+        "score": -0.26666666666666666,
+        "analystScore": -0.05,
+        "momentum6m": -0.5166666666666667,
+        "momentum12m": -0.03333333333333333,
+        "lowDrawdownScore": -0.510464719340991,
+        "lowVolatilityScore": -0.2,
+        "lowRiskScore": -0.35
+      }
     }
   ],
   "metrics": {
@@ -1674,6 +2475,79 @@
     },
     "rankICMean": -0.0449438202247191,
     "rankICTStat": -1.0446653818982197,
+    "rankICPValueApprox": 0.296177649892705,
     "rankICPeriods": 89
+  },
+  "factorDiagnostics": {
+    "score": {
+      "label": "Combined score",
+      "periods": 89,
+      "meanRankIC": -0.0449438202247191,
+      "tStat": -1.0446653818982197,
+      "roughPValue": 0.296177649892705,
+      "positiveRate": 0.4606741573033708,
+      "bestMonth": 0.8,
+      "worstMonth": -0.9
+    },
+    "analystScore": {
+      "label": "Analyst consensus",
+      "periods": 89,
+      "meanRankIC": -0.08931092417235385,
+      "tStat": -2.122952311734031,
+      "roughPValue": 0.03375784820239627,
+      "positiveRate": 0.4044943820224719,
+      "bestMonth": 0.85,
+      "worstMonth": -0.9
+    },
+    "momentum6m": {
+      "label": "6m momentum",
+      "periods": 89,
+      "meanRankIC": 0.021161048689138578,
+      "tStat": 0.44768229146192245,
+      "roughPValue": 0.6543825037207597,
+      "positiveRate": 0.47191011235955055,
+      "bestMonth": 0.9333333333333333,
+      "worstMonth": -0.8833333333333333
+    },
+    "momentum12m": {
+      "label": "12m momentum",
+      "periods": 89,
+      "meanRankIC": -0.020224719101123594,
+      "tStat": -0.4604249906241744,
+      "roughPValue": 0.6452112003083224,
+      "positiveRate": 0.4606741573033708,
+      "bestMonth": 0.85,
+      "worstMonth": -0.9
+    },
+    "lowDrawdownScore": {
+      "label": "Low drawdown",
+      "periods": 89,
+      "meanRankIC": -0.07687527732398185,
+      "tStat": -1.8769056741363241,
+      "roughPValue": 0.06053102306002245,
+      "positiveRate": 0.43820224719101125,
+      "bestMonth": 0.75,
+      "worstMonth": -0.9205101496312953
+    },
+    "lowVolatilityScore": {
+      "label": "Low volatility",
+      "periods": 89,
+      "meanRankIC": -0.07846441947565543,
+      "tStat": -1.8901013770639816,
+      "roughPValue": 0.058744402990002303,
+      "positiveRate": 0.4157303370786517,
+      "bestMonth": 0.7333333333333333,
+      "worstMonth": -0.9166666666666666
+    },
+    "lowRiskScore": {
+      "label": "Low risk composite",
+      "periods": 89,
+      "meanRankIC": -0.10018726591760299,
+      "tStat": -2.5573588268112317,
+      "roughPValue": 0.010547035886250061,
+      "positiveRate": 0.4044943820224719,
+      "bestMonth": 0.8166666666666667,
+      "worstMonth": -0.9
+    }
   }
 }

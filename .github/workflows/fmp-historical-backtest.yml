@@ -6,7 +6,7 @@ on:
       tickers:
         description: "Tickers to fetch. Blank uses current database tickers."
         required: false
-        default: "AAPL,MSFT,CELH,SPY"
+        default: ""
       max_tickers:
         description: "Maximum database tickers if tickers is blank"
         required: false
@@ -48,7 +48,7 @@ jobs:
             exit 2
           fi
           python scripts/fetch_fmp_history.py \
-            --tickers "${{ github.event.inputs.tickers || 'AAPL,MSFT,CELH,SPY' }}" \
+            --tickers "${{ github.event.inputs.tickers }}" \
             --max-tickers "${{ github.event.inputs.max_tickers || '25' }}" \
             --benchmark "${{ github.event.inputs.benchmark || 'SPY' }}"
 
