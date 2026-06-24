@@ -29,6 +29,7 @@ const LAST_REVIEW = "May 25 2026";
 const NEXT_REVIEW = "Nov 2026";
 const STORAGE_KEY = "kelly-stock-database-v1";
 const DATA_URL = "./data/stocks.json";
+const SCAN_URL = "./data/scan-results.json";
 const MODEL_V13 = "v13";
 const MODEL_V14 = "v14";
 const MODEL_OPTIONS = [
@@ -848,6 +849,86 @@ function Scanner({results,setView}){
   );
 }
 
+function YahooScan({scanData,setStocks,setDbMode,setView}){
+  const [query,setQuery] = useState("");
+  const [sortBy,setSortBy] = useState("score");
+  const rows = Array.isArray(scanData?.results) ? scanData.results : [];
+  const generated = scanData?.generatedAt ? new Date(scanData.generatedAt).toLocaleString() : "No scan yet";
+  const sorters = {
+    score: s=>Number(s.score)||0,
+    win: s=>Number(s.pAdj)||0,
+    upside: s=>Number(s.fxAdjUpside ?? s.upside)||0,
+    quality: s=>Number(s.qualityScore)||-1,
+    valuation: s=>Number(s.valuationScore)||-1,
+    confidence: s=>Number(s.dataConfidence)||0,
+    price: s=>Number(s.currentPrice)||0,
+  };
+  const filtered = rows
+    .filter(s=>!query || `${s.name} ${s.ticker} ${s.scanSource||""}`.toUpperCase().includes(query.toUpperCase()))
+    .sort((a,b)=>(sorters[sortBy](b)-sorters[sortBy](a)));
+  const addCandidate = row => {
+    const next = normalizeStock(row,0);
+    setDbMode("local");
+    setStocks(prev=>{
+      const without = prev.filter(s=>s.ticker!==next.ticker);
+      return [...without,next].sort((a,b)=>a.ticker.localeCompare(b.ticker));
+    });
+    setView("scanner");
+  };
+  return(
+    <div style={{padding:"20px 22px"}}>
+      <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-end",gap:12,flexWrap:"wrap",marginBottom:12}}>
+        <div>
+          <div style={{fontSize:13,fontWeight:700,color:"#e2e8f0"}}>Yahoo Market Scan</div>
+          <div style={{fontSize:9,color:"#475569",marginTop:2}}>
+            {rows.length} results · {scanData?.modelVersion||"v14"} · {generated}
+          </div>
+        </div>
+        <div style={{display:"flex",gap:8,alignItems:"center",flexWrap:"wrap"}}>
+          <input className="ni" style={{width:150}} placeholder="Search" value={query} onChange={e=>setQuery(e.target.value)}/>
+          <select className="ni" style={{width:138}} value={sortBy} onChange={e=>setSortBy(e.target.value)}>
+            <option value="score">Sort score</option>
+            <option value="win">Sort win %</option>
+            <option value="upside">Sort upside</option>
+            <option value="quality">Sort quality</option>
+            <option value="valuation">Sort value</option>
+            <option value="confidence">Sort confidence</option>
+            <option value="price">Sort price</option>
+          </select>
+          <a className="btn" href="https://github.com/willsidney/Kelly-Stock-Project/actions/workflows/scan-yahoo-stocks.yml" target="_blank" rel="noreferrer" style={{textDecoration:"none"}}>Run Scan</a>
+        </div>
+      </div>
+      <div style={{background:"#080f1e",border:"1px solid #1e293b",borderRadius:12,overflow:"hidden"}}>
+        <div style={{display:"grid",gridTemplateColumns:"42px 1.35fr 76px 76px 76px 70px 70px 78px 92px 78px",gap:8,padding:"9px 14px",background:"#0f172a",borderBottom:"1px solid #1e293b"}}>
+          {["#","Stock","Price","Score","Win %","Upside","Quality","Value","Confidence",""].map((h,i)=>(
+            <div key={h||i} style={{fontSize:8,fontWeight:700,color:"#1e3a5f",letterSpacing:".08em",textTransform:"uppercase",textAlign:i>1?"right":"left"}}>{h}</div>
+          ))}
+        </div>
+        {filtered.map((s,i)=>(
+          <div key={s.ticker} style={{display:"grid",gridTemplateColumns:"42px 1.35fr 76px 76px 76px 70px 70px 78px 92px 78px",gap:8,padding:"10px 14px",borderBottom:"1px solid #0f172a",alignItems:"center"}}>
+            <div className="mono" style={{fontSize:11,fontWeight:700,color:i<3?"#60a5fa":"#334155"}}>{s.rank||i+1}</div>
+            <div>
+              <div style={{fontSize:12,fontWeight:700,color:"#f8fafc"}}>{s.name||s.ticker} <span className="mono" style={{fontSize:9,color:"#60a5fa"}}>{s.ticker}</span></div>
+              <div style={{fontSize:8,color:"#475569"}}>{SECTOR_LABELS[s.sector]||s.sector||"Other"} · {s.scanSource||"Yahoo"}</div>
+            </div>
+            <div className="mono" style={{fontSize:11,fontWeight:700,color:s.currentPrice?"#94a3b8":"#334155",textAlign:"right"}}>{priceLabel(s)}</div>
+            <div className="mono" style={{fontSize:13,fontWeight:700,color:"#4ade80",textAlign:"right"}}>{(Number(s.score)||0).toFixed(1)}</div>
+            <div className="mono" style={{fontSize:12,fontWeight:700,color:"#22d3ee",textAlign:"right"}}>{fmtPct(s.pAdj)}</div>
+            <div className="mono" style={{fontSize:12,fontWeight:700,color:"#94a3b8",textAlign:"right"}}>{fmtPct(s.fxAdjUpside ?? s.upside)}</div>
+            <div className="mono" style={{fontSize:12,fontWeight:700,color:s.qualityScore===undefined?"#334155":"#a78bfa",textAlign:"right"}}>{fmtScore(s.qualityScore)}</div>
+            <div className="mono" style={{fontSize:12,fontWeight:700,color:s.valuationScore===undefined?"#334155":"#fbbf24",textAlign:"right"}}>{fmtScore(s.valuationScore)}</div>
+            <div className="mono" style={{fontSize:12,fontWeight:700,color:"#94a3b8",textAlign:"right"}}>{fmtPct(s.dataConfidence)}</div>
+            <button className="btn" onClick={()=>addCandidate(s)} style={{padding:"5px 8px"}}>Add</button>
+          </div>
+        ))}
+        {!filtered.length&&(
+          <div style={{padding:24,color:"#475569",fontSize:12,textAlign:"center"}}>No scan results yet.</div>
+        )}
+      </div>
+    </div>
+  );
+}
+
 function StockDatabase({stocks,results,setStocks,setView,setDbMode}){
   const empty = { name:"", ticker:"", sector:"other", emoji:"◆", color:STOCK_COLORS[0], strongBuy:40, buy:30, hold:25, sell:5, upside:0.25, drawdown:0.30, shortInt:0.02, beta:1.1, currentPrice:null, priceCurrency:"USD", fxExposed:true, earningsDays:90, ytd:0, analystCount:0, analystSrc:"Yahoo Finance", dataProvider:"Yahoo Finance" };
   const [draft,setDraft] = useState(empty);
@@ -1124,6 +1205,7 @@ export default function App(){
   const [view,      setView]      = useState("table");
   const [mcResults, setMcResults] = useState(null);
   const [portBands, setPortBands] = useState(null);
+  const [scanData,  setScanData]  = useState(null);
   const [running,   setRunning]   = useState(false);
   const [mcSeed,    setMcSeed]    = useState(12345);
   const toggle = k => setFlags(f=>({...f,[k]:!f[k]}));
@@ -1134,6 +1216,12 @@ export default function App(){
   },[stocks,eurUsdNow,eurUsdForecast]);
 
   useEffect(()=>{ if(dbMode==="local") saveStockDatabase(stocks); },[stocks,dbMode]);
+  useEffect(()=>{
+    fetch(SCAN_URL,{cache:"no-store"})
+      .then(r=>r.ok?r.json():null)
+      .then(data=>{ if(data&&Array.isArray(data.results)) setScanData(data); })
+      .catch(()=>{});
+  },[]);
   useEffect(()=>{
     if(dbMode!=="published") return;
     fetch(DATA_URL,{cache:"no-store"})
@@ -1308,7 +1396,7 @@ export default function App(){
 
       {/* TABS */}
       <div style={{padding:"8px 22px",borderBottom:"1px solid #1e293b",display:"flex",gap:4,background:"#020617",flexWrap:"wrap"}}>
-        {[{l:"Allocations",v:"table"},{l:"Portfolio Chart",v:"chart"},{l:"Scanner",v:"scanner"},{l:"Database",v:"database"},{l:"Fundamentals",v:"fundamentals"},{l:"Create Model",v:"create"},{l:"Stock Search",v:"search"},{l:"🔀 Win Prob Breakdown",v:"prob"}].map(o=>(
+        {[{l:"Allocations",v:"table"},{l:"Portfolio Chart",v:"chart"},{l:"Scanner",v:"scanner"},{l:"Yahoo Scan",v:"scan"},{l:"Database",v:"database"},{l:"Fundamentals",v:"fundamentals"},{l:"Create Model",v:"create"},{l:"Stock Search",v:"search"},{l:"🔀 Win Prob Breakdown",v:"prob"}].map(o=>(
           <button key={o.v} className={`view-btn${view===o.v?" active":""}`} onClick={()=>setView(o.v)}
             style={o.v==="prob"?{color:view==="prob"?"#e2e8f0":"#22d3ee"}:{}}>{o.l}</button>
         ))}
@@ -1316,6 +1404,7 @@ export default function App(){
 
       {view==="chart"&&<div style={{padding:"20px 22px"}}><PortfolioChart bands={portBands} budget={budget}/></div>}
       {view==="scanner"&&<Scanner results={results} setView={setView}/>}
+      {view==="scan"&&<YahooScan scanData={scanData} setStocks={setStocks} setDbMode={setDbMode} setView={setView}/>}
       {view==="database"&&<StockDatabase stocks={stocks} results={results} setStocks={setStocks} setView={setView} setDbMode={setDbMode}/>}
       {view==="fundamentals"&&<Fundamentals results={results}/>}
       {view==="create"&&<CreateModel stocks={stocks} results={results} budget={budget} kellyMult={kellyMult} flags={flags} marketBull={marketBull} eurUsdNow={eurUsdNow} eurUsdForecast={eurUsdForecast} modelVersion={modelVersion}/>}
