@@ -14,7 +14,7 @@ import sys
 import time
 import urllib.parse
 import urllib.request
-from datetime import datetime
+from datetime import UTC, datetime
 from pathlib import Path
 
 
@@ -27,6 +27,7 @@ ENDPOINTS = [
         "name": "grades_historical",
         "path": "grades-historical",
         "params": {},
+        "use_limit": False,
         "purpose": "Historical analyst rating positions",
         "must_have": True,
     },
@@ -34,6 +35,7 @@ ENDPOINTS = [
         "name": "grades_consensus",
         "path": "grades-consensus",
         "params": {},
+        "use_limit": False,
         "purpose": "Current analyst rating consensus",
         "must_have": False,
     },
@@ -41,6 +43,7 @@ ENDPOINTS = [
         "name": "price_target_consensus",
         "path": "price-target-consensus",
         "params": {},
+        "use_limit": False,
         "purpose": "Analyst target-price consensus",
         "must_have": True,
     },
@@ -48,6 +51,7 @@ ENDPOINTS = [
         "name": "price_target_summary",
         "path": "price-target-summary",
         "params": {},
+        "use_limit": False,
         "purpose": "Analyst target-price summary",
         "must_have": False,
     },
@@ -108,7 +112,7 @@ def fetch_json(url: str) -> tuple[int | None, object | None, str | None]:
 def make_url(endpoint: dict, ticker: str, api_key: str, limit: int) -> str:
     params = {"symbol": ticker, "apikey": api_key}
     params.update(endpoint.get("params") or {})
-    if endpoint["name"] not in {"grades_consensus", "price_target_consensus", "price_target_summary"}:
+    if endpoint.get("use_limit", True):
         params.setdefault("limit", str(limit))
     return f"{BASE_URL}/{endpoint['path']}?{urllib.parse.urlencode(params)}"
 
@@ -117,6 +121,10 @@ def classify_response(data: object) -> tuple[list[dict], str | None]:
     if isinstance(data, list):
         return [row for row in data if isinstance(row, dict)], None
     if isinstance(data, dict):
+        for key in ("data", "historical", "results", "result"):
+            nested = data.get(key)
+            if isinstance(nested, list):
+                return [row for row in nested if isinstance(row, dict)], None
         if "Error Message" in data:
             return [], str(data.get("Error Message"))
         if "error" in data:
@@ -125,6 +133,23 @@ def classify_response(data: object) -> tuple[list[dict], str | None]:
             return [], str(data.get("message"))
         return [data], None
     return [], "unexpected response shape"
+
+
+def response_shape(data: object) -> dict:
+    if isinstance(data, list):
+        return {"type": "list", "length": len(data)}
+    if isinstance(data, dict):
+        preview = {}
+        for key, value in list(data.items())[:8]:
+            if isinstance(value, list):
+                preview[key] = f"list[{len(value)}]"
+            elif isinstance(value, dict):
+                preview[key] = f"dict[{len(value)}]"
+            else:
+                text = str(value)
+                preview[key] = text[:120]
+        return {"type": "dict", "keys": list(data.keys())[:20], "preview": preview}
+    return {"type": type(data).__name__}
 
 
 def value_kind(value) -> str:
@@ -195,6 +220,7 @@ def probe_endpoint(endpoint: dict, ticker: str, api_key: str, limit: int) -> dic
         "httpStatus": status,
         "accessible": bool(rows),
         "error": error or message,
+        "responseShape": response_shape(data),
     }
     if rows:
         result.update(summarize_rows(rows))
@@ -276,7 +302,7 @@ def main() -> int:
             time.sleep(0.25)
 
     report = {
-        "generatedAt": datetime.utcnow().replace(microsecond=0).isoformat() + "Z",
+        "generatedAt": datetime.now(UTC).replace(microsecond=0).isoformat().replace("+00:00", "Z"),
         "provider": "Financial Modeling Prep",
         "tickers": tickers,
         "capabilities": capability_summary(results),

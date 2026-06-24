@@ -156,6 +156,8 @@ Set up once:
 
 Then run `Probe FMP Access` from the Actions tab. The default test tickers are `AAPL,MSFT,CELH`. The report tells us whether the account has dated analyst ratings, target-price consensus, historical prices, market caps, and fundamentals.
 
+For historical backtesting, the most important result is dated data. Current target-price consensus helps live scoring, but genuine historical validation needs dated analyst ratings, dated price targets, dated prices, and preferably dated fundamentals. If an endpoint shows `Accessible` but `Dated` is `no`, it can support today's model but not a clean historical backtest of that signal.
+
 Local version:
 
 ```bash
