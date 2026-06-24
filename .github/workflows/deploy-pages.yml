@@ -5,7 +5,7 @@ on:
     branches: [main]
   workflow_dispatch:
   workflow_run:
-    workflows: ["Update Yahoo Finance Data", "Scan Yahoo Stocks", "Save Scan Picks To Database", "Expand Yahoo Stock Universe"]
+    workflows: ["Update Yahoo Finance Data", "Scan Yahoo Stocks", "Save Scan Picks To Database", "Expand Yahoo Stock Universe", "Clean Yahoo Stock Universe"]
     types: [completed]
 
 permissions:

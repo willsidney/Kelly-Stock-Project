@@ -114,6 +114,8 @@ To build the universe:
 
 The expansion workflow seeds from S&P 500, Nasdaq 100, and Dow 30 constituent lists first. After that, it discovers additional US-listed common stocks, filters out ETFs/warrants/units, ranks candidates by Yahoo market cap and liquidity, then enriches the next batch before saving them into `public/data/stocks.json`. Stocks do not need to have every model field on day one; missing fields are tracked and refreshed over time.
 
+If a bad expansion batch gets into the database, run `Clean Yahoo Stock Universe`. It removes only auto-expanded, non-index stocks that do not have market-cap proof above the configured threshold. Original/manual stocks and major-index seeds are left alone.
+
 The right target structure is:
 
 - `public/data/stocks.json` - permanent database of tracked stocks, including incomplete names that Yahoo can improve over time.

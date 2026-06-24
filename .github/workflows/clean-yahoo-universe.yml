@@ -1,0 +1,59 @@
+name: Clean Yahoo Stock Universe
+
+on:
+  workflow_dispatch:
+    inputs:
+      min_market_cap:
+        description: "Minimum market cap in USD for non-index universe stocks"
+        required: false
+        default: "1000000000"
+      dry_run:
+        description: "Preview only; do not commit cleanup"
+        required: false
+        default: "false"
+        type: choice
+        options:
+          - "false"
+          - "true"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: yahoo-data
+  cancel-in-progress: false
+
+jobs:
+  clean:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Clean invalid universe rows
+        run: |
+          FLAGS=""
+          if [ "${{ inputs.dry_run }}" = "true" ]; then
+            FLAGS="--dry-run"
+          fi
+          python scripts/clean_yahoo_universe.py \
+            --min-market-cap "${{ inputs.min_market_cap || '1000000000' }}" \
+            $FLAGS
+
+      - name: Commit cleaned database
+        if: ${{ inputs.dry_run != 'true' }}
+        run: |
+          if git diff --quiet -- public/data/stocks.json; then
+            echo "No Yahoo universe cleanup changes."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add public/data/stocks.json
+          git commit -m "Clean Yahoo stock universe"
+          git push
