@@ -46,6 +46,24 @@ INDEX_SOURCES = [
         "name_columns": ("Company", "Security"),
     },
 ]
+FALLBACK_MAJOR_INDEX_TICKERS = """
+AAPL MSFT NVDA AMZN META AVGO GOOGL GOOG TSLA BRK-B JPM WMT LLY V ORCL MA NFLX
+XOM COST HD PG JNJ ABBV BAC KO PLTR CSCO GE CRM CVX IBM WFC PM UNH ABT LIN MCD
+GS MRK RTX TMO DIS ISRG AMD PEP MS NOW INTU AXP BKNG QCOM CAT TXN VZ AMGN SCHW
+C BLK SPGI BSX LOW HON PGR SYK AMAT BA NEE DHR TJX GILD DE ADP PANW CMCSA ETN
+COP MU ADI LRCX KLAC MDLZ CB MMC SBUX SO ICE MO FI BMY WM SHW DUK MCO UPS ELV
+HCA CVS APH CME PH ITW MMM USB NOC GD ECL AON TDG WELL CEG CL MCK ORLY EMR
+PNC EQIX AJG CTAS SNPS COF MSI MAR RSG APD FTNT WMB CDNS CI ZTS CRWD REGN
+BDX T FCX CARR PYPL EOG NXPI HLN TRV AZO TGT SLB ROP CSX AEP NSC PCAR BK
+URI JCI MNST AFL MET FDX O PCG ALL SRE KMI PSA DLTR GM TFC PSX SPG
+ROST DLR VLO LULU MPC CPRT PAYX OKE AMP DHI FAST KDP KR AIG IDXX CCI EXC
+KHC EW F FANG OXY LEN KVUE VRSK PEG CTVA GEHC TEL MSCI RCL HES HWM
+DD YUM NDAQ EA IR CMI MLM GRMN XEL STZ SYY CHD DFS XYL VMC EFX GLW WAB
+OTIS MCHP HPQ TSCO ANET TEAM ABNB ADBE ADP ALGN AMAT AMD ARM ASML AZN BIIB
+CDNS CHTR CMCSA COST CRWD CSCO DDOG DXCM EXC GFS HON IDXX INTC INTU ISRG
+KDP KLAC LIN LRCX MAR MDB MELI MRNA MRVL MSFT MU NFLX NXPI ON PANW PAYX PCAR
+PDD PYPL QCOM ROST SBUX SNPS TMUS TSLA TXN VRSK VRTX WBD ZS
+"""
 TICKER_RE = re.compile(r"^[A-Z][A-Z0-9.\-]{0,9}$")
 SKIP_NAME_TERMS = (
     " ETF",
@@ -124,38 +142,46 @@ def pick_column(columns: list[str], aliases: tuple[str, ...]) -> str | None:
 def discover_index_stocks(enabled: bool = True) -> dict[str, dict]:
     if not enabled:
         return {}
+    candidates: dict[str, dict] = {}
     try:
         import pandas as pd
     except Exception as exc:
         print(f"warn: pandas unavailable; skipping index seeds ({exc})", file=sys.stderr)
-        return {}
+        pd = None
 
-    candidates: dict[str, dict] = {}
-    for source in INDEX_SOURCES:
-        try:
-            tables = pd.read_html(source["url"])
-        except Exception as exc:
-            print(f"warn: failed to fetch {source['label']} constituents: {exc}", file=sys.stderr)
-            continue
-
-        found = 0
-        for table in tables:
-            table = table.copy()
-            table.columns = [clean_column(col) for col in table.columns]
-            ticker_col = pick_column(list(table.columns), source["ticker_columns"])
-            if not ticker_col:
+    if pd is not None:
+        for source in INDEX_SOURCES:
+            try:
+                tables = pd.read_html(source["url"])
+            except Exception as exc:
+                print(f"warn: failed to fetch {source['label']} constituents: {exc}", file=sys.stderr)
                 continue
-            name_col = pick_column(list(table.columns), source["name_columns"])
-            for _, row in table.iterrows():
-                ticker = yahoo_symbol(row.get(ticker_col))
-                if not ticker:
+
+            found = 0
+            for table in tables:
+                table = table.copy()
+                table.columns = [clean_column(col) for col in table.columns]
+                ticker_col = pick_column(list(table.columns), source["ticker_columns"])
+                if not ticker_col:
                     continue
-                name = str(row.get(name_col) or ticker).strip() if name_col else ticker
-                merge_candidate(candidates, ticker, name, f"index:{source['id']}", source["label"])
-                found += 1
-            if found:
-                break
-        print(f"{source['label']} seeds: {found}")
+                name_col = pick_column(list(table.columns), source["name_columns"])
+                for _, row in table.iterrows():
+                    ticker = yahoo_symbol(row.get(ticker_col))
+                    if not ticker:
+                        continue
+                    name = str(row.get(name_col) or ticker).strip() if name_col else ticker
+                    merge_candidate(candidates, ticker, name, f"index:{source['id']}", source["label"])
+                    found += 1
+                if found:
+                    break
+            print(f"{source['label']} seeds: {found}")
+
+    if len(candidates) < 100:
+        print(f"index seed fallback active: only {len(candidates)} live seeds found")
+        for raw in FALLBACK_MAJOR_INDEX_TICKERS.split():
+            ticker = yahoo_symbol(raw)
+            if ticker:
+                merge_candidate(candidates, ticker, ticker, "index:fallback-major", "Major index fallback")
     return candidates
 
 
