@@ -112,7 +112,7 @@ To build the universe:
 3. Run it with `target_size` set to `1000` and `batch_size` around `100`.
 4. Repeat the workflow until the database reaches the target size.
 
-The expansion workflow discovers US-listed common stocks, filters out ETFs/warrants/units, ranks candidates by Yahoo market cap and liquidity, then enriches the next batch with model-ready Yahoo data before saving them into `public/data/stocks.json`.
+The expansion workflow seeds from S&P 500, Nasdaq 100, and Dow 30 constituent lists first. After that, it discovers additional US-listed common stocks, filters out ETFs/warrants/units, ranks candidates by Yahoo market cap and liquidity, then enriches the next batch with model-ready Yahoo data before saving them into `public/data/stocks.json`.
 
 The right target structure is:
 

@@ -42,7 +42,7 @@ jobs:
           python-version: "3.12"
 
       - name: Install Yahoo universe dependencies
-        run: python -m pip install --upgrade yfinance
+        run: python -m pip install --upgrade yfinance pandas lxml
 
       - name: Expand Yahoo universe
         run: |
