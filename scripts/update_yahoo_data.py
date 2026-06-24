@@ -432,6 +432,7 @@ def update_stock(stock: dict, quote: dict | None) -> dict:
     )
     current_price = updated.get("currentPrice")
     if target_mean and current_price:
+        updated["targetMeanPrice"] = float(target_mean)
         updated["upside"] = clamp((float(target_mean) / float(current_price)) - 1, 0, 3)
 
     beta = first_number(key_stats.get("beta"), yf_info.get("beta"))
@@ -554,9 +555,37 @@ def update_stock(stock: dict, quote: dict | None) -> dict:
     return updated
 
 
+def refresh_price_only(stock: dict, quote: dict | None) -> dict:
+    ticker = str(stock.get("ticker", "")).upper().strip()
+    updated = dict(stock)
+    updated["ticker"] = ticker
+    updated["dataProvider"] = "Yahoo Finance"
+    updated["sourceUrl"] = f"https://finance.yahoo.com/quote/{ticker}"
+    if quote and quote.get("currency"):
+        updated["priceCurrency"] = quote["currency"]
+
+    quote_price, price_source, price_time = quote_current_price(quote)
+    if quote_price is None:
+        quote_price, price_source, price_time = intraday_price(ticker)
+    if quote_price is not None:
+        updated["currentPrice"] = quote_price
+        updated["priceSource"] = price_source
+        if price_time:
+            updated["priceTime"] = datetime.fromtimestamp(price_time, timezone.utc).replace(microsecond=0).isoformat()
+
+    target_mean = updated.get("targetMeanPrice")
+    current_price = updated.get("currentPrice")
+    if isinstance(target_mean, (int, float)) and target_mean > 0 and valid_price(current_price):
+        updated["upside"] = clamp((float(target_mean) / float(current_price)) - 1, 0, 3)
+
+    updated["lastUpdated"] = datetime.now(timezone.utc).replace(microsecond=0).isoformat()
+    return updated
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description="Refresh Kelly stock database from Yahoo Finance.")
     parser.add_argument("--tickers", default="", help="Comma or space separated ticker codes to add before refresh.")
+    parser.add_argument("--mode", choices=["full", "prices"], default="full", help="Use full for fundamentals/analysts or prices for a fast quote refresh.")
     args = parser.parse_args()
 
     stocks = json.loads(DATA_PATH.read_text())
@@ -569,6 +598,9 @@ def main() -> int:
     missing = [ticker for ticker in requested if ticker not in existing]
     new_tickers = set(missing)
     if missing:
+        if args.mode == "prices":
+            print("new tickers require a full Yahoo refresh; switching to full mode")
+            args.mode = "full"
         print(f"adding tickers: {', '.join(missing)}")
         missing_quotes = quote_batch(missing)
         for ticker in missing:
@@ -580,10 +612,14 @@ def main() -> int:
     quotes = quote_batch(tickers)
     refreshed = []
     skipped_new = []
+    print(f"update mode: {args.mode}")
     for stock in stocks:
         ticker = str(stock.get("ticker", "")).upper().strip()
         print(f"refreshing {ticker}")
-        refreshed_stock = update_stock(stock, quotes.get(ticker))
+        if args.mode == "prices":
+            refreshed_stock = refresh_price_only(stock, quotes.get(ticker))
+        else:
+            refreshed_stock = update_stock(stock, quotes.get(ticker))
         if ticker in new_tickers:
             issues = model_data_issues(refreshed_stock)
             if issues:

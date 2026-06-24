@@ -75,6 +75,13 @@ The repo includes a GitHub Actions workflow named `Update Yahoo Finance Data`.
 
 It refreshes `public/data/stocks.json` from Yahoo Finance on weekdays and can also be run manually from the Actions tab. It updates best-effort fields including price, currency, analyst recommendation mix, target-price upside, beta, short interest, earnings distance, YTD performance, one-year drawdown, valuation multiples, margins, growth, cash flow, and balance-sheet metrics when Yahoo returns those fields.
 
+For a large database, the updater has two modes:
+
+- `full` - updates analyst data, targets, fundamentals, risk fields, and price. This is slower and is best for adding stocks or doing a daily deep refresh.
+- `prices` - updates current Yahoo prices quickly and recalculates target-price upside when a stored Yahoo target is available.
+
+The scheduled workflow runs one full refresh early on weekdays and several faster price refreshes during the day. This is the intended path for a larger stock universe, because analyst and fundamental data do not need to be re-pulled as often as price.
+
 To add new stocks:
 
 1. Open GitHub Actions.
@@ -93,6 +100,17 @@ To save stocks from the broad market scan:
 4. Leave `tickers` blank to save the top scan results, or enter exact tickers such as `MSFT, AAPL, TEAM`.
 
 New tickers are only written to `public/data/stocks.json` after Yahoo returns model-ready data: current price, beta, analyst count, analyst rating mix, Yahoo source, and update timestamp. Once a ticker is in `public/data/stocks.json`, every scheduled Yahoo refresh updates it with the rest of the database.
+
+## Large Database Mode
+
+The app is designed to support a larger Yahoo-backed stock universe. The browser tables use row limits such as top 50, top 100, top 250, top 500, or all rows, so a 1000-stock database can still be searched and ranked without rendering everything at once on a phone.
+
+The right target structure is:
+
+- `public/data/stocks.json` - permanent database of model-ready stocks.
+- `public/data/scan-results.json` - latest broad market scan shortlist.
+- `Scanner` - ranks the permanent database with filters and model score.
+- `Yahoo Scan` - reviews new scan candidates before saving them into the database.
 
 ## Privacy Note
 

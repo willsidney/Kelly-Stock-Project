@@ -40,6 +40,8 @@ const MODEL_OPTIONS = [
   { value: MODEL_V14, label: "v14 Optimized", short: "v14", pill: "Optimized Risk" },
 ];
 const MODEL_LABELS = Object.fromEntries(MODEL_OPTIONS.map(m=>[m.value,m]));
+const ROW_LIMITS = ["50","100","250","500","all"];
+const rowLimitValue = (value,total)=>value==="all"?total:(Number(value)||100);
 
 // ─────────────────────────────────────────────────────────────────────────────
 // STOCK DATA — May 2026 + Novo Nordisk replaces IonQ
@@ -756,6 +758,7 @@ function Scanner({results,setView}){
   const [minUpside,setMinUpside] = useState(0);
   const [maxDrawdown,setMaxDrawdown] = useState(100);
   const [sortBy,setSortBy] = useState("score");
+  const [rowLimit,setRowLimit] = useState("100");
   const filterFields = [
     {label:"Min score", value:minScore, setter:setMinScore},
     {label:"Min win %", value:minWin, setter:setMinWin},
@@ -782,6 +785,7 @@ function Scanner({results,setView}){
       };
       return (map[sortBy](b)-map[sortBy](a));
     });
+  const visible = filtered.slice(0,rowLimitValue(rowLimit,filtered.length));
   return(
     <div style={{padding:"20px 22px"}}>
       <div style={{display:"flex",justifyContent:"space-between",gap:12,alignItems:"flex-end",flexWrap:"wrap",marginBottom:12}}>
@@ -805,6 +809,9 @@ function Scanner({results,setView}){
             <option value="allocation">Sort allocation</option>
             <option value="price">Sort price</option>
           </select>
+          <select className="ni" style={{width:110}} value={rowLimit} onChange={e=>setRowLimit(e.target.value)}>
+            {ROW_LIMITS.map(v=><option key={v} value={v}>{v==="all"?"All rows":`Top ${v}`}</option>)}
+          </select>
           <button className="btn" onClick={()=>setView("database")}>Add Stocks</button>
         </div>
       </div>
@@ -815,7 +822,7 @@ function Scanner({results,setView}){
             <input className="ni" style={{width:72}} type="number" value={value} onChange={e=>setter(Number(e.target.value)||0)}/>
           </label>
         ))}
-        <span style={{fontSize:9,color:"#334155"}}>{filtered.length} of {results.length} shown</span>
+        <span style={{fontSize:9,color:"#334155"}}>{visible.length} shown · {filtered.length} matched · {results.length} total</span>
       </div>
       <div style={{background:"#080f1e",border:"1px solid #1e293b",borderRadius:12,overflow:"hidden"}}>
         <div style={{display:"grid",gridTemplateColumns:"42px 1.35fr 76px 78px 78px 78px 86px 76px 76px 88px",padding:"9px 14px",background:"#0f172a",borderBottom:"1px solid #1e293b"}}>
@@ -823,7 +830,7 @@ function Scanner({results,setView}){
             <div key={h} style={{fontSize:8,fontWeight:700,color:"#1e3a5f",letterSpacing:".08em",textTransform:"uppercase",textAlign:i>1?"right":"left"}}>{h}</div>
           ))}
         </div>
-        {filtered.map((s,i)=>{
+        {visible.map((s,i)=>{
           const score=modelScore(s);
           const fs=fundamentalScores(s);
           return(
@@ -855,6 +862,7 @@ function Scanner({results,setView}){
 function YahooScan({scanData,setStocks,setDbMode,setView}){
   const [query,setQuery] = useState("");
   const [sortBy,setSortBy] = useState("score");
+  const [rowLimit,setRowLimit] = useState("100");
   const rows = Array.isArray(scanData?.results) ? scanData.results : [];
   const generated = scanData?.generatedAt ? new Date(scanData.generatedAt).toLocaleString() : "No scan yet";
   const sorters = {
@@ -869,6 +877,7 @@ function YahooScan({scanData,setStocks,setDbMode,setView}){
   const filtered = rows
     .filter(s=>!query || `${s.name} ${s.ticker} ${s.scanSource||""}`.toUpperCase().includes(query.toUpperCase()))
     .sort((a,b)=>(sorters[sortBy](b)-sorters[sortBy](a)));
+  const visible = filtered.slice(0,rowLimitValue(rowLimit,filtered.length));
   const addCandidate = row => {
     const next = normalizeStock(row,0);
     setDbMode("local");
@@ -898,6 +907,9 @@ function YahooScan({scanData,setStocks,setDbMode,setView}){
             <option value="confidence">Sort confidence</option>
             <option value="price">Sort price</option>
           </select>
+          <select className="ni" style={{width:110}} value={rowLimit} onChange={e=>setRowLimit(e.target.value)}>
+            {ROW_LIMITS.map(v=><option key={v} value={v}>{v==="all"?"All rows":`Top ${v}`}</option>)}
+          </select>
           <a className="btn" href={RUN_SCAN_URL} target="_blank" rel="noreferrer" style={{textDecoration:"none"}}>Run Scan</a>
           <a className="btn active" href={SAVE_SCAN_URL} target="_blank" rel="noreferrer" style={{textDecoration:"none"}}>Save Picks</a>
         </div>
@@ -908,7 +920,7 @@ function YahooScan({scanData,setStocks,setDbMode,setView}){
             <div key={h||i} style={{fontSize:8,fontWeight:700,color:"#1e3a5f",letterSpacing:".08em",textTransform:"uppercase",textAlign:i>1?"right":"left"}}>{h}</div>
           ))}
         </div>
-        {filtered.map((s,i)=>(
+        {visible.map((s,i)=>(
           <div key={s.ticker} style={{display:"grid",gridTemplateColumns:"42px 1.35fr 76px 76px 76px 70px 70px 78px 92px 78px",gap:8,padding:"10px 14px",borderBottom:"1px solid #0f172a",alignItems:"center"}}>
             <div className="mono" style={{fontSize:11,fontWeight:700,color:i<3?"#60a5fa":"#334155"}}>{s.rank||i+1}</div>
             <div>
@@ -925,7 +937,7 @@ function YahooScan({scanData,setStocks,setDbMode,setView}){
             <button className="btn" onClick={()=>addCandidate(s)} style={{padding:"5px 8px"}}>Preview</button>
           </div>
         ))}
-        {!filtered.length&&(
+        {!visible.length&&(
           <div style={{padding:24,color:"#475569",fontSize:12,textAlign:"center"}}>No scan results yet.</div>
         )}
       </div>
@@ -940,13 +952,15 @@ function StockDatabase({stocks,results,setStocks,setView,setDbMode}){
   const [dbQuery,setDbQuery] = useState("");
   const [dbSector,setDbSector] = useState("all");
   const [dbMinScore,setDbMinScore] = useState(0);
+  const [dbLimit,setDbLimit] = useState("100");
   const resultByTicker = Object.fromEntries(results.map(s=>[s.ticker,s]));
-  const visibleStocks = stocks
+  const matchedStocks = stocks
     .map(s=>resultByTicker[s.ticker] || s)
     .filter(s=>(dbSector==="all"||s.sector===dbSector)
       && (!dbQuery || `${s.name} ${s.ticker}`.toUpperCase().includes(dbQuery.toUpperCase()))
       && (s.adj===undefined || modelScore(s)>=dbMinScore))
     .sort((a,b)=>(modelScore(b)-modelScore(a)));
+  const visibleStocks = matchedStocks.slice(0,rowLimitValue(dbLimit,matchedStocks.length));
   const update=(k,v)=>setDraft(d=>({...d,[k]:v}));
   const pct=(k,v)=>update(k,(Number(v)||0)/100);
   const upsert=()=>{
@@ -1013,7 +1027,7 @@ function StockDatabase({stocks,results,setStocks,setView,setDbMode}){
           <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",gap:8,marginBottom:10}}>
             <div>
               <div style={{fontSize:13,fontWeight:700,color:"#e2e8f0"}}>Database</div>
-              <div style={{fontSize:9,color:"#475569"}}>{visibleStocks.length} of {stocks.length} stocks shown</div>
+              <div style={{fontSize:9,color:"#475569"}}>{visibleStocks.length} shown · {matchedStocks.length} matched · {stocks.length} total</div>
             </div>
             <div style={{display:"flex",gap:6}}>
               <button className="btn" onClick={exportDb}>Export</button>
@@ -1030,6 +1044,9 @@ function StockDatabase({stocks,results,setStocks,setView,setDbMode}){
               Min score
               <input className="ni" style={{width:72}} type="number" value={dbMinScore} onChange={e=>setDbMinScore(Number(e.target.value)||0)}/>
             </label>
+            <select className="ni" style={{width:110}} value={dbLimit} onChange={e=>setDbLimit(e.target.value)}>
+              {ROW_LIMITS.map(v=><option key={v} value={v}>{v==="all"?"All rows":`Top ${v}`}</option>)}
+            </select>
           </div>
           <textarea style={{...inputStyle,height:120,fontFamily:"JetBrains Mono,monospace",fontSize:10,resize:"vertical"}} placeholder="Paste exported JSON here to import..." value={importText} onChange={e=>setImportText(e.target.value)}/>
           <button className="btn" style={{marginTop:8}} onClick={importDb}>Import JSON</button>
@@ -1058,9 +1075,11 @@ function StockDatabase({stocks,results,setStocks,setView,setDbMode}){
 }
 
 function Fundamentals({results}){
+  const [rowLimit,setRowLimit] = useState("100");
   const rows = results
     .map(s=>({...s,fs:fundamentalScores(s)}))
     .sort((a,b)=>(((b.fs.quality??0)+(b.fs.valuation??0))-((a.fs.quality??0)+(a.fs.valuation??0))));
+  const visible = rows.slice(0,rowLimitValue(rowLimit,rows.length));
   return(
     <div style={{padding:"20px 22px"}}>
       <div style={{display:"flex",justifyContent:"space-between",gap:12,alignItems:"flex-end",flexWrap:"wrap",marginBottom:12}}>
@@ -1069,6 +1088,9 @@ function Fundamentals({results}){
           <div style={{fontSize:9,color:"#475569",marginTop:2}}>Quality and valuation are research layers only; they do not change allocations yet</div>
         </div>
         <div style={{display:"flex",gap:8,flexWrap:"wrap"}}>
+          <select className="ni" style={{width:110}} value={rowLimit} onChange={e=>setRowLimit(e.target.value)}>
+            {ROW_LIMITS.map(v=><option key={v} value={v}>{v==="all"?"All rows":`Top ${v}`}</option>)}
+          </select>
           <span className="pill" style={{background:"#2e1065",color:"#c4b5fd",border:"1px solid #a78bfa40"}}>Quality</span>
           <span className="pill" style={{background:"#422006",color:"#fde68a",border:"1px solid #fbbf2440"}}>Valuation</span>
         </div>
@@ -1079,7 +1101,7 @@ function Fundamentals({results}){
             <div key={h} style={{fontSize:8,fontWeight:700,color:"#1e3a5f",letterSpacing:".08em",textTransform:"uppercase",textAlign:i>1?"right":"left"}}>{h}</div>
           ))}
         </div>
-        {rows.map((s,i)=>{
+        {visible.map((s,i)=>{
           const debt=debtRatio(s.debtToEquity);
           return(
             <div key={s.ticker} style={{display:"grid",gridTemplateColumns:"42px 1.3fr 86px 86px 82px 70px 70px 74px 74px 74px 82px",gap:8,padding:"10px 14px",borderBottom:"1px solid #0f172a",alignItems:"center"}}>
@@ -1108,12 +1130,14 @@ function Fundamentals({results}){
 function CreateModel({stocks,results,budget,kellyMult,flags,marketBull,eurUsdNow,eurUsdForecast,modelVersion}){
   const [query,setQuery] = useState("");
   const [sector,setSector] = useState("all");
+  const [rowLimit,setRowLimit] = useState("100");
   const [selected,setSelected] = useState(()=>stocks.slice(0,Math.min(10,stocks.length)).map(s=>s.ticker));
   const selectedStocks = stocks.filter(s=>selected.includes(s.ticker));
   const customResults = selectedStocks.length ? runModel(selectedStocks,null,budget,kellyMult,flags,marketBull,eurUsdNow,eurUsdForecast,modelVersion) : [];
   const available = stocks
     .filter(s=>(sector==="all"||s.sector===sector) && (!query || `${s.name} ${s.ticker}`.toUpperCase().includes(query.toUpperCase())))
     .sort((a,b)=>a.ticker.localeCompare(b.ticker));
+  const visibleAvailable = available.slice(0,rowLimitValue(rowLimit,available.length));
   const toggleTicker = ticker => setSelected(prev=>prev.includes(ticker)?prev.filter(t=>t!==ticker):[...prev,ticker]);
   const clear = () => setSelected([]);
   const topTen = () => setSelected(results.slice().sort((a,b)=>modelScore(b)-modelScore(a)).slice(0,10).map(s=>s.ticker));
@@ -1137,9 +1161,12 @@ function CreateModel({stocks,results,budget,kellyMult,flags,marketBull,eurUsdNow
               <option value="all">All sectors</option>
               {SECTOR_OPTIONS.map(([v,l])=><option key={v} value={v}>{l}</option>)}
             </select>
+            <select className="ni" style={{width:110}} value={rowLimit} onChange={e=>setRowLimit(e.target.value)}>
+              {ROW_LIMITS.map(v=><option key={v} value={v}>{v==="all"?"All rows":`Top ${v}`}</option>)}
+            </select>
           </div>
           <div style={{maxHeight:460,overflow:"auto",border:"1px solid #1e293b",borderRadius:8}}>
-            {available.map(s=>(
+            {visibleAvailable.map(s=>(
               <button key={s.ticker} onClick={()=>toggleTicker(s.ticker)}
                 style={{width:"100%",display:"grid",gridTemplateColumns:"26px 1fr 70px",gap:8,alignItems:"center",padding:"8px 10px",background:selected.includes(s.ticker)?"#0f172a":"#080f1e",border:"none",borderBottom:"1px solid #0f172a",cursor:"pointer",textAlign:"left"}}>
                 <span style={{width:14,height:14,borderRadius:4,border:`1px solid ${selected.includes(s.ticker)?"#60a5fa":"#334155"}`,background:selected.includes(s.ticker)?"#3b82f6":"transparent"}}/>
@@ -1263,6 +1290,7 @@ export default function App(){
   const totalE     = results.reduce((s,x)=>s+x.euros,0);
   const kellyLabel = kellyMult===1?"Full Kelly":kellyMult===0.5?"Half Kelly":"Quarter Kelly";
   const modelLabel = MODEL_LABELS[modelVersion] || MODEL_LABELS[MODEL_V13];
+  const allocationRows = results.slice(0,Math.min(200,results.length));
   const portMed    = portBands?.p50[PORT_STEPS];
   const portP10    = portBands?.p10[PORT_STEPS];
   const fxPct      = ((eurUsdForecast-eurUsdNow)/eurUsdNow*100).toFixed(2);
@@ -1423,7 +1451,7 @@ export default function App(){
             ))}
           </div>
 
-          {results.map((s,ri)=>{
+          {allocationRows.map((s,ri)=>{
             const pColor  = s.pAdj>0.75?"#4ade80":s.pAdj>0.60?"#fbbf24":"#f87171";
             const bColor  = s.beta<1.5?"#4ade80":s.beta<2.5?"#fbbf24":"#f87171";
             const siColor = s.shortInt>0.15?"#f87171":s.shortInt>0.07?"#fbbf24":"#4ade80";

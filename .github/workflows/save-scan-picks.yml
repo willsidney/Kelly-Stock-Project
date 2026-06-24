@@ -79,7 +79,7 @@ jobs:
           PY
 
       - name: Refresh selected stocks into database
-        run: python scripts/update_yahoo_data.py --tickers "$PROMOTE_TICKERS"
+        run: python scripts/update_yahoo_data.py --mode full --tickers "$PROMOTE_TICKERS"
 
       - name: Commit refreshed database
         run: |

@@ -7,8 +7,17 @@ on:
         description: "Optional ticker codes to add, separated by commas or spaces"
         required: false
         default: ""
+      mode:
+        description: "Refresh type"
+        required: false
+        default: "full"
+        type: choice
+        options:
+          - full
+          - prices
   schedule:
-    - cron: "17 7 * * 1-5"
+    - cron: "52 6 * * 1-5"
+    - cron: "17 8,14,20 * * 1-5"
 
 permissions:
   contents: write
@@ -34,8 +43,18 @@ jobs:
 
       - name: Refresh Yahoo data
         run: |
-          echo "Requested tickers: ${{ inputs.tickers }}"
-          python scripts/update_yahoo_data.py --tickers "${{ inputs.tickers }}"
+          MODE="${{ github.event.inputs.mode || '' }}"
+          if [ -z "$MODE" ]; then
+            if [ "${{ github.event.schedule }}" = "52 6 * * 1-5" ]; then
+              MODE="full"
+            else
+              MODE="prices"
+            fi
+          fi
+          TICKERS="${{ github.event.inputs.tickers || '' }}"
+          echo "Requested tickers: $TICKERS"
+          echo "Refresh mode: $MODE"
+          python scripts/update_yahoo_data.py --mode "$MODE" --tickers "$TICKERS"
 
       - name: Commit refreshed database
         run: |
