@@ -1,0 +1,112 @@
+[
+  {
+    "ticker": "AAPL",
+    "file": "AAPL.json",
+    "fetchedAt": "2026-06-24T21:44:34Z",
+    "rowCounts": {
+      "gradesHistorical": 90,
+      "dividendAdjustedPrices": 2130,
+      "historicalMarketCap": 0
+    }
+  },
+  {
+    "ticker": "AMZN",
+    "file": "AMZN.json",
+    "fetchedAt": "2026-06-24T21:44:39Z",
+    "rowCounts": {
+      "gradesHistorical": 88,
+      "dividendAdjustedPrices": 2130,
+      "historicalMarketCap": 0
+    }
+  },
+  {
+    "ticker": "AVGO",
+    "file": "AVGO.json",
+    "fetchedAt": "2026-06-24T21:44:44Z",
+    "rowCounts": {
+      "gradesHistorical": 0,
+      "dividendAdjustedPrices": 0,
+      "historicalMarketCap": 0
+    }
+  },
+  {
+    "ticker": "GOOGL",
+    "file": "GOOGL.json",
+    "fetchedAt": "2026-06-24T21:44:42Z",
+    "rowCounts": {
+      "gradesHistorical": 86,
+      "dividendAdjustedPrices": 2130,
+      "historicalMarketCap": 0
+    }
+  },
+  {
+    "ticker": "JPM",
+    "file": "JPM.json",
+    "fetchedAt": "2026-06-24T21:44:47Z",
+    "rowCounts": {
+      "gradesHistorical": 88,
+      "dividendAdjustedPrices": 2130,
+      "historicalMarketCap": 0
+    }
+  },
+  {
+    "ticker": "META",
+    "file": "META.json",
+    "fetchedAt": "2026-06-24T21:44:41Z",
+    "rowCounts": {
+      "gradesHistorical": 88,
+      "dividendAdjustedPrices": 2130,
+      "historicalMarketCap": 0
+    }
+  },
+  {
+    "ticker": "MSFT",
+    "file": "MSFT.json",
+    "fetchedAt": "2026-06-24T21:44:36Z",
+    "rowCounts": {
+      "gradesHistorical": 88,
+      "dividendAdjustedPrices": 2130,
+      "historicalMarketCap": 0
+    }
+  },
+  {
+    "ticker": "NVDA",
+    "file": "NVDA.json",
+    "fetchedAt": "2026-06-24T21:44:37Z",
+    "rowCounts": {
+      "gradesHistorical": 88,
+      "dividendAdjustedPrices": 2130,
+      "historicalMarketCap": 0
+    }
+  },
+  {
+    "ticker": "SPY",
+    "file": "SPY.json",
+    "fetchedAt": "2026-06-24T21:44:50Z",
+    "rowCounts": {
+      "gradesHistorical": 0,
+      "dividendAdjustedPrices": 2130,
+      "historicalMarketCap": 0
+    }
+  },
+  {
+    "ticker": "TSLA",
+    "file": "TSLA.json",
+    "fetchedAt": "2026-06-24T21:44:45Z",
+    "rowCounts": {
+      "gradesHistorical": 86,
+      "dividendAdjustedPrices": 2130,
+      "historicalMarketCap": 0
+    }
+  },
+  {
+    "ticker": "V",
+    "file": "V.json",
+    "fetchedAt": "2026-06-24T21:44:49Z",
+    "rowCounts": {
+      "gradesHistorical": 85,
+      "dividendAdjustedPrices": 2130,
+      "historicalMarketCap": 0
+    }
+  }
+]
