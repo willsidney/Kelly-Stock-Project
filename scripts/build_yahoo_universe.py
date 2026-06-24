@@ -225,6 +225,10 @@ def rank_candidates(candidates: dict[str, dict], limit: int, min_market_cap: int
             continue
         if market_cap is not None and market_cap < min_market_cap:
             continue
+        if not index_sources and not quote:
+            continue
+        if not index_sources and market_cap is None:
+            continue
         if not quote and not allow_unquoted:
             continue
         index_priority = 1 if index_sources else 0
@@ -258,6 +262,25 @@ def load_database() -> list[dict]:
     return json.loads(DATA_PATH.read_text())
 
 
+def prune_non_index_under_min(stocks: list[dict], min_market_cap: int) -> tuple[list[dict], list[str]]:
+    kept = []
+    removed = []
+    for stock in stocks:
+        ticker = str(stock.get("ticker") or "").upper().strip()
+        source = str(stock.get("universeSource") or "")
+        index_membership = stock.get("indexMembership")
+        is_universe_added = bool(source)
+        is_index_seed = bool(index_membership) or "index:" in source
+        market_cap = stock.get("marketCap") or stock.get("universeMarketCap")
+        has_market_cap = isinstance(market_cap, (int, float)) and math.isfinite(market_cap)
+        should_prune = is_universe_added and not is_index_seed and (not has_market_cap or market_cap < min_market_cap)
+        if should_prune:
+            removed.append(ticker or str(stock.get("name") or "unknown"))
+            continue
+        kept.append(stock)
+    return kept, removed
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description="Expand the Kelly Yahoo stock database.")
     parser.add_argument("--target-size", type=int, default=1000, help="Desired database size.")
@@ -269,10 +292,16 @@ def main() -> int:
     args = parser.parse_args()
 
     stocks = load_database()
+    stocks, pruned = prune_non_index_under_min(stocks, args.min_market_cap)
+    if pruned:
+        print(f"pruned non-index universe stocks below/without min market cap: {', '.join(pruned)}")
     existing = {str(s.get("ticker", "")).upper().strip() for s in stocks if s.get("ticker")}
     needed = max(0, args.target_size - len(existing))
     if needed <= 0:
         print(f"database already has {len(existing)} stocks; target is {args.target_size}")
+        if pruned:
+            DATA_PATH.write_text(json.dumps(stocks, indent=2) + "\n")
+            print(f"updated {DATA_PATH}")
         return 0
 
     batch_size = min(max(1, args.batch_size), needed)
@@ -293,6 +322,10 @@ def main() -> int:
             file=sys.stderr,
         )
         print("Try increasing candidate_limit, lowering min_market_cap, or leaving require_yahoo_quotes disabled.", file=sys.stderr)
+        if pruned:
+            DATA_PATH.write_text(json.dumps(stocks, indent=2) + "\n")
+            print(f"updated {DATA_PATH}")
+            return 0
         return 2
 
     print(f"adding up to {len(to_add)} stocks toward target {args.target_size}")
