@@ -268,8 +268,12 @@ def main() -> int:
     ranked = rank_candidates(candidates, args.candidate_limit, args.min_market_cap)
     to_add = [row for row in ranked if row["ticker"] not in existing][:batch_size]
     if not to_add:
-        print("no new candidates found before enrichment")
-        return 0
+        print(
+            f"error: no new candidates found. Database has {len(existing)} stocks, target is {args.target_size}.",
+            file=sys.stderr,
+        )
+        print("Try increasing candidate_limit or lowering min_market_cap.", file=sys.stderr)
+        return 2
 
     print(f"adding up to {len(to_add)} stocks toward target {args.target_size}")
     added = []
@@ -296,6 +300,15 @@ def main() -> int:
             skipped.append((ticker, [str(exc)]))
             print(f"warn: failed to enrich {ticker}: {exc}", file=sys.stderr)
         time.sleep(0.5)
+
+    if not added:
+        print(
+            f"error: no stocks were added. Database remains at {len(stocks)} stocks, target is {args.target_size}.",
+            file=sys.stderr,
+        )
+        if skipped:
+            print("all candidates failed during enrichment.", file=sys.stderr)
+        return 2
 
     stocks.extend(added)
     stocks.sort(key=lambda s: str(s.get("ticker") or ""))

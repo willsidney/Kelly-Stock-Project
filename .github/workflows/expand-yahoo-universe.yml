@@ -42,7 +42,16 @@ jobs:
           python-version: "3.12"
 
       - name: Install Yahoo universe dependencies
-        run: python -m pip install --upgrade yfinance pandas lxml
+        run: python -m pip install --upgrade yfinance pandas lxml html5lib
+
+      - name: Count database before expansion
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          stocks = json.loads(Path("public/data/stocks.json").read_text())
+          print(f"Database before expansion: {len(stocks)} stocks")
+          PY
 
       - name: Expand Yahoo universe
         run: |
@@ -51,6 +60,15 @@ jobs:
             --batch-size "${{ github.event.inputs.batch_size || '100' }}" \
             --candidate-limit "${{ github.event.inputs.candidate_limit || '1600' }}" \
             --min-market-cap "${{ github.event.inputs.min_market_cap || '1000000000' }}"
+
+      - name: Count database after expansion
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          stocks = json.loads(Path("public/data/stocks.json").read_text())
+          print(f"Database after expansion: {len(stocks)} stocks")
+          PY
 
       - name: Commit expanded database
         run: |
