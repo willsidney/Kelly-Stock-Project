@@ -15,6 +15,10 @@ on:
         options:
           - full
           - prices
+      max_full:
+        description: "Maximum stocks to deep-refresh when mode is full. Use 0 for all."
+        required: false
+        default: "0"
   schedule:
     - cron: "52 6 * * 1-5"
     - cron: "17 8,14,20 * * 1-5"
@@ -44,17 +48,24 @@ jobs:
       - name: Refresh Yahoo data
         run: |
           MODE="${{ github.event.inputs.mode || '' }}"
+          MAX_FULL="${{ github.event.inputs.max_full || '' }}"
           if [ -z "$MODE" ]; then
             if [ "${{ github.event.schedule }}" = "52 6 * * 1-5" ]; then
               MODE="full"
+              MAX_FULL="175"
             else
               MODE="prices"
+              MAX_FULL="0"
             fi
+          fi
+          if [ -z "$MAX_FULL" ]; then
+            MAX_FULL="0"
           fi
           TICKERS="${{ github.event.inputs.tickers || '' }}"
           echo "Requested tickers: $TICKERS"
           echo "Refresh mode: $MODE"
-          python scripts/update_yahoo_data.py --mode "$MODE" --tickers "$TICKERS"
+          echo "Max full refresh: $MAX_FULL"
+          python scripts/update_yahoo_data.py --mode "$MODE" --max-full "$MAX_FULL" --tickers "$TICKERS"
 
       - name: Commit refreshed database
         run: |

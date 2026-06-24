@@ -10,11 +10,11 @@ on:
       count:
         description: "Maximum Yahoo candidates to scan"
         required: false
-        default: "120"
+        default: "300"
       top:
         description: "Number of top results to publish"
         required: false
-        default: "50"
+        default: "100"
       model:
         description: "Model version"
         required: false
@@ -52,8 +52,8 @@ jobs:
         run: |
           python scripts/scan_yahoo_stocks.py \
             --tickers "${{ github.event.inputs.tickers || '' }}" \
-            --count "${{ github.event.inputs.count || '120' }}" \
-            --top "${{ github.event.inputs.top || '50' }}" \
+            --count "${{ github.event.inputs.count || '300' }}" \
+            --top "${{ github.event.inputs.top || '100' }}" \
             --model "${{ github.event.inputs.model || 'v14' }}"
 
       - name: Commit scan results

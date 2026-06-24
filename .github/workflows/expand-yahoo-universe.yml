@@ -1,0 +1,65 @@
+name: Expand Yahoo Stock Universe
+
+on:
+  workflow_dispatch:
+    inputs:
+      target_size:
+        description: "Target number of model-ready stocks in the database"
+        required: false
+        default: "1000"
+      batch_size:
+        description: "Maximum new stocks to add in this run"
+        required: false
+        default: "100"
+      candidate_limit:
+        description: "How many large/liquid Yahoo candidates to consider"
+        required: false
+        default: "1600"
+      min_market_cap:
+        description: "Minimum market cap in USD"
+        required: false
+        default: "1000000000"
+  schedule:
+    - cron: "26 4 * * 6"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: yahoo-data
+  cancel-in-progress: false
+
+jobs:
+  expand:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install Yahoo universe dependencies
+        run: python -m pip install --upgrade yfinance
+
+      - name: Expand Yahoo universe
+        run: |
+          python scripts/build_yahoo_universe.py \
+            --target-size "${{ github.event.inputs.target_size || '1000' }}" \
+            --batch-size "${{ github.event.inputs.batch_size || '100' }}" \
+            --candidate-limit "${{ github.event.inputs.candidate_limit || '1600' }}" \
+            --min-market-cap "${{ github.event.inputs.min_market_cap || '1000000000' }}"
+
+      - name: Commit expanded database
+        run: |
+          if git diff --quiet -- public/data/stocks.json; then
+            echo "No Yahoo universe changes."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add public/data/stocks.json
+          git commit -m "Expand Yahoo stock universe"
+          git push

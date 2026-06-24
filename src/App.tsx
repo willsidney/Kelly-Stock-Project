@@ -8,6 +8,8 @@ const TRADING_DAYS  = 252;
 const MC_SIMS       = 8000;
 const PORT_SIMS     = 400;
 const PORT_STEPS    = 52;
+const MC_STOCK_LIMIT = 150;
+const PORT_SIM_STOCK_LIMIT = 80;
 const T_DF          = 5;
 const JUMP_LAMBDA   = 4;
 const JUMP_MU       = -0.02;
@@ -1242,6 +1244,10 @@ export default function App(){
   const toggle = k => setFlags(f=>({...f,[k]:!f[k]}));
 
   const runSim = useCallback((seed)=>{
+    if(stocks.length>MC_STOCK_LIMIT){
+      setRunning(false); setMcResults(null);
+      return;
+    }
     setRunning(true); setMcResults(null); setPortBands(null);
     setTimeout(()=>{ const mc=runMonteCarlo(stocks,seed,eurUsdNow,eurUsdForecast); setMcResults(mc); setRunning(false); },50);
   },[stocks,eurUsdNow,eurUsdForecast]);
@@ -1267,10 +1273,11 @@ export default function App(){
     ()=>runModel(stocks,mcResults,budget,kellyMult,flags,marketBull,eurUsdNow,eurUsdForecast,modelVersion),
     [stocks,mcResults,budget,kellyMult,flags,marketBull,eurUsdNow,eurUsdForecast,modelVersion]
   );
-  const weightsByBase = useMemo(
-    ()=>stocks.map(s=>results.find(r=>r.ticker===s.ticker)?.weight??(1/stocks.length)),
-    [stocks,results]
-  );
+  const portfolioSimRows = useMemo(()=>results.slice(0,Math.min(PORT_SIM_STOCK_LIMIT,results.length)),[results]);
+  const portfolioSimWeights = useMemo(()=>{
+    const total=portfolioSimRows.reduce((s,x)=>s+x.weight,0)||1;
+    return portfolioSimRows.map(s=>s.weight/total);
+  },[portfolioSimRows]);
 
   useEffect(()=>{
     setPortBands(null);
@@ -1279,10 +1286,10 @@ export default function App(){
   useEffect(()=>{
     if(view!=="chart" || portBands) return;
     const id=setTimeout(()=>{
-      setPortBands(runPortfolioSim(stocks,weightsByBase,budget,mcSeed+7,eurUsdNow,eurUsdForecast));
+      setPortBands(runPortfolioSim(portfolioSimRows,portfolioSimWeights,budget,mcSeed+7,eurUsdNow,eurUsdForecast));
     },50);
     return()=>clearTimeout(id);
-  },[view,portBands,stocks,weightsByBase,budget,mcSeed,eurUsdNow,eurUsdForecast]);
+  },[view,portBands,portfolioSimRows,portfolioSimWeights,budget,mcSeed,eurUsdNow,eurUsdForecast]);
 
   const maxEuros   = results[0]?.euros||1;
   const totalFloor = results.reduce((s,x)=>s+x.floor,0);
@@ -1291,6 +1298,7 @@ export default function App(){
   const kellyLabel = kellyMult===1?"Full Kelly":kellyMult===0.5?"Half Kelly":"Quarter Kelly";
   const modelLabel = MODEL_LABELS[modelVersion] || MODEL_LABELS[MODEL_V13];
   const allocationRows = results.slice(0,Math.min(200,results.length));
+  const canRunMc   = stocks.length<=MC_STOCK_LIMIT;
   const portMed    = portBands?.p50[PORT_STEPS];
   const portP10    = portBands?.p10[PORT_STEPS];
   const fxPct      = ((eurUsdForecast-eurUsdNow)/eurUsdNow*100).toFixed(2);
@@ -1348,13 +1356,15 @@ export default function App(){
               {running&&<span className="pill pulsing" style={{background:"#451a03",color:"#fb923c",border:"1px solid #fb923c40"}}>⟳ MC Running</span>}
             </div>
             <p style={{fontSize:11,color:"#475569"}}>
-              {modelVersion===MODEL_V14
+              {stocks.length>MC_STOCK_LIMIT
+                ? `Large database mode: ranking all ${stocks.length} stocks; simulations use shortlist views · ${LAST_REVIEW}`
+                : modelVersion===MODEL_V14
                 ? `Optimized = expected return + quality + valuation + growth - risk - data confidence penalty · ${LAST_REVIEW}`
                 : `Win prob = Analyst(40%) + Momentum(20%) + R/R(20%) + Short Int(10%) + Earnings(10%) · ${LAST_REVIEW}`}
             </p>
           </div>
-          <button className="btn active" onClick={()=>{const s=(Date.now()%99997)+1;setMcSeed(s);runSim(s);}}
-            style={{display:"flex",alignItems:"center",gap:6}}>
+          <button className={`btn${canRunMc?" active":""}`} disabled={!canRunMc} onClick={()=>{const s=(Date.now()%99997)+1;setMcSeed(s);runSim(s);}}
+            style={{display:"flex",alignItems:"center",gap:6,opacity:canRunMc?1:.45,cursor:canRunMc?"pointer":"not-allowed"}}>
             <span style={{fontSize:14}}>↺</span> Re-run MC
           </button>
         </div>

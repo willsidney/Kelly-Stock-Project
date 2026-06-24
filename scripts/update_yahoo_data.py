@@ -552,6 +552,7 @@ def update_stock(stock: dict, quote: dict | None) -> dict:
 
     updated["analystSrc"] = analyst_source
     updated["lastUpdated"] = datetime.now(timezone.utc).replace(microsecond=0).isoformat()
+    updated["lastFullUpdated"] = updated["lastUpdated"]
     return updated
 
 
@@ -586,6 +587,7 @@ def main() -> int:
     parser = argparse.ArgumentParser(description="Refresh Kelly stock database from Yahoo Finance.")
     parser.add_argument("--tickers", default="", help="Comma or space separated ticker codes to add before refresh.")
     parser.add_argument("--mode", choices=["full", "prices"], default="full", help="Use full for fundamentals/analysts or prices for a fast quote refresh.")
+    parser.add_argument("--max-full", type=int, default=0, help="Maximum stocks to deep-refresh in full mode. Remaining stocks receive a price refresh.")
     args = parser.parse_args()
 
     stocks = json.loads(DATA_PATH.read_text())
@@ -610,13 +612,28 @@ def main() -> int:
 
     tickers = [str(s.get("ticker", "")).upper().strip() for s in stocks if s.get("ticker")]
     quotes = quote_batch(tickers)
+    full_refresh = set(tickers)
+    if args.mode == "full" and args.max_full > 0 and len(tickers) > args.max_full:
+        oldest = sorted(
+            stocks,
+            key=lambda s: (
+                str(s.get("lastFullUpdated") or s.get("lastUpdated") or ""),
+                str(s.get("ticker") or ""),
+            ),
+        )
+        full_refresh = {
+            str(s.get("ticker", "")).upper().strip()
+            for s in oldest[: args.max_full]
+            if s.get("ticker")
+        } | new_tickers
+        print(f"full-refresh limit: {len(full_refresh)} of {len(tickers)} stocks")
     refreshed = []
     skipped_new = []
     print(f"update mode: {args.mode}")
     for stock in stocks:
         ticker = str(stock.get("ticker", "")).upper().strip()
         print(f"refreshing {ticker}")
-        if args.mode == "prices":
+        if args.mode == "prices" or ticker not in full_refresh:
             refreshed_stock = refresh_price_only(stock, quotes.get(ticker))
         else:
             refreshed_stock = update_stock(stock, quotes.get(ticker))
