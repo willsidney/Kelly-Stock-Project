@@ -12,10 +12,10 @@
   {
     "ticker": "AAPL",
     "file": "AAPL.json",
-    "fetchedAt": "2026-06-24T22:19:17Z",
+    "fetchedAt": "2026-06-25T11:19:51Z",
     "rowCounts": {
       "gradesHistorical": 0,
-      "dividendAdjustedPrices": 0,
+      "dividendAdjustedPrices": 2130,
       "historicalMarketCap": 0
     }
   },
@@ -192,10 +192,10 @@
   {
     "ticker": "AMZN",
     "file": "AMZN.json",
-    "fetchedAt": "2026-06-24T22:19:19Z",
+    "fetchedAt": "2026-06-25T11:19:53Z",
     "rowCounts": {
       "gradesHistorical": 0,
-      "dividendAdjustedPrices": 0,
+      "dividendAdjustedPrices": 2130,
       "historicalMarketCap": 0
     }
   },
@@ -272,10 +272,10 @@
   {
     "ticker": "AVGO",
     "file": "AVGO.json",
-    "fetchedAt": "2026-06-24T22:19:19Z",
+    "fetchedAt": "2026-06-25T11:19:56Z",
     "rowCounts": {
       "gradesHistorical": 0,
-      "dividendAdjustedPrices": 0,
+      "dividendAdjustedPrices": 2130,
       "historicalMarketCap": 0
     }
   },
@@ -552,10 +552,10 @@
   {
     "ticker": "GOOGL",
     "file": "GOOGL.json",
-    "fetchedAt": "2026-06-24T22:19:17Z",
+    "fetchedAt": "2026-06-25T11:19:55Z",
     "rowCounts": {
       "gradesHistorical": 0,
-      "dividendAdjustedPrices": 0,
+      "dividendAdjustedPrices": 2130,
       "historicalMarketCap": 0
     }
   },
@@ -612,10 +612,10 @@
   {
     "ticker": "JPM",
     "file": "JPM.json",
-    "fetchedAt": "2026-06-24T22:19:22Z",
+    "fetchedAt": "2026-06-25T11:19:57Z",
     "rowCounts": {
       "gradesHistorical": 0,
-      "dividendAdjustedPrices": 0,
+      "dividendAdjustedPrices": 2130,
       "historicalMarketCap": 0
     }
   },
@@ -682,10 +682,10 @@
   {
     "ticker": "META",
     "file": "META.json",
-    "fetchedAt": "2026-06-24T22:19:20Z",
+    "fetchedAt": "2026-06-25T11:19:54Z",
     "rowCounts": {
       "gradesHistorical": 0,
-      "dividendAdjustedPrices": 0,
+      "dividendAdjustedPrices": 2130,
       "historicalMarketCap": 0
     }
   },
@@ -712,10 +712,10 @@
   {
     "ticker": "MSFT",
     "file": "MSFT.json",
-    "fetchedAt": "2026-06-24T22:19:18Z",
+    "fetchedAt": "2026-06-25T11:19:52Z",
     "rowCounts": {
       "gradesHistorical": 0,
-      "dividendAdjustedPrices": 0,
+      "dividendAdjustedPrices": 2130,
       "historicalMarketCap": 0
     }
   },
@@ -742,10 +742,10 @@
   {
     "ticker": "NVDA",
     "file": "NVDA.json",
-    "fetchedAt": "2026-06-24T22:19:17Z",
+    "fetchedAt": "2026-06-25T11:19:52Z",
     "rowCounts": {
       "gradesHistorical": 0,
-      "dividendAdjustedPrices": 0,
+      "dividendAdjustedPrices": 2130,
       "historicalMarketCap": 0
     }
   },
@@ -802,20 +802,20 @@
   {
     "ticker": "SPY",
     "file": "SPY.json",
-    "fetchedAt": "2026-06-24T22:19:16Z",
+    "fetchedAt": "2026-06-25T11:19:50Z",
     "rowCounts": {
       "gradesHistorical": 0,
-      "dividendAdjustedPrices": 0,
+      "dividendAdjustedPrices": 2130,
       "historicalMarketCap": 0
     }
   },
   {
     "ticker": "TSLA",
     "file": "TSLA.json",
-    "fetchedAt": "2026-06-24T22:19:19Z",
+    "fetchedAt": "2026-06-25T11:19:56Z",
     "rowCounts": {
       "gradesHistorical": 0,
-      "dividendAdjustedPrices": 0,
+      "dividendAdjustedPrices": 2130,
       "historicalMarketCap": 0
     }
   },
@@ -842,10 +842,10 @@
   {
     "ticker": "V",
     "file": "V.json",
-    "fetchedAt": "2026-06-24T22:19:23Z",
+    "fetchedAt": "2026-06-25T11:19:58Z",
     "rowCounts": {
       "gradesHistorical": 0,
-      "dividendAdjustedPrices": 0,
+      "dividendAdjustedPrices": 2130,
       "historicalMarketCap": 0
     }
   },
