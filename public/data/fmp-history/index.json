@@ -12,7 +12,7 @@
   {
     "ticker": "AAPL",
     "file": "AAPL.json",
-    "fetchedAt": "2026-06-25T11:34:05Z",
+    "fetchedAt": "2026-06-25T11:38:19Z",
     "rowCounts": {
       "gradesHistorical": 0,
       "dividendAdjustedPrices": 2130,
@@ -22,10 +22,10 @@
   {
     "ticker": "ABBV",
     "file": "ABBV.json",
-    "fetchedAt": "2026-06-24T22:19:28Z",
+    "fetchedAt": "2026-06-25T11:38:35Z",
     "rowCounts": {
       "gradesHistorical": 0,
-      "dividendAdjustedPrices": 0,
+      "dividendAdjustedPrices": 2130,
       "historicalMarketCap": 0
     }
   },
@@ -152,20 +152,20 @@
   {
     "ticker": "AMAT",
     "file": "AMAT.json",
-    "fetchedAt": "2026-06-24T22:19:26Z",
+    "fetchedAt": "2026-06-25T11:38:32Z",
     "rowCounts": {
       "gradesHistorical": 0,
-      "dividendAdjustedPrices": 0,
+      "dividendAdjustedPrices": 2130,
       "historicalMarketCap": 0
     }
   },
   {
     "ticker": "AMD",
     "file": "AMD.json",
-    "fetchedAt": "2026-06-24T22:19:22Z",
+    "fetchedAt": "2026-06-25T11:38:27Z",
     "rowCounts": {
       "gradesHistorical": 0,
-      "dividendAdjustedPrices": 0,
+      "dividendAdjustedPrices": 2130,
       "historicalMarketCap": 0
     }
   },
@@ -192,7 +192,7 @@
   {
     "ticker": "AMZN",
     "file": "AMZN.json",
-    "fetchedAt": "2026-06-25T11:34:07Z",
+    "fetchedAt": "2026-06-25T11:38:21Z",
     "rowCounts": {
       "gradesHistorical": 0,
       "dividendAdjustedPrices": 2130,
@@ -252,27 +252,27 @@
   {
     "ticker": "ARM",
     "file": "ARM.json",
-    "fetchedAt": "2026-06-24T22:19:28Z",
+    "fetchedAt": "2026-06-25T11:38:36Z",
     "rowCounts": {
       "gradesHistorical": 0,
-      "dividendAdjustedPrices": 0,
+      "dividendAdjustedPrices": 696,
       "historicalMarketCap": 0
     }
   },
   {
     "ticker": "ASML",
     "file": "ASML.json",
-    "fetchedAt": "2026-06-24T22:19:23Z",
+    "fetchedAt": "2026-06-25T11:38:28Z",
     "rowCounts": {
       "gradesHistorical": 0,
-      "dividendAdjustedPrices": 0,
+      "dividendAdjustedPrices": 2130,
       "historicalMarketCap": 0
     }
   },
   {
     "ticker": "AVGO",
     "file": "AVGO.json",
-    "fetchedAt": "2026-06-25T11:34:08Z",
+    "fetchedAt": "2026-06-25T11:38:22Z",
     "rowCounts": {
       "gradesHistorical": 0,
       "dividendAdjustedPrices": 2130,
@@ -292,10 +292,10 @@
   {
     "ticker": "AZN",
     "file": "AZN.json",
-    "fetchedAt": "2026-06-24T22:19:33Z",
+    "fetchedAt": "2026-06-25T11:38:43Z",
     "rowCounts": {
       "gradesHistorical": 0,
-      "dividendAdjustedPrices": 0,
+      "dividendAdjustedPrices": 2130,
       "historicalMarketCap": 0
     }
   },
@@ -322,10 +322,10 @@
   {
     "ticker": "BAC",
     "file": "BAC.json",
-    "fetchedAt": "2026-06-24T22:19:28Z",
+    "fetchedAt": "2026-06-25T11:38:35Z",
     "rowCounts": {
       "gradesHistorical": 0,
-      "dividendAdjustedPrices": 0,
+      "dividendAdjustedPrices": 2130,
       "historicalMarketCap": 0
     }
   },
@@ -392,10 +392,10 @@
   {
     "ticker": "BRK-B",
     "file": "BRK-B.json",
-    "fetchedAt": "2026-06-24T22:19:21Z",
+    "fetchedAt": "2026-06-25T11:38:24Z",
     "rowCounts": {
       "gradesHistorical": 0,
-      "dividendAdjustedPrices": 0,
+      "dividendAdjustedPrices": 2130,
       "historicalMarketCap": 0
     }
   },
@@ -412,10 +412,10 @@
   {
     "ticker": "C",
     "file": "C.json",
-    "fetchedAt": "2026-06-24T22:19:36Z",
+    "fetchedAt": "2026-06-25T11:38:47Z",
     "rowCounts": {
       "gradesHistorical": 0,
-      "dividendAdjustedPrices": 0,
+      "dividendAdjustedPrices": 2130,
       "historicalMarketCap": 0
     }
   },
@@ -432,10 +432,10 @@
   {
     "ticker": "CAT",
     "file": "CAT.json",
-    "fetchedAt": "2026-06-24T22:19:26Z",
+    "fetchedAt": "2026-06-25T11:38:33Z",
     "rowCounts": {
       "gradesHistorical": 0,
-      "dividendAdjustedPrices": 0,
+      "dividendAdjustedPrices": 2130,
       "historicalMarketCap": 0
     }
   },
@@ -502,57 +502,57 @@
   {
     "ticker": "COST",
     "file": "COST.json",
-    "fetchedAt": "2026-06-24T22:19:27Z",
+    "fetchedAt": "2026-06-25T11:38:34Z",
     "rowCounts": {
       "gradesHistorical": 0,
-      "dividendAdjustedPrices": 0,
+      "dividendAdjustedPrices": 2130,
       "historicalMarketCap": 0
     }
   },
   {
     "ticker": "CSCO",
     "file": "CSCO.json",
-    "fetchedAt": "2026-06-24T22:19:25Z",
+    "fetchedAt": "2026-06-25T11:38:30Z",
     "rowCounts": {
       "gradesHistorical": 0,
-      "dividendAdjustedPrices": 0,
+      "dividendAdjustedPrices": 2130,
       "historicalMarketCap": 0
     }
   },
   {
     "ticker": "CVX",
     "file": "CVX.json",
-    "fetchedAt": "2026-06-24T22:19:31Z",
+    "fetchedAt": "2026-06-25T11:38:40Z",
     "rowCounts": {
       "gradesHistorical": 0,
-      "dividendAdjustedPrices": 0,
+      "dividendAdjustedPrices": 2130,
       "historicalMarketCap": 0
     }
   },
   {
     "ticker": "GE",
     "file": "GE.json",
-    "fetchedAt": "2026-06-24T22:19:29Z",
+    "fetchedAt": "2026-06-25T11:38:37Z",
     "rowCounts": {
       "gradesHistorical": 0,
-      "dividendAdjustedPrices": 0,
+      "dividendAdjustedPrices": 2130,
       "historicalMarketCap": 0
     }
   },
   {
     "ticker": "GOOG",
     "file": "GOOG.json",
-    "fetchedAt": "2026-06-24T22:19:18Z",
+    "fetchedAt": "2026-06-25T11:38:20Z",
     "rowCounts": {
       "gradesHistorical": 0,
-      "dividendAdjustedPrices": 0,
+      "dividendAdjustedPrices": 2130,
       "historicalMarketCap": 0
     }
   },
   {
     "ticker": "GOOGL",
     "file": "GOOGL.json",
-    "fetchedAt": "2026-06-25T11:34:08Z",
+    "fetchedAt": "2026-06-25T11:38:19Z",
     "rowCounts": {
       "gradesHistorical": 0,
       "dividendAdjustedPrices": 2130,
@@ -562,57 +562,57 @@
   {
     "ticker": "GS",
     "file": "GS.json",
-    "fetchedAt": "2026-06-24T22:19:32Z",
+    "fetchedAt": "2026-06-25T11:38:41Z",
     "rowCounts": {
       "gradesHistorical": 0,
-      "dividendAdjustedPrices": 0,
+      "dividendAdjustedPrices": 2130,
       "historicalMarketCap": 0
     }
   },
   {
     "ticker": "HD",
     "file": "HD.json",
-    "fetchedAt": "2026-06-24T22:19:31Z",
+    "fetchedAt": "2026-06-25T11:38:41Z",
     "rowCounts": {
       "gradesHistorical": 0,
-      "dividendAdjustedPrices": 0,
+      "dividendAdjustedPrices": 2130,
       "historicalMarketCap": 0
     }
   },
   {
     "ticker": "IBM",
     "file": "IBM.json",
-    "fetchedAt": "2026-06-24T22:19:36Z",
+    "fetchedAt": "2026-06-25T11:38:48Z",
     "rowCounts": {
       "gradesHistorical": 0,
-      "dividendAdjustedPrices": 0,
+      "dividendAdjustedPrices": 2130,
       "historicalMarketCap": 0
     }
   },
   {
     "ticker": "INTC",
     "file": "INTC.json",
-    "fetchedAt": "2026-06-24T22:19:23Z",
+    "fetchedAt": "2026-06-25T11:38:27Z",
     "rowCounts": {
       "gradesHistorical": 0,
-      "dividendAdjustedPrices": 0,
+      "dividendAdjustedPrices": 2130,
       "historicalMarketCap": 0
     }
   },
   {
     "ticker": "JNJ",
     "file": "JNJ.json",
-    "fetchedAt": "2026-06-24T22:19:24Z",
+    "fetchedAt": "2026-06-25T11:38:29Z",
     "rowCounts": {
       "gradesHistorical": 0,
-      "dividendAdjustedPrices": 0,
+      "dividendAdjustedPrices": 2130,
       "historicalMarketCap": 0
     }
   },
   {
     "ticker": "JPM",
     "file": "JPM.json",
-    "fetchedAt": "2026-06-25T11:34:09Z",
+    "fetchedAt": "2026-06-25T11:38:26Z",
     "rowCounts": {
       "gradesHistorical": 0,
       "dividendAdjustedPrices": 2130,
@@ -622,67 +622,67 @@
   {
     "ticker": "KLAC",
     "file": "KLAC.json",
-    "fetchedAt": "2026-06-24T22:19:32Z",
+    "fetchedAt": "2026-06-25T11:38:42Z",
     "rowCounts": {
       "gradesHistorical": 0,
-      "dividendAdjustedPrices": 0,
+      "dividendAdjustedPrices": 2130,
       "historicalMarketCap": 0
     }
   },
   {
     "ticker": "KO",
     "file": "KO.json",
-    "fetchedAt": "2026-06-24T22:19:30Z",
+    "fetchedAt": "2026-06-25T11:38:39Z",
     "rowCounts": {
       "gradesHistorical": 0,
-      "dividendAdjustedPrices": 0,
+      "dividendAdjustedPrices": 2130,
       "historicalMarketCap": 0
     }
   },
   {
     "ticker": "LIN",
     "file": "LIN.json",
-    "fetchedAt": "2026-06-24T22:19:37Z",
+    "fetchedAt": "2026-06-25T11:38:48Z",
     "rowCounts": {
       "gradesHistorical": 0,
-      "dividendAdjustedPrices": 0,
+      "dividendAdjustedPrices": 2130,
       "historicalMarketCap": 0
     }
   },
   {
     "ticker": "LLY",
     "file": "LLY.json",
-    "fetchedAt": "2026-06-24T22:19:21Z",
+    "fetchedAt": "2026-06-25T11:38:25Z",
     "rowCounts": {
       "gradesHistorical": 0,
-      "dividendAdjustedPrices": 0,
+      "dividendAdjustedPrices": 2130,
       "historicalMarketCap": 0
     }
   },
   {
     "ticker": "LRCX",
     "file": "LRCX.json",
-    "fetchedAt": "2026-06-24T22:19:25Z",
+    "fetchedAt": "2026-06-25T11:38:31Z",
     "rowCounts": {
       "gradesHistorical": 0,
-      "dividendAdjustedPrices": 0,
+      "dividendAdjustedPrices": 2130,
       "historicalMarketCap": 0
     }
   },
   {
     "ticker": "MA",
     "file": "MA.json",
-    "fetchedAt": "2026-06-24T22:19:27Z",
+    "fetchedAt": "2026-06-25T11:38:33Z",
     "rowCounts": {
       "gradesHistorical": 0,
-      "dividendAdjustedPrices": 0,
+      "dividendAdjustedPrices": 2130,
       "historicalMarketCap": 0
     }
   },
   {
     "ticker": "META",
     "file": "META.json",
-    "fetchedAt": "2026-06-25T11:34:07Z",
+    "fetchedAt": "2026-06-25T11:38:23Z",
     "rowCounts": {
       "gradesHistorical": 0,
       "dividendAdjustedPrices": 2130,
@@ -692,27 +692,27 @@
   {
     "ticker": "MRK",
     "file": "MRK.json",
-    "fetchedAt": "2026-06-24T22:19:33Z",
+    "fetchedAt": "2026-06-25T11:38:43Z",
     "rowCounts": {
       "gradesHistorical": 0,
-      "dividendAdjustedPrices": 0,
+      "dividendAdjustedPrices": 2130,
       "historicalMarketCap": 0
     }
   },
   {
     "ticker": "MS",
     "file": "MS.json",
-    "fetchedAt": "2026-06-24T22:19:30Z",
+    "fetchedAt": "2026-06-25T11:38:39Z",
     "rowCounts": {
       "gradesHistorical": 0,
-      "dividendAdjustedPrices": 0,
+      "dividendAdjustedPrices": 2130,
       "historicalMarketCap": 0
     }
   },
   {
     "ticker": "MSFT",
     "file": "MSFT.json",
-    "fetchedAt": "2026-06-25T11:34:06Z",
+    "fetchedAt": "2026-06-25T11:38:21Z",
     "rowCounts": {
       "gradesHistorical": 0,
       "dividendAdjustedPrices": 2130,
@@ -722,27 +722,27 @@
   {
     "ticker": "MU",
     "file": "MU.json",
-    "fetchedAt": "2026-06-24T22:19:20Z",
+    "fetchedAt": "2026-06-25T11:38:23Z",
     "rowCounts": {
       "gradesHistorical": 0,
-      "dividendAdjustedPrices": 0,
+      "dividendAdjustedPrices": 2130,
       "historicalMarketCap": 0
     }
   },
   {
     "ticker": "NFLX",
     "file": "NFLX.json",
-    "fetchedAt": "2026-06-24T22:19:32Z",
+    "fetchedAt": "2026-06-25T11:38:42Z",
     "rowCounts": {
       "gradesHistorical": 0,
-      "dividendAdjustedPrices": 0,
+      "dividendAdjustedPrices": 2130,
       "historicalMarketCap": 0
     }
   },
   {
     "ticker": "NVDA",
     "file": "NVDA.json",
-    "fetchedAt": "2026-06-25T11:34:06Z",
+    "fetchedAt": "2026-06-25T11:38:18Z",
     "rowCounts": {
       "gradesHistorical": 0,
       "dividendAdjustedPrices": 2130,
@@ -752,57 +752,57 @@
   {
     "ticker": "ORCL",
     "file": "ORCL.json",
-    "fetchedAt": "2026-06-24T22:19:26Z",
+    "fetchedAt": "2026-06-25T11:38:32Z",
     "rowCounts": {
       "gradesHistorical": 0,
-      "dividendAdjustedPrices": 0,
+      "dividendAdjustedPrices": 2130,
       "historicalMarketCap": 0
     }
   },
   {
     "ticker": "PG",
     "file": "PG.json",
-    "fetchedAt": "2026-06-24T22:19:30Z",
+    "fetchedAt": "2026-06-25T11:38:38Z",
     "rowCounts": {
       "gradesHistorical": 0,
-      "dividendAdjustedPrices": 0,
+      "dividendAdjustedPrices": 2130,
       "historicalMarketCap": 0
     }
   },
   {
     "ticker": "PLTR",
     "file": "PLTR.json",
-    "fetchedAt": "2026-06-24T22:19:34Z",
+    "fetchedAt": "2026-06-25T11:38:45Z",
     "rowCounts": {
       "gradesHistorical": 0,
-      "dividendAdjustedPrices": 0,
+      "dividendAdjustedPrices": 1439,
       "historicalMarketCap": 0
     }
   },
   {
     "ticker": "PM",
     "file": "PM.json",
-    "fetchedAt": "2026-06-24T22:19:35Z",
+    "fetchedAt": "2026-06-25T11:38:45Z",
     "rowCounts": {
       "gradesHistorical": 0,
-      "dividendAdjustedPrices": 0,
+      "dividendAdjustedPrices": 2130,
       "historicalMarketCap": 0
     }
   },
   {
     "ticker": "RTX",
     "file": "RTX.json",
-    "fetchedAt": "2026-06-24T22:19:35Z",
+    "fetchedAt": "2026-06-25T11:38:46Z",
     "rowCounts": {
       "gradesHistorical": 0,
-      "dividendAdjustedPrices": 0,
+      "dividendAdjustedPrices": 2130,
       "historicalMarketCap": 0
     }
   },
   {
     "ticker": "SPY",
     "file": "SPY.json",
-    "fetchedAt": "2026-06-25T11:34:05Z",
+    "fetchedAt": "2026-06-25T11:38:18Z",
     "rowCounts": {
       "gradesHistorical": 0,
       "dividendAdjustedPrices": 2130,
@@ -812,7 +812,7 @@
   {
     "ticker": "TSLA",
     "file": "TSLA.json",
-    "fetchedAt": "2026-06-25T11:34:09Z",
+    "fetchedAt": "2026-06-25T11:38:22Z",
     "rowCounts": {
       "gradesHistorical": 0,
       "dividendAdjustedPrices": 2130,
@@ -822,27 +822,27 @@
   {
     "ticker": "TXN",
     "file": "TXN.json",
-    "fetchedAt": "2026-06-24T22:19:34Z",
+    "fetchedAt": "2026-06-25T11:38:44Z",
     "rowCounts": {
       "gradesHistorical": 0,
-      "dividendAdjustedPrices": 0,
+      "dividendAdjustedPrices": 2130,
       "historicalMarketCap": 0
     }
   },
   {
     "ticker": "UNH",
     "file": "UNH.json",
-    "fetchedAt": "2026-06-24T22:19:29Z",
+    "fetchedAt": "2026-06-25T11:38:37Z",
     "rowCounts": {
       "gradesHistorical": 0,
-      "dividendAdjustedPrices": 0,
+      "dividendAdjustedPrices": 2130,
       "historicalMarketCap": 0
     }
   },
   {
     "ticker": "V",
     "file": "V.json",
-    "fetchedAt": "2026-06-25T11:34:10Z",
+    "fetchedAt": "2026-06-25T11:38:29Z",
     "rowCounts": {
       "gradesHistorical": 0,
       "dividendAdjustedPrices": 2130,
@@ -852,30 +852,30 @@
   {
     "ticker": "WFC",
     "file": "WFC.json",
-    "fetchedAt": "2026-06-24T22:19:35Z",
+    "fetchedAt": "2026-06-25T11:38:46Z",
     "rowCounts": {
       "gradesHistorical": 0,
-      "dividendAdjustedPrices": 0,
+      "dividendAdjustedPrices": 2130,
       "historicalMarketCap": 0
     }
   },
   {
     "ticker": "WMT",
     "file": "WMT.json",
-    "fetchedAt": "2026-06-24T22:19:21Z",
+    "fetchedAt": "2026-06-25T11:38:25Z",
     "rowCounts": {
       "gradesHistorical": 0,
-      "dividendAdjustedPrices": 0,
+      "dividendAdjustedPrices": 2130,
       "historicalMarketCap": 0
     }
   },
   {
     "ticker": "XOM",
     "file": "XOM.json",
-    "fetchedAt": "2026-06-24T22:19:24Z",
+    "fetchedAt": "2026-06-25T11:38:30Z",
     "rowCounts": {
       "gradesHistorical": 0,
-      "dividendAdjustedPrices": 0,
+      "dividendAdjustedPrices": 2130,
       "historicalMarketCap": 0
     }
   }
