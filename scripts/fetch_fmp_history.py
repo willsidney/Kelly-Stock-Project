@@ -10,7 +10,7 @@ import sys
 import time
 import urllib.parse
 import urllib.request
-from datetime import UTC, datetime
+from datetime import UTC, datetime, timedelta
 from pathlib import Path
 
 
@@ -48,7 +48,64 @@ def rows_from_response(data: object | None) -> list[dict]:
     return []
 
 
+def timestamp_from_iso(value: str) -> int:
+    parsed = datetime.fromisoformat(value[:10]).replace(tzinfo=UTC)
+    return int(parsed.timestamp())
+
+
+def yahoo_chart_price_rows(ticker: str, start: str, end: str) -> list[dict]:
+    period1 = timestamp_from_iso(start)
+    period2 = int((datetime.fromisoformat(end[:10]).replace(tzinfo=UTC) + timedelta(days=1)).timestamp())
+    symbol = urllib.parse.quote(ticker, safe="")
+    url = (
+        f"https://query1.finance.yahoo.com/v8/finance/chart/{symbol}"
+        f"?period1={period1}&period2={period2}&interval=1d&events=history&includeAdjustedClose=true"
+    )
+    request = urllib.request.Request(
+        url,
+        headers={"User-Agent": "KellyStockProject/1.0", "Accept": "application/json"},
+    )
+    try:
+        with urllib.request.urlopen(request, timeout=30) as response:
+            data = json.loads(response.read().decode("utf-8", errors="replace"))
+    except Exception as exc:
+        print(f"warn: Yahoo historical price fetch failed for {ticker}: {exc}", file=sys.stderr)
+        return []
+
+    result = (((data or {}).get("chart") or {}).get("result") or [None])[0]
+    if not result:
+        return []
+    timestamps = result.get("timestamp") or []
+    quote = (((result.get("indicators") or {}).get("quote") or [{}])[0]) or {}
+    adjclose = (((result.get("indicators") or {}).get("adjclose") or [{}])[0]) or {}
+    closes = quote.get("close") or []
+    adj_closes = adjclose.get("adjclose") or []
+    volumes = quote.get("volume") or []
+    rows = []
+    for idx, ts in enumerate(timestamps):
+        close = adj_closes[idx] if idx < len(adj_closes) and adj_closes[idx] else None
+        if close is None and idx < len(closes):
+            close = closes[idx]
+        if not isinstance(close, (int, float)) or close <= 0:
+            continue
+        rows.append(
+            {
+                "symbol": ticker,
+                "date": datetime.fromtimestamp(ts, UTC).date().isoformat(),
+                "adjClose": close,
+                "close": closes[idx] if idx < len(closes) else close,
+                "volume": volumes[idx] if idx < len(volumes) else None,
+                "provider": "Yahoo Finance",
+            }
+        )
+    return rows
+
+
 def fetch_price_rows(ticker: str, api_key: str, args: argparse.Namespace) -> tuple[list[dict], str]:
+    yahoo_rows = yahoo_chart_price_rows(ticker, args.start, args.end)
+    if yahoo_rows:
+        return yahoo_rows, "yahoo_chart"
+
     params = {"symbol": ticker, "from": args.start, "to": args.end, "limit": str(args.limit), "apikey": api_key}
     candidates = [
         ("stable_dividend_adjusted", "historical-price-eod/dividend-adjusted", BASE_URL, params),
@@ -151,6 +208,38 @@ def fetch_ticker(ticker: str, api_key: str, args: argparse.Namespace) -> dict:
     }
 
 
+def preserve_existing_rows(new_data: dict, existing_path: Path, benchmark: str) -> dict:
+    if not existing_path.exists():
+        return new_data
+    try:
+        old_data = json.loads(existing_path.read_text())
+    except Exception:
+        return new_data
+
+    preserved = dict(new_data)
+    endpoint_info = dict(preserved.get("sourceEndpoints") or {})
+    row_counts = dict(preserved.get("rowCounts") or {})
+
+    if not preserved.get("dividendAdjustedPrices") and old_data.get("dividendAdjustedPrices"):
+        preserved["dividendAdjustedPrices"] = old_data["dividendAdjustedPrices"]
+        endpoint_info["prices"] = f"cached_{((old_data.get('sourceEndpoints') or {}).get('prices') or 'previous')}"
+        row_counts["dividendAdjustedPrices"] = len(preserved["dividendAdjustedPrices"])
+
+    if benchmark != str(preserved.get("ticker") or "").upper() and not preserved.get("gradesHistorical") and old_data.get("gradesHistorical"):
+        preserved["gradesHistorical"] = old_data["gradesHistorical"]
+        endpoint_info["grades"] = f"cached_{((old_data.get('sourceEndpoints') or {}).get('grades') or 'previous')}"
+        row_counts["gradesHistorical"] = len(preserved["gradesHistorical"])
+
+    if not preserved.get("historicalMarketCap") and old_data.get("historicalMarketCap"):
+        preserved["historicalMarketCap"] = old_data["historicalMarketCap"]
+        row_counts["historicalMarketCap"] = len(preserved["historicalMarketCap"])
+
+    preserved["sourceEndpoints"] = endpoint_info
+    preserved["rowCounts"] = row_counts
+    preserved["usedCachedRows"] = preserved != new_data
+    return preserved
+
+
 def write_index(out_dir: Path) -> None:
     entries = []
     for path in sorted(out_dir.glob("*.json")):
@@ -202,12 +291,14 @@ def main() -> int:
     for ticker in tickers:
         data = fetch_ticker(ticker, api_key, args)
         path = args.output_dir / f"{ticker}.json"
+        data = preserve_existing_rows(data, path, benchmark)
         path.write_text(json.dumps(data, separators=(",", ":")) + "\n")
         print(
             f"{ticker}: grades={data['rowCounts']['gradesHistorical']} "
             f"prices={data['rowCounts']['dividendAdjustedPrices']} "
             f"marketCaps={data['rowCounts']['historicalMarketCap']} "
-            f"priceEndpoint={data['sourceEndpoints']['prices']}"
+            f"priceEndpoint={data['sourceEndpoints']['prices']} "
+            f"cachedRows={'yes' if data.get('usedCachedRows') else 'no'}"
         )
         time.sleep(0.35)
 
