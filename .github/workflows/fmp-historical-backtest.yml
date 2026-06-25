@@ -56,24 +56,42 @@ jobs:
             --max-tickers "${{ github.event.inputs.max_tickers || '25' }}" \
             --benchmark "${{ github.event.inputs.benchmark || 'SPY' }}"
 
+      - name: Commit fetched FMP histories
+        run: |
+          if git diff --quiet -- public/data/fmp-history; then
+            echo "No fetched FMP history changes."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add public/data/fmp-history
+          git commit -m "Update FMP historical histories"
+          git pull --rebase origin main
+          git push
+
       - name: Run FMP historical backtest
         run: |
+          set +e
           python scripts/backtest_fmp_history.py \
             --benchmark "${{ github.event.inputs.benchmark || 'SPY' }}" \
             --top "${{ github.event.inputs.top || '10' }}" \
             --min-tickers "${{ github.event.inputs.min_usable_tickers || '10' }}" \
             --require-benchmark \
             --output public/data/fmp-backtest-results.json \
-            --format markdown
+            --format markdown | tee /tmp/fmp-backtest.md
+          status=${PIPESTATUS[0]}
+          cat /tmp/fmp-backtest.md >> "$GITHUB_STEP_SUMMARY"
+          exit "$status"
 
-      - name: Commit FMP historical data and backtest
+      - name: Commit FMP backtest result
         run: |
-          if git diff --quiet -- public/data/fmp-history public/data/fmp-backtest-results.json; then
-            echo "No FMP historical changes."
+          if git diff --quiet -- public/data/fmp-backtest-results.json; then
+            echo "No FMP backtest result changes."
             exit 0
           fi
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add public/data/fmp-history public/data/fmp-backtest-results.json
+          git add public/data/fmp-backtest-results.json
           git commit -m "Update FMP historical backtest"
+          git pull --rebase origin main
           git push
