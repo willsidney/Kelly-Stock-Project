@@ -21,6 +21,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 OUT_PATH = ROOT / "public" / "data" / "fmp-access-report.json"
 BASE_URL = "https://financialmodelingprep.com/stable"
+DEFAULT_TICKERS = "AAPL,MSFT,NVDA,JPM,CELH"
 
 ENDPOINTS = [
     {
@@ -90,7 +91,163 @@ ENDPOINTS = [
         "purpose": "Historical revenue/earnings growth inputs",
         "must_have": False,
     },
+    {
+        "name": "ratings_historical",
+        "path": "ratings-historical",
+        "params": {},
+        "use_limit": False,
+        "purpose": "Historical analyst rating scores",
+        "must_have": False,
+    },
+    {
+        "name": "analyst_estimates_annual",
+        "path": "analyst-estimates",
+        "params": {"period": "annual"},
+        "purpose": "Analyst EPS/revenue estimates",
+        "must_have": False,
+    },
+    {
+        "name": "analyst_estimates_quarterly",
+        "path": "analyst-estimates",
+        "params": {"period": "quarter"},
+        "purpose": "Quarterly analyst EPS/revenue estimates",
+        "must_have": False,
+    },
+    {
+        "name": "financial_estimates_annual",
+        "path": "financial-estimates",
+        "params": {"period": "annual"},
+        "purpose": "Alternative FMP financial estimates endpoint",
+        "must_have": False,
+    },
+    {
+        "name": "financial_estimates_quarterly",
+        "path": "financial-estimates",
+        "params": {"period": "quarter"},
+        "purpose": "Alternative FMP quarterly estimates endpoint",
+        "must_have": False,
+    },
+    {
+        "name": "quote",
+        "path": "quote",
+        "params": {},
+        "use_limit": False,
+        "purpose": "Current price, volume, market cap, and exchange fields",
+        "must_have": False,
+    },
+    {
+        "name": "profile",
+        "path": "profile",
+        "params": {},
+        "use_limit": False,
+        "purpose": "Company profile, sector, industry, exchange, and beta",
+        "must_have": False,
+    },
+    {
+        "name": "ratios_ttm",
+        "path": "ratios-ttm",
+        "params": {},
+        "purpose": "Current trailing valuation/profitability ratios",
+        "must_have": False,
+    },
+    {
+        "name": "key_metrics_ttm",
+        "path": "key-metrics-ttm",
+        "params": {},
+        "purpose": "Current trailing financial quality metrics",
+        "must_have": False,
+    },
+    {
+        "name": "balance_sheet_annual",
+        "path": "balance-sheet-statement",
+        "params": {"period": "annual"},
+        "purpose": "Historical balance-sheet quality inputs",
+        "must_have": False,
+    },
+    {
+        "name": "cash_flow_annual",
+        "path": "cash-flow-statement",
+        "params": {"period": "annual"},
+        "purpose": "Historical free-cash-flow quality inputs",
+        "must_have": False,
+    },
+    {
+        "name": "enterprise_values_annual",
+        "path": "enterprise-values",
+        "params": {"period": "annual"},
+        "purpose": "Historical enterprise value and share count",
+        "must_have": False,
+    },
+    {
+        "name": "financial_growth_annual",
+        "path": "financial-growth",
+        "params": {"period": "annual"},
+        "purpose": "Historical financial growth rates",
+        "must_have": False,
+    },
+    {
+        "name": "financial_scores",
+        "path": "financial-scores",
+        "params": {},
+        "use_limit": False,
+        "purpose": "Altman/Piotroski-style financial health scores",
+        "must_have": False,
+    },
 ]
+
+ENDPOINT_META = {
+    "grades_historical": ("Analyst ratings", "Historical analyst sentiment", "Analyst sentiment"),
+    "ratings_historical": ("Analyst ratings", "Historical analyst sentiment", "Analyst sentiment"),
+    "grades_consensus": ("Analyst ratings", "No, unless dated rows are returned", "Current analyst sentiment"),
+    "price_target_consensus": ("Analyst targets", "No, unless dated rows are returned", "Target-price upside"),
+    "price_target_summary": ("Analyst targets", "No, unless dated rows are returned", "Target-price upside and dispersion"),
+    "analyst_estimates_annual": ("Analyst estimates", "Forward estimates if dated rows are returned", "Forward growth and valuation"),
+    "analyst_estimates_quarterly": ("Analyst estimates", "Forward estimates if dated rows are returned", "Near-term revisions and growth"),
+    "financial_estimates_annual": ("Analyst estimates", "Forward estimates if dated rows are returned", "Forward growth and valuation"),
+    "financial_estimates_quarterly": ("Analyst estimates", "Forward estimates if dated rows are returned", "Near-term revisions and growth"),
+    "dividend_adjusted_prices": ("Prices", "Future return measurement", "Current and historical price risk"),
+    "historical_market_cap": ("Universe filters", "Point-in-time universe filters", "Size filter"),
+    "quote": ("Current market data", "No, current snapshot only", "Live price and market data"),
+    "profile": ("Reference data", "No, current snapshot only", "Sector, industry, beta, and exchange filters"),
+    "ratios_annual": ("Fundamentals", "Valuation, profitability, leverage", "Valuation and quality"),
+    "ratios_ttm": ("Fundamentals", "No, current snapshot only", "Current valuation and quality"),
+    "key_metrics_annual": ("Fundamentals", "Valuation, growth, profitability, balance-sheet quality", "Quality and valuation"),
+    "key_metrics_ttm": ("Fundamentals", "No, current snapshot only", "Current quality and valuation"),
+    "income_statement_annual": ("Fundamentals", "Revenue and earnings growth", "Growth and profitability"),
+    "balance_sheet_annual": ("Fundamentals", "Debt, cash, liquidity, book value", "Balance-sheet risk"),
+    "cash_flow_annual": ("Fundamentals", "Free cash flow and capital intensity", "Cash-flow quality"),
+    "enterprise_values_annual": ("Fundamentals", "Enterprise-value valuation ratios", "Current valuation context"),
+    "financial_growth_annual": ("Fundamentals", "Growth trend signals", "Growth trend signals"),
+    "financial_scores": ("Fundamentals", "No, unless dated rows are returned", "Financial health screen"),
+}
+
+ENDPOINT_SETS = {
+    "core": {"dividend_adjusted_prices", "historical_market_cap", "quote", "profile"},
+    "analyst": {
+        "grades_historical",
+        "ratings_historical",
+        "grades_consensus",
+        "price_target_consensus",
+        "price_target_summary",
+        "analyst_estimates_annual",
+        "analyst_estimates_quarterly",
+        "financial_estimates_annual",
+        "financial_estimates_quarterly",
+    },
+    "fundamentals": {
+        "ratios_annual",
+        "ratios_ttm",
+        "key_metrics_annual",
+        "key_metrics_ttm",
+        "income_statement_annual",
+        "balance_sheet_annual",
+        "cash_flow_annual",
+        "enterprise_values_annual",
+        "financial_growth_annual",
+        "financial_scores",
+    },
+}
+ENDPOINT_SETS["all"] = set().union(*ENDPOINT_SETS.values())
 
 
 def fetch_json(url: str) -> tuple[int | None, object | None, str | None]:
@@ -211,10 +368,16 @@ def probe_endpoint(endpoint: dict, ticker: str, api_key: str, limit: int) -> dic
     url = make_url(endpoint, ticker, api_key, limit)
     status, data, error = fetch_json(url)
     rows, message = classify_response(data)
+    category, backtest_use, live_use = ENDPOINT_META.get(
+        endpoint["name"], ("Other", "Unknown", "Unknown")
+    )
     result = {
         "endpoint": endpoint["name"],
         "path": endpoint["path"],
+        "category": category,
         "purpose": endpoint["purpose"],
+        "backtestUse": backtest_use,
+        "liveUse": live_use,
         "mustHave": endpoint["must_have"],
         "ticker": ticker,
         "httpStatus": status,
@@ -237,20 +400,60 @@ def capability_summary(results: list[dict]) -> dict:
     for name, rows in by_endpoint.items():
         accessible_rows = [row for row in rows if row["accessible"]]
         dated_rows = [row for row in accessible_rows if row.get("dateFields")]
+        category, backtest_use, live_use = ENDPOINT_META.get(name, ("Other", "Unknown", "Unknown"))
+        earliest_date = min((row["minDate"] for row in dated_rows if row.get("minDate")), default=None)
+        latest_date = max((row["maxDate"] for row in dated_rows if row.get("maxDate")), default=None)
+        total_rows = sum(row.get("rowCount", 0) for row in accessible_rows)
+        has_historical_series = bool(dated_rows) and (
+            total_rows > max(1, len(accessible_rows)) or bool(earliest_date and latest_date and earliest_date < latest_date)
+        )
         endpoints[name] = {
+            "category": category,
+            "path": rows[0].get("path") if rows else None,
+            "purpose": rows[0].get("purpose") if rows else None,
+            "backtestUse": backtest_use,
+            "liveUse": live_use,
             "accessibleTickers": [row["ticker"] for row in accessible_rows],
+            "rowCounts": {row["ticker"]: row.get("rowCount", 0) for row in rows},
+            "totalRows": total_rows,
             "hasDatedRows": bool(dated_rows),
-            "earliestDate": min((row["minDate"] for row in dated_rows if row.get("minDate")), default=None),
-            "latestDate": max((row["maxDate"] for row in dated_rows if row.get("maxDate")), default=None),
+            "hasHistoricalSeries": has_historical_series,
+            "earliestDate": earliest_date,
+            "latestDate": latest_date,
+            "dateFields": sorted({field for row in accessible_rows for field in row.get("dateFields", [])}),
             "fields": sorted({field for row in accessible_rows for field in row.get("fields", [])}),
         }
     return {
-        "historicalAnalystRatings": bool(endpoints.get("grades_historical", {}).get("hasDatedRows")),
+        "historicalAnalystRatings": any(
+            endpoints.get(name, {}).get("hasHistoricalSeries")
+            for name in ("grades_historical", "ratings_historical")
+        ),
         "targetPriceAvailable": bool(endpoints.get("price_target_consensus", {}).get("accessibleTickers")),
-        "historicalPrices": bool(endpoints.get("dividend_adjusted_prices", {}).get("hasDatedRows")),
+        "historicalTargetPrices": any(
+            endpoints.get(name, {}).get("hasHistoricalSeries")
+            for name in ("price_target_consensus", "price_target_summary")
+        ),
+        "analystEstimates": any(
+            endpoints.get(name, {}).get("accessibleTickers")
+            for name in (
+                "analyst_estimates_annual",
+                "analyst_estimates_quarterly",
+                "financial_estimates_annual",
+                "financial_estimates_quarterly",
+            )
+        ),
+        "historicalPrices": bool(endpoints.get("dividend_adjusted_prices", {}).get("hasHistoricalSeries")),
         "historicalFundamentals": any(
-            endpoints.get(name, {}).get("hasDatedRows")
-            for name in ("ratios_annual", "key_metrics_annual", "income_statement_annual")
+            endpoints.get(name, {}).get("hasHistoricalSeries")
+            for name in (
+                "ratios_annual",
+                "key_metrics_annual",
+                "income_statement_annual",
+                "balance_sheet_annual",
+                "cash_flow_annual",
+                "enterprise_values_annual",
+                "financial_growth_annual",
+            )
         ),
         "endpointSummary": endpoints,
     }
@@ -266,23 +469,47 @@ def print_markdown(report: dict) -> None:
     print("## Capability Summary")
     print(f"- Historical analyst ratings: {'yes' if cap['historicalAnalystRatings'] else 'no'}")
     print(f"- Target-price consensus: {'yes' if cap['targetPriceAvailable'] else 'no'}")
+    print(f"- Historical target prices: {'yes' if cap['historicalTargetPrices'] else 'no'}")
+    print(f"- Analyst/financial estimates: {'yes' if cap['analystEstimates'] else 'no'}")
     print(f"- Historical prices: {'yes' if cap['historicalPrices'] else 'no'}")
     print(f"- Historical fundamentals: {'yes' if cap['historicalFundamentals'] else 'no'}")
     print()
-    print("| Endpoint | Accessible | Dated | Earliest | Latest | Fields |")
-    print("| --- | ---: | ---: | ---: | ---: | ---: |")
+    print("| Endpoint | Area | Accessible | Dated | Historical series | Earliest | Latest | Rows | Backtest use | Live use | Fields |")
+    print("| --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | --- | --- | ---: |")
     for name, row in cap["endpointSummary"].items():
         print(
-            f"| {name} | {len(row['accessibleTickers'])} | "
-            f"{'yes' if row['hasDatedRows'] else 'no'} | {row['earliestDate'] or '-'} | "
-            f"{row['latestDate'] or '-'} | {len(row['fields'])} |"
+            f"| {name} | {row['category']} | {len(row['accessibleTickers'])} | "
+            f"{'yes' if row['hasDatedRows'] else 'no'} | "
+            f"{'yes' if row['hasHistoricalSeries'] else 'no'} | {row['earliestDate'] or '-'} | "
+            f"{row['latestDate'] or '-'} | {row['totalRows']} | {row['backtestUse']} | "
+            f"{row['liveUse']} | {len(row['fields'])} |"
         )
+    print()
+    print("## Field Samples")
+    print()
+    print("| Endpoint | Date fields | Sample fields |")
+    print("| --- | --- | --- |")
+    for name, row in cap["endpointSummary"].items():
+        if not row["fields"]:
+            continue
+        date_fields = ", ".join(row["dateFields"]) or "-"
+        sample_fields = ", ".join(row["fields"][:18])
+        if len(row["fields"]) > 18:
+            sample_fields += f", ... (+{len(row['fields']) - 18})"
+        print(f"| {name} | {date_fields} | {sample_fields} |")
 
 
 def main() -> int:
     parser = argparse.ArgumentParser(description="Probe FMP endpoint access for backtesting.")
-    parser.add_argument("--tickers", default="AAPL,MSFT,CELH", help="Comma separated sample tickers.")
+    parser.add_argument("--tickers", default=DEFAULT_TICKERS, help="Comma separated sample tickers.")
+    parser.add_argument(
+        "--endpoint-set",
+        choices=sorted(ENDPOINT_SETS.keys()),
+        default="all",
+        help="Endpoint family to probe.",
+    )
     parser.add_argument("--limit", type=int, default=120)
+    parser.add_argument("--pause", type=float, default=0.25, help="Seconds to wait between requests.")
     parser.add_argument("--output", type=Path, default=OUT_PATH)
     parser.add_argument("--format", choices=["json", "markdown"], default="markdown")
     parser.add_argument("--api-key", default="", help="Optional API key. Prefer FMP_API_KEY env var.")
@@ -294,17 +521,20 @@ def main() -> int:
         return 2
 
     tickers = [token.strip().upper() for token in args.tickers.split(",") if token.strip()]
+    selected_names = ENDPOINT_SETS[args.endpoint_set]
+    selected_endpoints = [endpoint for endpoint in ENDPOINTS if endpoint["name"] in selected_names]
     results = []
     for ticker in tickers:
-        for endpoint in ENDPOINTS:
+        for endpoint in selected_endpoints:
             print(f"probing {endpoint['name']} for {ticker}", file=sys.stderr)
             results.append(probe_endpoint(endpoint, ticker, api_key, args.limit))
-            time.sleep(0.25)
+            time.sleep(args.pause)
 
     report = {
         "generatedAt": datetime.now(UTC).replace(microsecond=0).isoformat().replace("+00:00", "Z"),
         "provider": "Financial Modeling Prep",
         "tickers": tickers,
+        "endpointSet": args.endpoint_set,
         "capabilities": capability_summary(results),
         "results": results,
     }

@@ -154,15 +154,24 @@ Set up once:
 3. Add a repository secret named `FMP_API_KEY`.
 4. Paste your FMP key there. Do not commit or share the key.
 
-Then run `Probe FMP Access` from the Actions tab. The default test tickers are `AAPL,MSFT,CELH`. The report tells us whether the account has dated analyst ratings, target-price consensus, historical prices, market caps, and fundamentals.
+Then run `Probe FMP Access` from the Actions tab. The default test tickers are `AAPL,MSFT,NVDA,JPM,CELH`. The report tells us whether the account has dated analyst ratings, target-price consensus, historical prices, market caps, fundamentals, balance-sheet data, cash-flow data, analyst estimates, and current quote/profile fields.
 
-For historical backtesting, the most important result is dated data. Current target-price consensus helps live scoring, but genuine historical validation needs dated analyst ratings, dated price targets, dated prices, and preferably dated fundamentals. If an endpoint shows `Accessible` but `Dated` is `no`, it can support today's model but not a clean historical backtest of that signal.
+The workflow has an `endpoint_set` input:
+
+- `all` - probes every known useful endpoint family.
+- `analyst` - probes analyst grades, ratings, target prices, and estimate endpoints.
+- `fundamentals` - probes ratios, key metrics, financial statements, growth, enterprise value, and financial scores.
+- `core` - probes prices, market cap, quote, and profile fields.
+
+If FMP rate-limits the run, use fewer tickers first or set `endpoint_set` to `analyst` or `fundamentals`.
+
+For historical backtesting, the most important result is a real `Historical series`, not just a single dated current snapshot. Current target-price consensus helps live scoring, but genuine historical validation needs historical analyst ratings, historical price targets, historical prices, and preferably historical fundamentals. If an endpoint shows `Accessible` but `Historical series` is `no`, it can support today's model but not a clean historical backtest of that signal.
 
 Local version:
 
 ```bash
 export FMP_API_KEY="your_key_here"
-python3 scripts/probe_fmp_access.py --tickers AAPL,MSFT,CELH --output public/data/fmp-access-report.json
+python3 scripts/probe_fmp_access.py --tickers AAPL,MSFT,NVDA,JPM,CELH --endpoint-set all --output public/data/fmp-access-report.json
 ```
 
 ## FMP Historical Backtest

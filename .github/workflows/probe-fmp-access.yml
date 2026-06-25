@@ -6,11 +6,25 @@ on:
       tickers:
         description: "Sample tickers to test"
         required: false
-        default: "AAPL,MSFT,CELH"
+        default: "AAPL,MSFT,NVDA,JPM,CELH"
+      endpoint_set:
+        description: "Endpoint family to probe"
+        required: false
+        default: "all"
+        type: choice
+        options:
+          - all
+          - core
+          - analyst
+          - fundamentals
       limit:
         description: "Maximum rows to request per historical endpoint"
         required: false
         default: "120"
+      pause_seconds:
+        description: "Delay between FMP requests"
+        required: false
+        default: "0.25"
 
 permissions:
   contents: write
@@ -36,10 +50,13 @@ jobs:
             exit 2
           fi
           python scripts/probe_fmp_access.py \
-            --tickers "${{ github.event.inputs.tickers || 'AAPL,MSFT,CELH' }}" \
+            --tickers "${{ github.event.inputs.tickers || 'AAPL,MSFT,NVDA,JPM,CELH' }}" \
+            --endpoint-set "${{ github.event.inputs.endpoint_set || 'all' }}" \
             --limit "${{ github.event.inputs.limit || '120' }}" \
+            --pause "${{ github.event.inputs.pause_seconds || '0.25' }}" \
             --output public/data/fmp-access-report.json \
-            --format markdown
+            --format markdown | tee /tmp/fmp-access-probe.md
+          cat /tmp/fmp-access-probe.md >> "$GITHUB_STEP_SUMMARY"
 
       - name: Commit FMP access report
         run: |
