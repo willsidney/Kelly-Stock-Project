@@ -40,6 +40,18 @@ FACTOR_SPECS = (
     ("lowVolatilityScore", "Low volatility"),
     ("lowRiskScore", "Low risk composite"),
 )
+MODEL_CONFIGS = {
+    "analyst_price": {
+        "label": "Historical analyst grades + price momentum/risk",
+        "description": "Historical analyst grades + price momentum/risk. Excludes undated target prices and fundamentals.",
+        "requiresGrades": True,
+    },
+    "price_only": {
+        "label": "Historical price momentum/risk only",
+        "description": "Historical price momentum/risk only. Uses Yahoo/FMP prices and excludes analyst grades, targets, and fundamentals.",
+        "requiresGrades": False,
+    },
+}
 
 
 def is_num(value) -> bool:
@@ -180,12 +192,14 @@ def clamp(value: float, lo: float = 0.0, hi: float = 1.0) -> float:
     return max(lo, min(hi, value))
 
 
-def stock_features(item: dict, d: date) -> dict | None:
+def stock_features(item: dict, d: date, model_variant: str) -> dict | None:
     p_now = price_on(item["prices"], d)
     p_6m = price_on(item["prices"], d - timedelta(days=183))
     p_12m = price_on(item["prices"], d - timedelta(days=365))
     analyst = latest_grade(item["grades"], d)
-    if not p_now or analyst is None:
+    if not p_now:
+        return None
+    if MODEL_CONFIGS[model_variant]["requiresGrades"] and analyst is None:
         return None
     momentum_6m = (p_now / p_6m) - 1 if p_6m else 0.0
     momentum_12m = (p_now / p_12m) - 1 if p_12m else momentum_6m
@@ -201,7 +215,10 @@ def stock_features(item: dict, d: date) -> dict | None:
     risk_score = 0.60 * clamp(drawdown / 0.60) + 0.40 * clamp(vol / 0.80)
     low_drawdown_score = 1 - clamp(drawdown / 0.60)
     low_volatility_score = 1 - clamp(vol / 0.80)
-    score = clamp(0.55 * analyst + 0.20 * momentum_score + 0.10 * trend_score + 0.15 * (1 - risk_score))
+    if model_variant == "analyst_price":
+        score = clamp(0.55 * analyst + 0.20 * momentum_score + 0.10 * trend_score + 0.15 * (1 - risk_score))
+    else:
+        score = clamp(0.60 * momentum_score + 0.25 * trend_score + 0.15 * (1 - risk_score))
     return {
         "ticker": item["ticker"],
         "score": score,
@@ -324,9 +341,16 @@ def signal_stats(values: list[float]) -> dict:
     }
 
 
-def run_backtest(universe: dict[str, dict], benchmark: str, top_n: int) -> dict:
-    tradable = {ticker: item for ticker, item in universe.items() if ticker != benchmark and item.get("grades")}
+def run_backtest(universe: dict[str, dict], benchmark: str, top_n: int, model_variant: str) -> dict:
+    config = MODEL_CONFIGS[model_variant]
+    tradable = {
+        ticker: item
+        for ticker, item in universe.items()
+        if ticker != benchmark and (item.get("grades") or not config["requiresGrades"])
+    }
     benchmark_available = benchmark in universe
+    grade_tickers = sorted(ticker for ticker, item in universe.items() if ticker != benchmark and item.get("grades"))
+    price_only_tickers = sorted(ticker for ticker, item in universe.items() if ticker != benchmark and not item.get("grades"))
     all_dates = [d for item in tradable.values() for d, _ in item["prices"]]
     if not all_dates:
         return {"status": "insufficient_data", "reason": "No usable FMP price histories."}
@@ -337,7 +361,7 @@ def run_backtest(universe: dict[str, dict], benchmark: str, top_n: int) -> dict:
     rank_ics = []
     factor_ics = {key: [] for key, _ in FACTOR_SPECS}
     for start_date, end_date in zip(rebalance_dates, rebalance_dates[1:]):
-        features = [row for item in tradable.values() if (row := stock_features(item, start_date))]
+        features = [row for item in tradable.values() if (row := stock_features(item, start_date, model_variant))]
         returns = {
             ticker: ret
             for ticker, item in tradable.items()
@@ -387,13 +411,18 @@ def run_backtest(universe: dict[str, dict], benchmark: str, top_n: int) -> dict:
         ic_t_stat = mean_ic / (statistics.stdev(rank_ics) / math.sqrt(len(rank_ics)))
     return {
         "status": "ok" if periods else "insufficient_data",
-        "model": "fmp_ratings_price_v1",
-        "description": "Historical analyst grades + price momentum/risk. Excludes undated target prices and fundamentals.",
+        "model": model_variant,
+        "description": config["description"],
         "benchmark": benchmark,
         "requestedTopN": top_n,
         "effectiveTopNRule": "Uses requested Top N, capped at half the tradable universe to prevent top/bottom overlap.",
         "loadedTickerCount": len(universe),
         "tickerCount": len(tradable),
+        "gradeTickerCount": len(grade_tickers),
+        "priceOnlyTickerCount": len(price_only_tickers),
+        "tradableTickers": sorted(tradable),
+        "gradeTickers": grade_tickers,
+        "priceOnlyTickers": price_only_tickers[:50],
         "benchmarkAvailable": benchmark_available,
         "benchmarkIssue": None if benchmark_available else f"{benchmark} was not loaded with at least 30 usable price rows.",
         "periods": periods,
@@ -451,9 +480,12 @@ def print_markdown(result: dict) -> None:
         return
     print(result["description"])
     print()
+    print(f"Model variant: {result.get('model')}")
     print(f"Benchmark: {result.get('benchmark')}")
     print(f"Loaded histories: {result.get('loadedTickerCount', result['tickerCount'])}")
     print(f"Ticker count: {result['tickerCount']}")
+    print(f"Tickers with analyst grades: {result.get('gradeTickerCount', 0)}")
+    print(f"Price-only tickers: {result.get('priceOnlyTickerCount', 0)}")
     print(f"Benchmark available: {'yes' if result.get('benchmarkAvailable') else 'no'}")
     if result.get("benchmarkIssue"):
         print(f"Benchmark issue: {result['benchmarkIssue']}")
@@ -500,11 +532,12 @@ def main() -> int:
     parser.add_argument("--top", type=int, default=10)
     parser.add_argument("--output", type=Path, default=OUT_PATH)
     parser.add_argument("--format", choices=["json", "markdown"], default="markdown")
+    parser.add_argument("--model", choices=sorted(MODEL_CONFIGS), default="analyst_price")
     parser.add_argument("--min-tickers", type=int, default=0)
     parser.add_argument("--require-benchmark", action="store_true")
     args = parser.parse_args()
     universe = load_universe(args.history_dir)
-    result = run_backtest(universe, args.benchmark.strip().upper(), args.top)
+    result = run_backtest(universe, args.benchmark.strip().upper(), args.top, args.model)
     issues = validation_issues(result, args.min_tickers, args.require_benchmark)
     if issues:
         result["validationIssues"] = issues

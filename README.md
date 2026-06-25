@@ -175,6 +175,11 @@ The free FMP access tested so far supports dated analyst grades and dated prices
 
 If `tickers` is left blank, the workflow selects the largest current database stocks by market cap, up to `max_tickers`. It fetches the benchmark first, usually `SPY`, uses Yahoo's historical chart endpoint for prices, and uses FMP mainly for historical analyst grades. This reduces FMP API calls and makes the benchmark less likely to go missing. It also preserves older good cached rows when a fresh provider response is empty, which prevents a partial free-account run from overwriting usable history with blank files. The workflow fails by default if the benchmark is missing or fewer than 10 usable stock histories are available, because tiny backtests can look convincing while still being mostly noise.
 
+The workflow has two model variants:
+
+- `price_only` - default while FMP analyst-grade coverage is sparse. It tests price momentum, trend, drawdown, and volatility across every loaded price history.
+- `analyst_price` - requires dated FMP analyst grades and therefore may only work once enough tickers have grade history.
+
 Run it first with a small ticker set such as:
 
 ```text

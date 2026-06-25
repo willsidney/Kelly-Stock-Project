@@ -19,6 +19,10 @@ on:
         description: "Benchmark ticker"
         required: false
         default: "SPY"
+      model_variant:
+        description: "Backtest model: price_only or analyst_price"
+        required: false
+        default: "price_only"
       min_usable_tickers:
         description: "Fail if fewer tradable stock histories are available"
         required: false
@@ -75,6 +79,7 @@ jobs:
           python scripts/backtest_fmp_history.py \
             --benchmark "${{ github.event.inputs.benchmark || 'SPY' }}" \
             --top "${{ github.event.inputs.top || '10' }}" \
+            --model "${{ github.event.inputs.model_variant || 'price_only' }}" \
             --min-tickers "${{ github.event.inputs.min_usable_tickers || '10' }}" \
             --require-benchmark \
             --output public/data/fmp-backtest-results.json \
