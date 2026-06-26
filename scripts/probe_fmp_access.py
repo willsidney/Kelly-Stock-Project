@@ -249,6 +249,8 @@ ENDPOINT_SETS = {
 }
 ENDPOINT_SETS["all"] = set().union(*ENDPOINT_SETS.values())
 
+CURRENT_SNAPSHOT_ONLY = {"quote", "profile", "ratios_ttm", "key_metrics_ttm"}
+
 
 def fetch_json(url: str) -> tuple[int | None, object | None, str | None]:
     request = urllib.request.Request(
@@ -407,6 +409,8 @@ def capability_summary(results: list[dict]) -> dict:
         has_historical_series = bool(dated_rows) and (
             total_rows > max(1, len(accessible_rows)) or bool(earliest_date and latest_date and earliest_date < latest_date)
         )
+        if name in CURRENT_SNAPSHOT_ONLY:
+            has_historical_series = False
         endpoints[name] = {
             "category": category,
             "path": rows[0].get("path") if rows else None,
