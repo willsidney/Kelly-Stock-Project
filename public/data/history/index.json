@@ -28,5 +28,15 @@
     "stockCount": 268,
     "modelReadyCount": 264,
     "benchmarks": []
+  },
+  {
+    "date": "2026-06-29",
+    "file": "2026-06-29.json",
+    "snapshotTime": "2026-06-29T17:22:56+00:00",
+    "mode": "full",
+    "reason": "Yahoo refresh",
+    "stockCount": 268,
+    "modelReadyCount": 264,
+    "benchmarks": []
   }
 ]
