@@ -52,11 +52,13 @@
   {
     "date": "2026-07-01",
     "file": "2026-07-01.json",
-    "snapshotTime": "2026-07-01T13:35:44+00:00",
+    "snapshotTime": "2026-07-01T16:16:30+00:00",
     "mode": "full",
     "reason": "Yahoo refresh",
     "stockCount": 268,
     "modelReadyCount": 264,
-    "benchmarks": []
+    "benchmarks": [
+      "SPY"
+    ]
   }
 ]
