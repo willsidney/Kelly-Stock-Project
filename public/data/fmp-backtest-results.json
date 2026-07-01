@@ -3,6 +3,9 @@
   "model": "price_only",
   "description": "Historical price momentum/risk only. Uses Yahoo/FMP prices and excludes analyst grades, targets, and fundamentals.",
   "benchmark": "SPY",
+  "transactionCostBps": 10.0,
+  "evaluationStart": "2024-01-01",
+  "universeConstruction": "Cached current ticker list. Delisted stocks and historical membership are not guaranteed, so survivorship bias remains.",
   "requestedTopN": 15,
   "effectiveTopNRule": "Uses requested Top N, capped at half the tradable universe to prevent top/bottom overlap.",
   "loadedTickerCount": 152,
@@ -244,11 +247,45 @@
         "WMT",
         "KO"
       ],
+      "bottomTickers": [
+        "ANET",
+        "C",
+        "LRCX",
+        "MRVL",
+        "GS",
+        "AMAT",
+        "FDX",
+        "NFLX",
+        "NXPI",
+        "META",
+        "SPOT",
+        "FCX",
+        "MU",
+        "GE",
+        "NVDA"
+      ],
       "topReturn": 0.0491640833490387,
+      "topNetReturn": 0.0481640833490387,
       "bottomReturn": 0.19474601024481444,
+      "bottomNetReturn": 0.19374601024481444,
       "equalUniverseReturn": 0.09840156827449682,
+      "equalUniverseNetReturn": 0.09740156827449682,
       "benchmarkReturn": 0.08058597458671968,
+      "benchmarkNetReturn": 0.07958597458671968,
       "spreadReturn": -0.14558192689577576,
+      "spreadNetReturn": -0.14758192689577576,
+      "turnover": {
+        "top": 1.0,
+        "bottom": 1.0,
+        "equalUniverse": 1.0,
+        "benchmark": 1.0
+      },
+      "transactionCosts": {
+        "top": 0.001,
+        "bottom": 0.001,
+        "equalUniverse": 0.001,
+        "benchmark": 0.001
+      },
       "rankIC": -0.5103643135408193,
       "factorRankIC": {
         "score": -0.5103643135408193,
@@ -257,7 +294,8 @@
         "lowDrawdownScore": -0.4883685089258958,
         "lowVolatilityScore": -0.4457382593432938,
         "lowRiskScore": -0.5150177661714971
-      }
+      },
+      "sample": "research"
     },
     {
       "startDate": "2019-02-01",
@@ -281,11 +319,45 @@
         "CME",
         "ORLY"
       ],
+      "bottomTickers": [
+        "AAPL",
+        "MO",
+        "MS",
+        "ABBV",
+        "GS",
+        "HWM",
+        "ANET",
+        "AMAT",
+        "QCOM",
+        "MU",
+        "SPOT",
+        "GE",
+        "FDX",
+        "FCX",
+        "NVDA"
+      ],
       "topReturn": 0.0398742727365868,
+      "topNetReturn": 0.0394742727365868,
       "bottomReturn": 0.05779628049024472,
+      "bottomNetReturn": 0.05739628049024472,
       "equalUniverseReturn": 0.048896078318544346,
+      "equalUniverseNetReturn": 0.048896078318544346,
       "benchmarkReturn": 0.03836212251522264,
+      "benchmarkNetReturn": 0.03836212251522264,
       "spreadReturn": -0.017922007753657918,
+      "spreadNetReturn": -0.01872200775365792,
+      "turnover": {
+        "top": 0.4,
+        "bottom": 0.4,
+        "equalUniverse": 0.0,
+        "benchmark": 0.0
+      },
+      "transactionCosts": {
+        "top": 0.0004,
+        "bottom": 0.0004,
+        "equalUniverse": 0.0,
+        "benchmark": 0.0
+      },
       "rankIC": 0.08198553020249154,
       "factorRankIC": {
         "score": 0.08198553020249154,
@@ -294,7 +366,8 @@
         "lowDrawdownScore": 0.08326652937102792,
         "lowVolatilityScore": -0.18408341975632334,
         "lowRiskScore": -0.010830943105441158
-      }
+      },
+      "sample": "research"
     },
     {
       "startDate": "2019-03-01",
@@ -318,11 +391,45 @@
         "PG",
         "WELL"
       ],
+      "bottomTickers": [
+        "GD",
+        "MS",
+        "FCX",
+        "AAPL",
+        "AMAT",
+        "HWM",
+        "GS",
+        "QCOM",
+        "ABBV",
+        "CVS",
+        "GE",
+        "MU",
+        "FDX",
+        "SPOT",
+        "NVDA"
+      ],
       "topReturn": 0.03095124411430113,
+      "topNetReturn": 0.03055124411430113,
       "bottomReturn": 0.03251867565226733,
+      "bottomNetReturn": 0.032385342318933995,
       "equalUniverseReturn": 0.02295621572135829,
+      "equalUniverseNetReturn": 0.02295621572135829,
       "benchmarkReturn": 0.023781466923929795,
+      "benchmarkNetReturn": 0.023781466923929795,
       "spreadReturn": -0.001567431537966197,
+      "spreadNetReturn": -0.0021007648712995305,
+      "turnover": {
+        "top": 0.4,
+        "bottom": 0.13333333333333333,
+        "equalUniverse": 0.0,
+        "benchmark": 0.0
+      },
+      "transactionCosts": {
+        "top": 0.0004,
+        "bottom": 0.00013333333333333334,
+        "equalUniverse": 0.0,
+        "benchmark": 0.0
+      },
       "rankIC": 0.05358534183826363,
       "factorRankIC": {
         "score": 0.05358534183826363,
@@ -331,7 +438,8 @@
         "lowDrawdownScore": 0.05253641861625426,
         "lowVolatilityScore": -0.02785010900522701,
         "lowRiskScore": 0.0406310201635344
-      }
+      },
+      "sample": "research"
     },
     {
       "startDate": "2019-04-01",
@@ -355,11 +463,45 @@
         "ORLY",
         "SO"
       ],
+      "bottomTickers": [
+        "MCK",
+        "SCHW",
+        "QCOM",
+        "BKNG",
+        "ABBV",
+        "FCX",
+        "MU",
+        "GE",
+        "GS",
+        "GD",
+        "FDX",
+        "BMY",
+        "SPOT",
+        "CVS",
+        "NVDA"
+      ],
       "topReturn": 0.01666997956678302,
+      "topNetReturn": 0.016469979566783022,
       "bottomReturn": 0.03620069465458128,
+      "bottomNetReturn": 0.03593402798791461,
       "equalUniverseReturn": 0.020209121624822534,
+      "equalUniverseNetReturn": 0.020209121624822534,
       "benchmarkReturn": 0.02092184448749146,
+      "benchmarkNetReturn": 0.02092184448749146,
       "spreadReturn": -0.019530715087798255,
+      "spreadNetReturn": -0.01999738175446492,
+      "turnover": {
+        "top": 0.2,
+        "bottom": 0.26666666666666666,
+        "equalUniverse": 0.0,
+        "benchmark": 0.0
+      },
+      "transactionCosts": {
+        "top": 0.0002,
+        "bottom": 0.0002666666666666667,
+        "equalUniverse": 0.0,
+        "benchmark": 0.0
+      },
       "rankIC": -0.1099190890020977,
       "factorRankIC": {
         "score": -0.1099190890020977,
@@ -368,7 +510,8 @@
         "lowDrawdownScore": -0.11994613374019457,
         "lowVolatilityScore": -0.04746778543602038,
         "lowRiskScore": -0.12744124320390426
-      }
+      },
+      "sample": "research"
     },
     {
       "startDate": "2019-05-01",
@@ -392,11 +535,45 @@
         "PANW",
         "SBUX"
       ],
+      "bottomTickers": [
+        "WFC",
+        "FCX",
+        "GE",
+        "GS",
+        "BMY",
+        "GILD",
+        "UNH",
+        "MCK",
+        "COP",
+        "SPOT",
+        "MO",
+        "FDX",
+        "NVDA",
+        "CVS",
+        "TSLA"
+      ],
       "topReturn": -0.07325868255523024,
+      "topNetReturn": -0.07372534922189691,
       "bottomReturn": -0.08896804513896453,
+      "bottomNetReturn": -0.08936804513896453,
       "equalUniverseReturn": -0.0601211277272007,
+      "equalUniverseNetReturn": -0.0601211277272007,
       "benchmarkReturn": -0.05668073377068683,
+      "benchmarkNetReturn": -0.05668073377068683,
       "spreadReturn": 0.015709362583734288,
+      "spreadNetReturn": 0.014842695917067621,
+      "turnover": {
+        "top": 0.4666666666666667,
+        "bottom": 0.4,
+        "equalUniverse": 0.0,
+        "benchmark": 0.0
+      },
+      "transactionCosts": {
+        "top": 0.00046666666666666666,
+        "bottom": 0.0004,
+        "equalUniverse": 0.0,
+        "benchmark": 0.0
+      },
       "rankIC": 0.057951967121880214,
       "factorRankIC": {
         "score": 0.057951967121880214,
@@ -405,7 +582,8 @@
         "lowDrawdownScore": 0.2672514544801855,
         "lowVolatilityScore": 0.44437261869086864,
         "lowRiskScore": 0.38717838948585126
-      }
+      },
+      "sample": "research"
     },
     {
       "startDate": "2019-06-01",
@@ -429,11 +607,45 @@
         "WM",
         "SBUX"
       ],
+      "bottomTickers": [
+        "BMY",
+        "BKNG",
+        "AMGN",
+        "WFC",
+        "ABBV",
+        "BK",
+        "UPS",
+        "PDD",
+        "MMM",
+        "MU",
+        "FCX",
+        "NVDA",
+        "CVS",
+        "FDX",
+        "TSLA"
+      ],
       "topReturn": 0.08565084647918102,
+      "topNetReturn": 0.08525084647918102,
       "bottomReturn": 0.10605283677597012,
+      "bottomNetReturn": 0.10551950344263679,
       "equalUniverseReturn": 0.08708875742719456,
+      "equalUniverseNetReturn": 0.08708875742719456,
       "benchmarkReturn": 0.07929670628506802,
+      "benchmarkNetReturn": 0.07929670628506802,
       "spreadReturn": -0.020401990296789102,
+      "spreadNetReturn": -0.021335323630122437,
+      "turnover": {
+        "top": 0.4,
+        "bottom": 0.5333333333333333,
+        "equalUniverse": 0.0,
+        "benchmark": 0.0
+      },
+      "transactionCosts": {
+        "top": 0.0004,
+        "bottom": 0.0005333333333333334,
+        "equalUniverse": 0.0,
+        "benchmark": 0.0
+      },
       "rankIC": -0.19026071321546298,
       "factorRankIC": {
         "score": -0.19026071321546298,
@@ -442,7 +654,8 @@
         "lowDrawdownScore": -0.33759150648572284,
         "lowVolatilityScore": -0.4014983518130057,
         "lowRiskScore": -0.38025600410976496
-      }
+      },
+      "sample": "research"
     },
     {
       "startDate": "2019-07-01",
@@ -466,11 +679,45 @@
         "JCI",
         "EQIX"
       ],
+      "bottomTickers": [
+        "AMGN",
+        "UNH",
+        "COP",
+        "SPG",
+        "MO",
+        "FCX",
+        "SCHW",
+        "BK",
+        "FDX",
+        "MMM",
+        "BMY",
+        "PDD",
+        "CVS",
+        "ABBV",
+        "TSLA"
+      ],
       "topReturn": 0.012888160624756588,
+      "topNetReturn": 0.012754827291423255,
       "bottomReturn": 7.278968847427662e-05,
+      "bottomNetReturn": -0.0002605436448590567,
       "equalUniverseReturn": 0.003948705703144905,
+      "equalUniverseNetReturn": 0.003948705703144905,
       "benchmarkReturn": -0.0027731767117632478,
+      "benchmarkNetReturn": -0.0027731767117632478,
       "spreadReturn": 0.012815370936282312,
+      "spreadNetReturn": 0.012348704269615646,
+      "turnover": {
+        "top": 0.13333333333333333,
+        "bottom": 0.3333333333333333,
+        "equalUniverse": 0.0,
+        "benchmark": 0.0
+      },
+      "transactionCosts": {
+        "top": 0.00013333333333333334,
+        "bottom": 0.0003333333333333333,
+        "equalUniverse": 0.0,
+        "benchmark": 0.0
+      },
       "rankIC": 0.015938182285200567,
       "factorRankIC": {
         "score": 0.015938182285200567,
@@ -479,7 +726,8 @@
         "lowDrawdownScore": -0.004938959980007159,
         "lowVolatilityScore": 0.018588124491630637,
         "lowRiskScore": 0.023763859754270304
-      }
+      },
+      "sample": "research"
     },
     {
       "startDate": "2019-08-01",
@@ -503,11 +751,45 @@
         "ECL",
         "MSFT"
       ],
+      "bottomTickers": [
+        "NFLX",
+        "GLW",
+        "SPG",
+        "BMY",
+        "BK",
+        "COP",
+        "BA",
+        "MMM",
+        "FCX",
+        "SCHW",
+        "FDX",
+        "CVS",
+        "PDD",
+        "ABBV",
+        "TSLA"
+      ],
       "topReturn": 0.01835642029628629,
+      "topNetReturn": 0.018023086962952954,
       "bottomReturn": -0.0002426652825223104,
+      "bottomNetReturn": -0.0004426652825223104,
       "equalUniverseReturn": -0.003465297959265273,
+      "equalUniverseNetReturn": -0.0034723402127864,
       "benchmarkReturn": -0.00810616762758154,
+      "benchmarkNetReturn": -0.00810616762758154,
       "spreadReturn": 0.0185990855788086,
+      "spreadNetReturn": 0.018065752245475266,
+      "turnover": {
+        "top": 0.3333333333333333,
+        "bottom": 0.2,
+        "equalUniverse": 0.007042253521126737,
+        "benchmark": 0.0
+      },
+      "transactionCosts": {
+        "top": 0.0003333333333333333,
+        "bottom": 0.0002,
+        "equalUniverse": 7.042253521126737e-06,
+        "benchmark": 0.0
+      },
       "rankIC": 0.2912146289431276,
       "factorRankIC": {
         "score": 0.2912146289431276,
@@ -516,7 +798,8 @@
         "lowDrawdownScore": 0.26935900639007837,
         "lowVolatilityScore": 0.3067723406350916,
         "lowRiskScore": 0.3318775919914667
-      }
+      },
+      "sample": "research"
     },
     {
       "startDate": "2019-09-01",
@@ -540,11 +823,45 @@
         "AMD",
         "MA"
       ],
+      "bottomTickers": [
+        "EMR",
+        "PANW",
+        "MO",
+        "GLW",
+        "BK",
+        "NFLX",
+        "ABBV",
+        "SCHW",
+        "FDX",
+        "MMM",
+        "ANET",
+        "GE",
+        "COP",
+        "TSLA",
+        "FCX"
+      ],
       "topReturn": -0.04086461784531656,
+      "topNetReturn": -0.041264617845316556,
       "bottomReturn": 0.012856723303889523,
+      "bottomNetReturn": 0.01252338997055619,
       "equalUniverseReturn": -0.001301233655387043,
+      "equalUniverseNetReturn": -0.001301233655387043,
       "benchmarkReturn": 0.007331722990153056,
+      "benchmarkNetReturn": 0.007331722990153056,
       "spreadReturn": -0.053721341149206084,
+      "spreadNetReturn": -0.05445467448253941,
+      "turnover": {
+        "top": 0.4,
+        "bottom": 0.3333333333333333,
+        "equalUniverse": 0.0,
+        "benchmark": 0.0
+      },
+      "transactionCosts": {
+        "top": 0.0004,
+        "bottom": 0.0003333333333333333,
+        "equalUniverse": 0.0,
+        "benchmark": 0.0
+      },
       "rankIC": -0.24913504236249218,
       "factorRankIC": {
         "score": -0.24913504236249218,
@@ -553,7 +870,8 @@
         "lowDrawdownScore": -0.14365114516751823,
         "lowVolatilityScore": 0.06248441399774933,
         "lowRiskScore": -0.06290772457988521
-      }
+      },
+      "sample": "research"
     },
     {
       "startDate": "2019-10-01",
@@ -577,11 +895,45 @@
         "HWM",
         "AMAT"
       ],
+      "bottomTickers": [
+        "PANW",
+        "NVDA",
+        "ELV",
+        "SCHW",
+        "GLW",
+        "GE",
+        "TSLA",
+        "COP",
+        "MMM",
+        "ANET",
+        "SPOT",
+        "MO",
+        "NFLX",
+        "FDX",
+        "FCX"
+      ],
       "topReturn": 0.06137038301963462,
+      "topNetReturn": 0.06083704968630129,
       "bottomReturn": 0.11613463846749959,
+      "bottomNetReturn": 0.11593463846749959,
       "equalUniverseReturn": 0.05590877774140786,
+      "equalUniverseNetReturn": 0.05590877774140786,
       "benchmarkReturn": 0.04399107050762874,
+      "benchmarkNetReturn": 0.04399107050762874,
       "spreadReturn": -0.05476425544786497,
+      "spreadNetReturn": -0.0554975887811983,
+      "turnover": {
+        "top": 0.5333333333333333,
+        "bottom": 0.2,
+        "equalUniverse": 0.0,
+        "benchmark": 0.0
+      },
+      "transactionCosts": {
+        "top": 0.0005333333333333334,
+        "bottom": 0.0002,
+        "equalUniverse": 0.0,
+        "benchmark": 0.0
+      },
       "rankIC": -0.3428124168309964,
       "factorRankIC": {
         "score": -0.3428124168309964,
@@ -590,7 +942,8 @@
         "lowDrawdownScore": -0.31216221596802957,
         "lowVolatilityScore": -0.4679237454185012,
         "lowRiskScore": -0.4033416388825439
-      }
+      },
+      "sample": "research"
     },
     {
       "startDate": "2019-11-01",
@@ -614,11 +967,45 @@
         "EQIX",
         "SO"
       ],
+      "bottomTickers": [
+        "RCL",
+        "BA",
+        "MMM",
+        "XOM",
+        "COP",
+        "SCHW",
+        "CSCO",
+        "CRWD",
+        "SPG",
+        "FCX",
+        "WMB",
+        "MO",
+        "FDX",
+        "NFLX",
+        "ANET"
+      ],
       "topReturn": 0.009450587577926066,
+      "topNetReturn": 0.0091839209112594,
       "bottomReturn": 0.059088541473150895,
+      "bottomNetReturn": 0.05862187480648423,
       "equalUniverseReturn": 0.03282472553480527,
+      "equalUniverseNetReturn": 0.03281083664591638,
       "benchmarkReturn": 0.026687456644806984,
+      "benchmarkNetReturn": 0.026687456644806984,
       "spreadReturn": -0.04963795389522483,
+      "spreadNetReturn": -0.05037128722855816,
+      "turnover": {
+        "top": 0.26666666666666666,
+        "bottom": 0.4666666666666667,
+        "equalUniverse": 0.013888888888888926,
+        "benchmark": 0.0
+      },
+      "transactionCosts": {
+        "top": 0.0002666666666666667,
+        "bottom": 0.00046666666666666666,
+        "equalUniverse": 1.3888888888888927e-05,
+        "benchmark": 0.0
+      },
       "rankIC": -0.3095812233743268,
       "factorRankIC": {
         "score": -0.3095812233743268,
@@ -627,7 +1014,8 @@
         "lowDrawdownScore": -0.29493652079133936,
         "lowVolatilityScore": -0.3875797640663519,
         "lowRiskScore": -0.3943694236797685
-      }
+      },
+      "sample": "research"
     },
     {
       "startDate": "2019-12-01",
@@ -651,11 +1039,45 @@
         "AMGN",
         "CVS"
       ],
+      "bottomTickers": [
+        "COP",
+        "GLW",
+        "NET",
+        "MNST",
+        "CSX",
+        "PGR",
+        "DDOG",
+        "XOM",
+        "NFLX",
+        "FDX",
+        "SPG",
+        "CRWD",
+        "WMB",
+        "CSCO",
+        "ANET"
+      ],
       "topReturn": 0.06293504701939881,
+      "topNetReturn": 0.06253504701939881,
       "bottomReturn": -0.0024619442171785505,
+      "bottomNetReturn": -0.0028619442171785507,
       "equalUniverseReturn": 0.02776510280302765,
+      "equalUniverseNetReturn": 0.02776510280302765,
       "benchmarkReturn": 0.02905516237690664,
+      "benchmarkNetReturn": 0.02905516237690664,
       "spreadReturn": 0.06539699123657736,
+      "spreadNetReturn": 0.06459699123657736,
+      "turnover": {
+        "top": 0.4,
+        "bottom": 0.4,
+        "equalUniverse": 0.0,
+        "benchmark": 0.0
+      },
+      "transactionCosts": {
+        "top": 0.0004,
+        "bottom": 0.0004,
+        "equalUniverse": 0.0,
+        "benchmark": 0.0
+      },
       "rankIC": 0.17973635559842457,
       "factorRankIC": {
         "score": 0.17973635559842457,
@@ -664,7 +1086,8 @@
         "lowDrawdownScore": -0.0785113213814869,
         "lowVolatilityScore": -0.1368319837955676,
         "lowRiskScore": -0.10259625432039225
-      }
+      },
+      "sample": "research"
     },
     {
       "startDate": "2020-01-01",
@@ -688,11 +1111,45 @@
         "BMY",
         "SHOP"
       ],
+      "bottomTickers": [
+        "CSX",
+        "ORCL",
+        "XOM",
+        "NET",
+        "DDOG",
+        "PGR",
+        "SPG",
+        "BA",
+        "FDX",
+        "WMB",
+        "NFLX",
+        "CSCO",
+        "GLW",
+        "ANET",
+        "CRWD"
+      ],
       "topReturn": 0.05271520706931299,
+      "topNetReturn": 0.05244854040264633,
       "bottomReturn": 0.022111439000686513,
+      "bottomNetReturn": 0.02197810566735318,
       "equalUniverseReturn": 0.0022362863632581884,
+      "equalUniverseNetReturn": 0.0022362863632581884,
       "benchmarkReturn": -0.0004037019500021666,
+      "benchmarkNetReturn": -0.0004037019500021666,
       "spreadReturn": 0.03060376806862648,
+      "spreadNetReturn": 0.030203768068626482,
+      "turnover": {
+        "top": 0.26666666666666666,
+        "bottom": 0.13333333333333333,
+        "equalUniverse": 0.0,
+        "benchmark": 0.0
+      },
+      "transactionCosts": {
+        "top": 0.0002666666666666667,
+        "bottom": 0.00013333333333333334,
+        "equalUniverse": 0.0,
+        "benchmark": 0.0
+      },
       "rankIC": -0.06149827184309943,
       "factorRankIC": {
         "score": -0.06149827184309943,
@@ -701,7 +1158,8 @@
         "lowDrawdownScore": -0.038739499457656014,
         "lowVolatilityScore": 0.07823326099188169,
         "lowRiskScore": 0.0026927095892613135
-      }
+      },
+      "sample": "research"
     },
     {
       "startDate": "2020-02-01",
@@ -725,11 +1183,45 @@
         "HWM",
         "INTC"
       ],
+      "bottomTickers": [
+        "BK",
+        "SPOT",
+        "UPS",
+        "CVX",
+        "ELV",
+        "BA",
+        "MMM",
+        "ANET",
+        "CSCO",
+        "GLW",
+        "XOM",
+        "FDX",
+        "SPG",
+        "WMB",
+        "CRWD"
+      ],
       "topReturn": -0.03676770562088932,
+      "topNetReturn": -0.03703437228755598,
       "bottomReturn": -0.08666340824827673,
+      "bottomNetReturn": -0.08706340824827673,
       "equalUniverseReturn": -0.0715920253739653,
+      "equalUniverseNetReturn": -0.0715920253739653,
       "benchmarkReturn": -0.07916596728266923,
+      "benchmarkNetReturn": -0.07916596728266923,
       "spreadReturn": 0.04989570262738741,
+      "spreadNetReturn": 0.04922903596072075,
+      "turnover": {
+        "top": 0.26666666666666666,
+        "bottom": 0.4,
+        "equalUniverse": 0.0,
+        "benchmark": 0.0
+      },
+      "transactionCosts": {
+        "top": 0.0002666666666666667,
+        "bottom": 0.0004,
+        "equalUniverse": 0.0,
+        "benchmark": 0.0
+      },
       "rankIC": 0.126143396833052,
       "factorRankIC": {
         "score": 0.126143396833052,
@@ -738,7 +1230,8 @@
         "lowDrawdownScore": 0.04881847200636658,
         "lowVolatilityScore": -0.15855236717305682,
         "lowRiskScore": -0.06551322240977413
-      }
+      },
+      "sample": "research"
     },
     {
       "startDate": "2020-03-01",
@@ -762,11 +1255,45 @@
         "ADBE",
         "VRTX"
       ],
+      "bottomTickers": [
+        "GD",
+        "COP",
+        "PANW",
+        "FDX",
+        "CSCO",
+        "GLW",
+        "SPG",
+        "CVX",
+        "WMB",
+        "UPS",
+        "ANET",
+        "XOM",
+        "RCL",
+        "BA",
+        "CRWD"
+      ],
       "topReturn": -0.14351201873120403,
+      "topNetReturn": -0.14391201873120404,
       "bottomReturn": -0.2572821780490315,
+      "bottomNetReturn": -0.25754884471569817,
       "equalUniverseReturn": -0.17137894530158396,
+      "equalUniverseNetReturn": -0.17137894530158396,
       "benchmarkReturn": -0.16425630785330136,
+      "benchmarkNetReturn": -0.16425630785330136,
       "spreadReturn": 0.11377015931782744,
+      "spreadNetReturn": 0.11310349265116078,
+      "turnover": {
+        "top": 0.4,
+        "bottom": 0.26666666666666666,
+        "equalUniverse": 0.0,
+        "benchmark": 0.0
+      },
+      "transactionCosts": {
+        "top": 0.0004,
+        "bottom": 0.0002666666666666667,
+        "equalUniverse": 0.0,
+        "benchmark": 0.0
+      },
       "rankIC": 0.1454384695764006,
       "factorRankIC": {
         "score": 0.1454384695764006,
@@ -775,7 +1302,8 @@
         "lowDrawdownScore": 0.2964914395948879,
         "lowVolatilityScore": 0.04931677517884414,
         "lowRiskScore": 0.26499879430913914
-      }
+      },
+      "sample": "research"
     },
     {
       "startDate": "2020-04-01",
@@ -799,11 +1327,45 @@
         "BMY",
         "EQIX"
       ],
+      "bottomTickers": [
+        "GLW",
+        "XOM",
+        "CVX",
+        "WFC",
+        "MAR",
+        "C",
+        "TDG",
+        "WMB",
+        "WELL",
+        "COP",
+        "COF",
+        "FCX",
+        "BA",
+        "RCL",
+        "SPG"
+      ],
       "topReturn": 0.17015705940912626,
+      "topNetReturn": 0.16962372607579293,
       "bottomReturn": 0.25464514813831324,
+      "bottomNetReturn": 0.25417848147164657,
       "equalUniverseReturn": 0.15344953788424823,
+      "equalUniverseNetReturn": 0.15344953788424823,
       "benchmarkReturn": 0.14885231422110268,
+      "benchmarkNetReturn": 0.14885231422110268,
       "spreadReturn": -0.08448808872918698,
+      "spreadNetReturn": -0.08548808872918698,
+      "turnover": {
+        "top": 0.5333333333333333,
+        "bottom": 0.4666666666666667,
+        "equalUniverse": 0.0,
+        "benchmark": 0.0
+      },
+      "transactionCosts": {
+        "top": 0.0005333333333333334,
+        "bottom": 0.00046666666666666666,
+        "equalUniverse": 0.0,
+        "benchmark": 0.0
+      },
       "rankIC": -0.168383443387918,
       "factorRankIC": {
         "score": -0.168383443387918,
@@ -812,7 +1374,8 @@
         "lowDrawdownScore": -0.32485059420965756,
         "lowVolatilityScore": -0.3579727911017579,
         "lowRiskScore": -0.36912775953902943
-      }
+      },
+      "sample": "research"
     },
     {
       "startDate": "2020-05-01",
@@ -836,11 +1399,45 @@
         "MSFT",
         "EQIX"
       ],
+      "bottomTickers": [
+        "RTX",
+        "TDG",
+        "USB",
+        "COP",
+        "XOM",
+        "HWM",
+        "COF",
+        "C",
+        "MAR",
+        "GE",
+        "WELL",
+        "WFC",
+        "BA",
+        "RCL",
+        "SPG"
+      ],
       "topReturn": 0.16520406080577782,
+      "topNetReturn": 0.16493739413911115,
       "bottomReturn": 0.10913489708899865,
+      "bottomNetReturn": 0.10886823042233199,
       "equalUniverseReturn": 0.11174586514174639,
+      "equalUniverseNetReturn": 0.11173896859002225,
       "benchmarkReturn": 0.08048407840327232,
+      "benchmarkNetReturn": 0.08048407840327232,
       "spreadReturn": 0.05606916371677917,
+      "spreadNetReturn": 0.05553583038344584,
+      "turnover": {
+        "top": 0.26666666666666666,
+        "bottom": 0.26666666666666666,
+        "equalUniverse": 0.00689655172413791,
+        "benchmark": 0.0
+      },
+      "transactionCosts": {
+        "top": 0.0002666666666666667,
+        "bottom": 0.0002666666666666667,
+        "equalUniverse": 6.8965517241379105e-06,
+        "benchmark": 0.0
+      },
       "rankIC": 0.03865941843605151,
       "factorRankIC": {
         "score": 0.03865941843605151,
@@ -850,7 +1447,8 @@
         "lowDrawdownScore": -0.13333385818816176,
         "lowVolatilityScore": -0.4086343777524218,
         "lowRiskScore": -0.25878703663811203
-      }
+      },
+      "sample": "research"
     },
     {
       "startDate": "2020-06-01",
@@ -874,11 +1472,45 @@
         "SNPS",
         "AAPL"
       ],
+      "bottomTickers": [
+        "SCHW",
+        "COP",
+        "RTX",
+        "COF",
+        "C",
+        "USB",
+        "XOM",
+        "MAR",
+        "HWM",
+        "WELL",
+        "GE",
+        "WFC",
+        "RCL",
+        "BA",
+        "SPG"
+      ],
       "topReturn": 0.14206930251621622,
+      "topNetReturn": 0.1417359691828829,
       "bottomReturn": -0.00911822255096304,
+      "bottomNetReturn": -0.009184889217629706,
       "equalUniverseReturn": 0.02740221702180939,
+      "equalUniverseNetReturn": 0.02740221702180939,
       "benchmarkReturn": 0.0207379315859042,
+      "benchmarkNetReturn": 0.0207379315859042,
       "spreadReturn": 0.15118752506717925,
+      "spreadNetReturn": 0.15078752506717927,
+      "turnover": {
+        "top": 0.3333333333333333,
+        "bottom": 0.06666666666666667,
+        "equalUniverse": 0.0,
+        "benchmark": 0.0
+      },
+      "transactionCosts": {
+        "top": 0.0003333333333333333,
+        "bottom": 6.666666666666667e-05,
+        "equalUniverse": 0.0,
+        "benchmark": 0.0
+      },
       "rankIC": 0.3770984658898711,
       "factorRankIC": {
         "score": 0.3770984658898711,
@@ -888,7 +1520,8 @@
         "lowDrawdownScore": 0.282154742344036,
         "lowVolatilityScore": -0.031790729827908835,
         "lowRiskScore": 0.1840538734588687
-      }
+      },
+      "sample": "research"
     },
     {
       "startDate": "2020-07-01",
@@ -912,11 +1545,45 @@
         "FTNT",
         "CDNS"
       ],
+      "bottomTickers": [
+        "RTX",
+        "HCA",
+        "C",
+        "HWM",
+        "USB",
+        "COP",
+        "XOM",
+        "WELL",
+        "COF",
+        "MAR",
+        "GE",
+        "WFC",
+        "BA",
+        "SPG",
+        "RCL"
+      ],
       "topReturn": 0.07914259376657573,
+      "topNetReturn": 0.07894259376657572,
       "bottomReturn": -0.01826270967409441,
+      "bottomNetReturn": -0.018329376340761077,
       "equalUniverseReturn": 0.04773259991586441,
+      "equalUniverseNetReturn": 0.04773259991586441,
       "benchmarkReturn": 0.051526224084253336,
+      "benchmarkNetReturn": 0.051526224084253336,
       "spreadReturn": 0.09740530344067014,
+      "spreadNetReturn": 0.09713863677400346,
+      "turnover": {
+        "top": 0.2,
+        "bottom": 0.06666666666666667,
+        "equalUniverse": 0.0,
+        "benchmark": 0.0
+      },
+      "transactionCosts": {
+        "top": 0.0002,
+        "bottom": 6.666666666666667e-05,
+        "equalUniverse": 0.0,
+        "benchmark": 0.0
+      },
       "rankIC": 0.27796016375373955,
       "factorRankIC": {
         "score": 0.27796016375373955,
@@ -926,7 +1593,8 @@
         "lowDrawdownScore": 0.29358133505245565,
         "lowVolatilityScore": 0.188814886296465,
         "lowRiskScore": 0.2732443709652023
-      }
+      },
+      "sample": "research"
     },
     {
       "startDate": "2020-08-01",
@@ -950,11 +1618,45 @@
         "CRWD",
         "NFLX"
       ],
+      "bottomTickers": [
+        "AXP",
+        "HWM",
+        "C",
+        "USB",
+        "COF",
+        "RTX",
+        "XOM",
+        "COP",
+        "WELL",
+        "MAR",
+        "GE",
+        "WFC",
+        "BA",
+        "SPG",
+        "RCL"
+      ],
       "topReturn": 0.1485242930088955,
+      "topNetReturn": 0.1483242930088955,
       "bottomReturn": 0.08830685265263877,
+      "bottomNetReturn": 0.0882401859859721,
       "equalUniverseReturn": 0.07619335035351545,
+      "equalUniverseNetReturn": 0.07619335035351545,
       "benchmarkReturn": 0.07987275245135228,
+      "benchmarkNetReturn": 0.07987275245135228,
       "spreadReturn": 0.06021744035625673,
+      "spreadNetReturn": 0.059950773689590064,
+      "turnover": {
+        "top": 0.2,
+        "bottom": 0.06666666666666667,
+        "equalUniverse": 0.0,
+        "benchmark": 0.0
+      },
+      "transactionCosts": {
+        "top": 0.0002,
+        "bottom": 6.666666666666667e-05,
+        "equalUniverse": 0.0,
+        "benchmark": 0.0
+      },
       "rankIC": 0.11377735789639427,
       "factorRankIC": {
         "score": 0.11377735789639427,
@@ -964,7 +1666,8 @@
         "lowDrawdownScore": 0.06880294605974765,
         "lowVolatilityScore": -0.1443216761598016,
         "lowRiskScore": 0.0078019209573295546
-      }
+      },
+      "sample": "research"
     },
     {
       "startDate": "2020-09-01",
@@ -988,11 +1691,45 @@
         "NFLX",
         "CDNS"
       ],
+      "bottomTickers": [
+        "ROST",
+        "MAR",
+        "RCL",
+        "HWM",
+        "C",
+        "WELL",
+        "USB",
+        "COF",
+        "COP",
+        "RTX",
+        "XOM",
+        "GE",
+        "WFC",
+        "BA",
+        "SPG"
+      ],
       "topReturn": -0.06805365688341443,
+      "topNetReturn": -0.06818699021674776,
       "bottomReturn": -0.0411218167036732,
+      "bottomNetReturn": -0.04118848337033987,
       "equalUniverseReturn": -0.024546211998292104,
+      "equalUniverseNetReturn": -0.024546211998292104,
       "benchmarkReturn": -0.04030294429448955,
+      "benchmarkNetReturn": -0.04030294429448955,
       "spreadReturn": -0.026931840179741227,
+      "spreadNetReturn": -0.027131840179741226,
+      "turnover": {
+        "top": 0.13333333333333333,
+        "bottom": 0.06666666666666667,
+        "equalUniverse": 0.0,
+        "benchmark": 0.0
+      },
+      "transactionCosts": {
+        "top": 0.00013333333333333334,
+        "bottom": 6.666666666666667e-05,
+        "equalUniverse": 0.0,
+        "benchmark": 0.0
+      },
       "rankIC": -0.07531491103763187,
       "factorRankIC": {
         "score": -0.07531491103763187,
@@ -1002,7 +1739,8 @@
         "lowDrawdownScore": 0.024325201194625046,
         "lowVolatilityScore": 0.10185438722875445,
         "lowRiskScore": 0.09721303731695796
-      }
+      },
+      "sample": "research"
     },
     {
       "startDate": "2020-10-01",
@@ -1026,11 +1764,45 @@
         "SHOP",
         "CDNS"
       ],
+      "bottomTickers": [
+        "INTC",
+        "USB",
+        "T",
+        "CSCO",
+        "CVS",
+        "CME",
+        "BK",
+        "C",
+        "COP",
+        "CVX",
+        "GILD",
+        "RTX",
+        "XOM",
+        "GE",
+        "WFC"
+      ],
       "topReturn": -0.027879474338210735,
+      "topNetReturn": -0.028279474338210736,
       "bottomReturn": -0.03351255131130188,
+      "bottomNetReturn": -0.03404588464463521,
       "equalUniverseReturn": -0.024075055729446748,
+      "equalUniverseNetReturn": -0.024075055729446748,
       "benchmarkReturn": -0.03115368920267303,
+      "benchmarkNetReturn": -0.03115368920267303,
       "spreadReturn": 0.005633076973091147,
+      "spreadNetReturn": 0.004699743639757813,
+      "turnover": {
+        "top": 0.4,
+        "bottom": 0.5333333333333333,
+        "equalUniverse": 0.0,
+        "benchmark": 0.0
+      },
+      "transactionCosts": {
+        "top": 0.0004,
+        "bottom": 0.0005333333333333334,
+        "equalUniverse": 0.0,
+        "benchmark": 0.0
+      },
       "rankIC": 0.01860730593607306,
       "factorRankIC": {
         "score": 0.01860730593607306,
@@ -1040,7 +1812,8 @@
         "lowDrawdownScore": -0.0008620689655172414,
         "lowVolatilityScore": -0.06713142470302642,
         "lowRiskScore": -0.028613604156825696
-      }
+      },
+      "sample": "research"
     },
     {
       "startDate": "2020-11-01",
@@ -1064,11 +1837,45 @@
         "TSLA",
         "QCOM"
       ],
+      "bottomTickers": [
+        "BK",
+        "ROST",
+        "BA",
+        "CSCO",
+        "SPG",
+        "CME",
+        "VRTX",
+        "C",
+        "RTX",
+        "GILD",
+        "INTC",
+        "CVX",
+        "XOM",
+        "WFC",
+        "COP"
+      ],
       "topReturn": 0.2270647036361277,
+      "topNetReturn": 0.22679803696946105,
       "bottomReturn": 0.25356786837639034,
+      "bottomNetReturn": 0.25330120170972364,
       "equalUniverseReturn": 0.16692459256370357,
+      "equalUniverseNetReturn": 0.16692459256370357,
       "benchmarkReturn": 0.1209039384697741,
+      "benchmarkNetReturn": 0.1209039384697741,
       "spreadReturn": -0.026503164740262625,
+      "spreadNetReturn": -0.027036498073595955,
+      "turnover": {
+        "top": 0.26666666666666666,
+        "bottom": 0.26666666666666666,
+        "equalUniverse": 0.0,
+        "benchmark": 0.0
+      },
+      "transactionCosts": {
+        "top": 0.0002666666666666667,
+        "bottom": 0.0002666666666666667,
+        "equalUniverse": 0.0,
+        "benchmark": 0.0
+      },
       "rankIC": -0.17533852936545427,
       "factorRankIC": {
         "score": -0.17533852936545427,
@@ -1078,7 +1885,8 @@
         "lowDrawdownScore": -0.44911431270666036,
         "lowVolatilityScore": -0.6289324515824279,
         "lowRiskScore": -0.5979806329711856
-      }
+      },
+      "sample": "research"
     },
     {
       "startDate": "2020-12-01",
@@ -1102,11 +1910,45 @@
         "PDD",
         "DE"
       ],
+      "bottomTickers": [
+        "GD",
+        "IBM",
+        "BK",
+        "CSCO",
+        "CME",
+        "PLTR",
+        "T",
+        "CVX",
+        "FTNT",
+        "WFC",
+        "GILD",
+        "VRTX",
+        "COP",
+        "INTC",
+        "XOM"
+      ],
       "topReturn": 0.08932539102576526,
+      "topNetReturn": 0.08912539102576525,
       "bottomReturn": 0.026109606907260354,
+      "bottomNetReturn": 0.02577627357392702,
       "equalUniverseReturn": 0.03916464663658525,
+      "equalUniverseNetReturn": 0.03915779732151675,
       "benchmarkReturn": 0.025828670405785736,
+      "benchmarkNetReturn": 0.025828670405785736,
       "spreadReturn": 0.0632157841185049,
+      "spreadNetReturn": 0.06268245078517155,
+      "turnover": {
+        "top": 0.2,
+        "bottom": 0.3333333333333333,
+        "equalUniverse": 0.006849315068493171,
+        "benchmark": 0.0
+      },
+      "transactionCosts": {
+        "top": 0.0002,
+        "bottom": 0.0003333333333333333,
+        "equalUniverse": 6.849315068493171e-06,
+        "benchmark": 0.0
+      },
       "rankIC": 0.06621036699989395,
       "factorRankIC": {
         "score": 0.06621036699989395,
@@ -1116,7 +1958,8 @@
         "lowDrawdownScore": -0.027682357749862305,
         "lowVolatilityScore": -0.29836907587614797,
         "lowRiskScore": -0.20267224509076187
-      }
+      },
+      "sample": "research"
     },
     {
       "startDate": "2021-01-01",
@@ -1140,11 +1983,45 @@
         "LRCX",
         "CDNS"
       ],
+      "bottomTickers": [
+        "SPGI",
+        "WFC",
+        "BA",
+        "CSCO",
+        "GD",
+        "T",
+        "PLTR",
+        "AZN",
+        "AMGN",
+        "CVX",
+        "XOM",
+        "COP",
+        "VRTX",
+        "INTC",
+        "GILD"
+      ],
       "topReturn": 0.03895065620284557,
+      "topNetReturn": 0.038817322869512234,
       "bottomReturn": 0.05282638582514335,
+      "bottomNetReturn": 0.05255971915847669,
       "equalUniverseReturn": 0.0035839991676931172,
+      "equalUniverseNetReturn": 0.0035839991676931172,
       "benchmarkReturn": 0.006285422640215144,
+      "benchmarkNetReturn": 0.006285422640215144,
       "spreadReturn": -0.013875729622297786,
+      "spreadNetReturn": -0.014275729622297785,
+      "turnover": {
+        "top": 0.13333333333333333,
+        "bottom": 0.26666666666666666,
+        "equalUniverse": 0.0,
+        "benchmark": 0.0
+      },
+      "transactionCosts": {
+        "top": 0.00013333333333333334,
+        "bottom": 0.0002666666666666667,
+        "equalUniverse": 0.0,
+        "benchmark": 0.0
+      },
       "rankIC": 0.05900725902075521,
       "factorRankIC": {
         "score": 0.05900725902075521,
@@ -1154,7 +2031,8 @@
         "lowDrawdownScore": -0.12624312728886058,
         "lowVolatilityScore": -0.20548330810831655,
         "lowRiskScore": -0.24276748961275582
-      }
+      },
+      "sample": "research"
     },
     {
       "startDate": "2021-02-01",
@@ -1178,11 +2056,45 @@
         "MU",
         "PH"
       ],
+      "bottomTickers": [
+        "MCO",
+        "MRK",
+        "GD",
+        "VZ",
+        "GILD",
+        "T",
+        "COP",
+        "IBM",
+        "DASH",
+        "ABNB",
+        "SPGI",
+        "PLTR",
+        "ORLY",
+        "AZN",
+        "VRTX"
+      ],
       "topReturn": 0.05399373201887723,
+      "topNetReturn": 0.053527065352210565,
       "bottomReturn": 0.00395474791135606,
+      "bottomNetReturn": 0.0034880812446893934,
       "equalUniverseReturn": 0.055467576817504666,
+      "equalUniverseNetReturn": 0.05545406330399115,
       "benchmarkReturn": 0.03548367709272049,
+      "benchmarkNetReturn": 0.03548367709272049,
       "spreadReturn": 0.05003898410752117,
+      "spreadNetReturn": 0.04910565077418784,
+      "turnover": {
+        "top": 0.4666666666666667,
+        "bottom": 0.4666666666666667,
+        "equalUniverse": 0.013513513513513459,
+        "benchmark": 0.0
+      },
+      "transactionCosts": {
+        "top": 0.00046666666666666666,
+        "bottom": 0.00046666666666666666,
+        "equalUniverse": 1.351351351351346e-05,
+        "benchmark": 0.0
+      },
       "rankIC": 0.1510159659728212,
       "factorRankIC": {
         "score": 0.1510159659728212,
@@ -1192,7 +2104,8 @@
         "lowDrawdownScore": -0.3277744255692482,
         "lowVolatilityScore": -0.28808452039170357,
         "lowRiskScore": -0.33331235632290285
-      }
+      },
+      "sample": "research"
     },
     {
       "startDate": "2021-03-01",
@@ -1216,11 +2129,45 @@
         "SCHW",
         "NXPI"
       ],
+      "bottomTickers": [
+        "VZ",
+        "PEP",
+        "AMGN",
+        "MDLZ",
+        "ABNB",
+        "PG",
+        "GILD",
+        "T",
+        "DASH",
+        "AZN",
+        "PLTR",
+        "EQIX",
+        "MRK",
+        "CRM",
+        "VRTX"
+      ],
       "topReturn": 0.009753273224253855,
+      "topNetReturn": 0.009353273224253856,
       "bottomReturn": 0.028095547090096443,
+      "bottomNetReturn": 0.02769554709009644,
       "equalUniverseReturn": 0.03151077506468011,
+      "equalUniverseNetReturn": 0.03151077506468011,
       "benchmarkReturn": 0.031680235325441064,
+      "benchmarkNetReturn": 0.031680235325441064,
       "spreadReturn": -0.018342273865842588,
+      "spreadNetReturn": -0.01914227386584259,
+      "turnover": {
+        "top": 0.4,
+        "bottom": 0.4,
+        "equalUniverse": 0.0,
+        "benchmark": 0.0
+      },
+      "transactionCosts": {
+        "top": 0.0004,
+        "bottom": 0.0004,
+        "equalUniverse": 0.0,
+        "benchmark": 0.0
+      },
       "rankIC": -0.2878169225244968,
       "factorRankIC": {
         "score": -0.2878169225244968,
@@ -1230,7 +2177,8 @@
         "lowDrawdownScore": 0.000929640083937485,
         "lowVolatilityScore": 0.46166005271735167,
         "lowRiskScore": 0.22030673325016567
-      }
+      },
+      "sample": "research"
     },
     {
       "startDate": "2021-04-01",
@@ -1254,11 +2202,45 @@
         "FTNT",
         "COF"
       ],
+      "bottomTickers": [
+        "CL",
+        "AMGN",
+        "PG",
+        "VZ",
+        "GILD",
+        "WMT",
+        "NVO",
+        "CRM",
+        "DDOG",
+        "MRK",
+        "AZN",
+        "ABNB",
+        "EQIX",
+        "DASH",
+        "VRTX"
+      ],
       "topReturn": 0.033394208913114204,
+      "topNetReturn": 0.0327942089131142,
       "bottomReturn": 0.015420389406727386,
+      "bottomNetReturn": 0.015153722740060719,
       "equalUniverseReturn": 0.029766694477914673,
+      "equalUniverseNetReturn": 0.029766694477914673,
       "benchmarkReturn": 0.041661484340789645,
+      "benchmarkNetReturn": 0.041661484340789645,
       "spreadReturn": 0.017973819506386816,
+      "spreadNetReturn": 0.01710715283972015,
+      "turnover": {
+        "top": 0.6,
+        "bottom": 0.26666666666666666,
+        "equalUniverse": 0.0,
+        "benchmark": 0.0
+      },
+      "transactionCosts": {
+        "top": 0.0006,
+        "bottom": 0.0002666666666666667,
+        "equalUniverse": 0.0,
+        "benchmark": 0.0
+      },
       "rankIC": -0.11318701251587157,
       "factorRankIC": {
         "score": -0.11318701251587157,
@@ -1268,7 +2250,8 @@
         "lowDrawdownScore": -0.0013143487231476224,
         "lowVolatilityScore": 0.16811161785290063,
         "lowRiskScore": 0.12304867530179131
-      }
+      },
+      "sample": "research"
     },
     {
       "startDate": "2021-05-01",
@@ -1292,11 +2275,45 @@
         "ASML",
         "HWM"
       ],
+      "bottomTickers": [
+        "BMY",
+        "CL",
+        "TMO",
+        "DDOG",
+        "CRM",
+        "AZN",
+        "VZ",
+        "WMT",
+        "GILD",
+        "PG",
+        "EQIX",
+        "MRK",
+        "VRTX",
+        "ABNB",
+        "DASH"
+      ],
       "topReturn": 0.05868777116981901,
+      "topNetReturn": 0.05842110450315235,
       "bottomReturn": 0.004514194853789558,
+      "bottomNetReturn": 0.004380861520456225,
       "equalUniverseReturn": 0.020872296229967596,
+      "equalUniverseNetReturn": 0.020872296229967596,
       "benchmarkReturn": 0.005679533598261566,
+      "benchmarkNetReturn": 0.005679533598261566,
       "spreadReturn": 0.054173576316029454,
+      "spreadNetReturn": 0.053773576316029456,
+      "turnover": {
+        "top": 0.26666666666666666,
+        "bottom": 0.13333333333333333,
+        "equalUniverse": 0.0,
+        "benchmark": 0.0
+      },
+      "transactionCosts": {
+        "top": 0.0002666666666666667,
+        "bottom": 0.00013333333333333334,
+        "equalUniverse": 0.0,
+        "benchmark": 0.0
+      },
       "rankIC": 0.39176788074199387,
       "factorRankIC": {
         "score": 0.39176788074199387,
@@ -1306,7 +2323,8 @@
         "lowDrawdownScore": 0.08095781096302015,
         "lowVolatilityScore": -0.2011222093995847,
         "lowRiskScore": -0.09166089798879827
-      }
+      },
+      "sample": "research"
     },
     {
       "startDate": "2021-06-01",
@@ -1330,11 +2348,45 @@
         "C",
         "PNC"
       ],
+      "bottomTickers": [
+        "ABT",
+        "WMT",
+        "ECL",
+        "MELI",
+        "AMD",
+        "VZ",
+        "DDOG",
+        "APP",
+        "MRK",
+        "ABNB",
+        "NOW",
+        "DASH",
+        "SPOT",
+        "VRTX",
+        "PLTR"
+      ],
       "topReturn": -0.03057559627559132,
+      "topNetReturn": -0.030908929608924655,
       "bottomReturn": 0.07953385711170474,
+      "bottomNetReturn": 0.07900052377837141,
       "equalUniverseReturn": 0.024092954088933218,
+      "equalUniverseNetReturn": 0.024086242679537247,
       "benchmarkReturn": 0.028994539413522702,
+      "benchmarkNetReturn": 0.028994539413522702,
       "spreadReturn": -0.11010945338729607,
+      "spreadNetReturn": -0.11097612005396273,
+      "turnover": {
+        "top": 0.3333333333333333,
+        "bottom": 0.5333333333333333,
+        "equalUniverse": 0.006711409395973193,
+        "benchmark": 0.0
+      },
+      "transactionCosts": {
+        "top": 0.0003333333333333333,
+        "bottom": 0.0005333333333333334,
+        "equalUniverse": 6.7114093959731935e-06,
+        "benchmark": 0.0
+      },
       "rankIC": -0.4232867767095955,
       "factorRankIC": {
         "score": -0.4232867767095955,
@@ -1344,7 +2396,8 @@
         "lowDrawdownScore": -0.39157743651280813,
         "lowVolatilityScore": -0.17379119698102286,
         "lowRiskScore": -0.33090876111010337
-      }
+      },
+      "sample": "research"
     },
     {
       "startDate": "2021-07-01",
@@ -1368,11 +2421,45 @@
         "BAC",
         "GOOGL"
       ],
+      "bottomTickers": [
+        "DDOG",
+        "PG",
+        "NEE",
+        "CL",
+        "WMT",
+        "NFLX",
+        "VZ",
+        "MELI",
+        "ECL",
+        "ABNB",
+        "APP",
+        "PLTR",
+        "SPOT",
+        "VRTX",
+        "PDD"
+      ],
       "topReturn": -0.0008747070094169566,
+      "topNetReturn": -0.0013413736760836234,
       "bottomReturn": -0.033589928178832905,
+      "bottomNetReturn": -0.033923261512166236,
       "equalUniverseReturn": 0.014154325513048814,
+      "equalUniverseNetReturn": 0.014154325513048814,
       "benchmarkReturn": 0.018772083046554533,
+      "benchmarkNetReturn": 0.018772083046554533,
       "spreadReturn": 0.03271522116941595,
+      "spreadNetReturn": 0.031915221169415954,
+      "turnover": {
+        "top": 0.4666666666666667,
+        "bottom": 0.3333333333333333,
+        "equalUniverse": 0.0,
+        "benchmark": 0.0
+      },
+      "transactionCosts": {
+        "top": 0.00046666666666666666,
+        "bottom": 0.0003333333333333333,
+        "equalUniverse": 0.0,
+        "benchmark": 0.0
+      },
       "rankIC": 0.02174496644295302,
       "factorRankIC": {
         "score": 0.02174496644295302,
@@ -1382,7 +2469,8 @@
         "lowDrawdownScore": 0.2972260078419917,
         "lowVolatilityScore": 0.17015055323780157,
         "lowRiskScore": 0.285282060584074
-      }
+      },
+      "sample": "research"
     },
     {
       "startDate": "2021-08-01",
@@ -1406,11 +2494,45 @@
         "ASML",
         "WELL"
       ],
+      "bottomTickers": [
+        "AMZN",
+        "T",
+        "AMGN",
+        "TSLA",
+        "NEE",
+        "INTC",
+        "NFLX",
+        "MELI",
+        "APP",
+        "DASH",
+        "VRTX",
+        "ABNB",
+        "SPOT",
+        "PDD",
+        "PLTR"
+      ],
       "topReturn": 0.04673626840462016,
+      "topNetReturn": 0.046336268404620164,
       "bottomReturn": 0.0829674160224506,
+      "bottomNetReturn": 0.0825674160224506,
       "equalUniverseReturn": 0.029949897640571776,
+      "equalUniverseNetReturn": 0.029949897640571776,
       "benchmarkReturn": 0.030307001570611503,
+      "benchmarkNetReturn": 0.030307001570611503,
       "spreadReturn": -0.03623114761783044,
+      "spreadNetReturn": -0.03703114761783043,
+      "turnover": {
+        "top": 0.4,
+        "bottom": 0.4,
+        "equalUniverse": 0.0,
+        "benchmark": 0.0
+      },
+      "transactionCosts": {
+        "top": 0.0004,
+        "bottom": 0.0004,
+        "equalUniverse": 0.0,
+        "benchmark": 0.0
+      },
       "rankIC": -0.05624886631598041,
       "factorRankIC": {
         "score": -0.05624886631598041,
@@ -1420,7 +2542,8 @@
         "lowDrawdownScore": 0.03897339107123092,
         "lowVolatilityScore": -0.19442408851804824,
         "lowRiskScore": -0.10048612370760021
-      }
+      },
+      "sample": "research"
     },
     {
       "startDate": "2021-09-01",
@@ -1444,11 +2567,45 @@
         "JCI",
         "MS"
       ],
+      "bottomTickers": [
+        "CVX",
+        "PLTR",
+        "T",
+        "AMGN",
+        "MAR",
+        "MA",
+        "CMI",
+        "APP",
+        "MU",
+        "RCL",
+        "INTC",
+        "VRTX",
+        "ABNB",
+        "PDD",
+        "SPOT"
+      ],
       "topReturn": -0.05920956075907056,
+      "topNetReturn": -0.05954289409240389,
       "bottomReturn": 0.002464027998121347,
+      "bottomNetReturn": 0.002064027998121347,
       "equalUniverseReturn": -0.02654311899424847,
+      "equalUniverseNetReturn": -0.02654311899424847,
       "benchmarkReturn": -0.03578770783860852,
+      "benchmarkNetReturn": -0.03578770783860852,
       "spreadReturn": -0.06167358875719191,
+      "spreadNetReturn": -0.06240692209052524,
+      "turnover": {
+        "top": 0.3333333333333333,
+        "bottom": 0.4,
+        "equalUniverse": 0.0,
+        "benchmark": 0.0
+      },
+      "transactionCosts": {
+        "top": 0.0003333333333333333,
+        "bottom": 0.0004,
+        "equalUniverse": 0.0,
+        "benchmark": 0.0
+      },
       "rankIC": -0.2324759658987847,
       "factorRankIC": {
         "score": -0.2324759658987847,
@@ -1458,7 +2615,8 @@
         "lowDrawdownScore": -0.3094690915032619,
         "lowVolatilityScore": -0.09842553963359332,
         "lowRiskScore": -0.2453836386722293
-      }
+      },
+      "sample": "research"
     },
     {
       "startDate": "2021-10-01",
@@ -1482,11 +2640,45 @@
         "MS",
         "ISRG"
       ],
+      "bottomTickers": [
+        "VZ",
+        "APP",
+        "QCOM",
+        "T",
+        "CAT",
+        "CMI",
+        "GLW",
+        "MU",
+        "ABNB",
+        "INTC",
+        "AMGN",
+        "SPOT",
+        "FDX",
+        "VRTX",
+        "PDD"
+      ],
       "topReturn": 0.1079583668907082,
+      "topNetReturn": 0.10762503355737486,
       "bottomReturn": 0.05416995212014443,
+      "bottomNetReturn": 0.0538366187868111,
       "equalUniverseReturn": 0.06155384548816686,
+      "equalUniverseNetReturn": 0.06155384548816686,
       "benchmarkReturn": 0.059414104573429105,
+      "benchmarkNetReturn": 0.059414104573429105,
       "spreadReturn": 0.05378841477056377,
+      "spreadNetReturn": 0.05312174810389711,
+      "turnover": {
+        "top": 0.3333333333333333,
+        "bottom": 0.3333333333333333,
+        "equalUniverse": 0.0,
+        "benchmark": 0.0
+      },
+      "transactionCosts": {
+        "top": 0.0003333333333333333,
+        "bottom": 0.0003333333333333333,
+        "equalUniverse": 0.0,
+        "benchmark": 0.0
+      },
       "rankIC": 0.2739597315436242,
       "factorRankIC": {
         "score": 0.2739597315436242,
@@ -1496,7 +2688,8 @@
         "lowDrawdownScore": 0.03540572651811242,
         "lowVolatilityScore": -0.16035189551968076,
         "lowRiskScore": -0.03298022855069835
-      }
+      },
+      "sample": "research"
     },
     {
       "startDate": "2021-11-01",
@@ -1520,11 +2713,45 @@
         "MS",
         "MSFT"
       ],
+      "bottomTickers": [
+        "CL",
+        "IBM",
+        "V",
+        "VZ",
+        "MNST",
+        "MA",
+        "MU",
+        "INTC",
+        "AMGN",
+        "TMUS",
+        "GLW",
+        "T",
+        "VRTX",
+        "FDX",
+        "PDD"
+      ],
       "topReturn": 0.0033080321409740153,
+      "topNetReturn": 0.002841365474307349,
       "bottomReturn": -0.041003786821870274,
+      "bottomNetReturn": -0.04140378682187027,
       "equalUniverseReturn": -0.03754488530961311,
+      "equalUniverseNetReturn": -0.03754488530961311,
       "benchmarkReturn": -0.020737197589610123,
+      "benchmarkNetReturn": -0.020737197589610123,
       "spreadReturn": 0.044311818962844286,
+      "spreadNetReturn": 0.043445152296177625,
+      "turnover": {
+        "top": 0.4666666666666667,
+        "bottom": 0.4,
+        "equalUniverse": 0.0,
+        "benchmark": 0.0
+      },
+      "transactionCosts": {
+        "top": 0.00046666666666666666,
+        "bottom": 0.0004,
+        "equalUniverse": 0.0,
+        "benchmark": 0.0
+      },
       "rankIC": 0.0576346816615273,
       "factorRankIC": {
         "score": 0.0576346816615273,
@@ -1534,7 +2761,8 @@
         "lowDrawdownScore": 0.14429532801787842,
         "lowVolatilityScore": 0.23653183384727008,
         "lowRiskScore": 0.2340068927988391
-      }
+      },
+      "sample": "research"
     },
     {
       "startDate": "2021-12-01",
@@ -1558,11 +2786,45 @@
         "MSFT",
         "KLAC"
       ],
+      "bottomTickers": [
+        "SPOT",
+        "MA",
+        "TDG",
+        "V",
+        "HWM",
+        "CMI",
+        "DIS",
+        "T",
+        "PLTR",
+        "TMUS",
+        "BA",
+        "FDX",
+        "MELI",
+        "RCL",
+        "PDD"
+      ],
       "topReturn": 0.047093480573078404,
+      "topNetReturn": 0.04682681390641174,
       "bottomReturn": 0.09962821429073689,
+      "bottomNetReturn": 0.09902821429073688,
       "equalUniverseReturn": 0.06923036652184314,
+      "equalUniverseNetReturn": 0.06923036652184314,
       "benchmarkReturn": 0.0579992132187912,
+      "benchmarkNetReturn": 0.0579992132187912,
       "spreadReturn": -0.05253473371765848,
+      "spreadNetReturn": -0.05340140038432515,
+      "turnover": {
+        "top": 0.26666666666666666,
+        "bottom": 0.6,
+        "equalUniverse": 0.0,
+        "benchmark": 0.0
+      },
+      "transactionCosts": {
+        "top": 0.0002666666666666667,
+        "bottom": 0.0006,
+        "equalUniverse": 0.0,
+        "benchmark": 0.0
+      },
       "rankIC": -0.23255214946490113,
       "factorRankIC": {
         "score": -0.23255214946490113,
@@ -1572,7 +2834,8 @@
         "lowDrawdownScore": -0.07654271721385815,
         "lowVolatilityScore": 0.22369308906221658,
         "lowRiskScore": 0.02070379103936151
-      }
+      },
+      "sample": "research"
     },
     {
       "startDate": "2022-01-01",
@@ -1596,11 +2859,45 @@
         "HD",
         "SPG"
       ],
+      "bottomTickers": [
+        "ROST",
+        "RCL",
+        "FDX",
+        "T",
+        "C",
+        "CMCSA",
+        "DIS",
+        "BA",
+        "MELI",
+        "DASH",
+        "CRWD",
+        "SPOT",
+        "TMUS",
+        "PLTR",
+        "PDD"
+      ],
       "topReturn": -0.12295918781819083,
+      "topNetReturn": -0.1232258544848575,
       "bottomReturn": -0.06002123372574916,
+      "bottomNetReturn": -0.060354567059082494,
       "equalUniverseReturn": -0.043784601763609356,
+      "equalUniverseNetReturn": -0.043784601763609356,
       "benchmarkReturn": -0.046340667949377745,
+      "benchmarkNetReturn": -0.046340667949377745,
       "spreadReturn": -0.06293795409244167,
+      "spreadNetReturn": -0.06353795409244167,
+      "turnover": {
+        "top": 0.26666666666666666,
+        "bottom": 0.3333333333333333,
+        "equalUniverse": 0.0,
+        "benchmark": 0.0
+      },
+      "transactionCosts": {
+        "top": 0.0002666666666666667,
+        "bottom": 0.0003333333333333333,
+        "equalUniverse": 0.0,
+        "benchmark": 0.0
+      },
       "rankIC": -0.3781208053691275,
       "factorRankIC": {
         "score": -0.3781208053691275,
@@ -1610,7 +2907,8 @@
         "lowDrawdownScore": -0.11164956560709395,
         "lowVolatilityScore": 0.23093052784327953,
         "lowRiskScore": 0.020954108470886995
-      }
+      },
+      "sample": "research"
     },
     {
       "startDate": "2022-02-01",
@@ -1634,11 +2932,45 @@
         "PANW",
         "UPS"
       ],
+      "bottomTickers": [
+        "CMCSA",
+        "ECL",
+        "SBUX",
+        "NET",
+        "NFLX",
+        "ROST",
+        "DIS",
+        "SPOT",
+        "TMUS",
+        "CRWD",
+        "SHOP",
+        "MELI",
+        "DASH",
+        "PLTR",
+        "PDD"
+      ],
       "topReturn": -0.010019402305803863,
+      "topNetReturn": -0.01068606897247053,
       "bottomReturn": -0.0748369796090965,
+      "bottomNetReturn": -0.07517031294242983,
       "equalUniverseReturn": -0.04593733392298554,
+      "equalUniverseNetReturn": -0.04593733392298554,
       "benchmarkReturn": -0.05071200394805098,
+      "benchmarkNetReturn": -0.05071200394805098,
       "spreadReturn": 0.06481757730329263,
+      "spreadNetReturn": 0.06381757730329263,
+      "turnover": {
+        "top": 0.6666666666666666,
+        "bottom": 0.3333333333333333,
+        "equalUniverse": 0.0,
+        "benchmark": 0.0
+      },
+      "transactionCosts": {
+        "top": 0.0006666666666666666,
+        "bottom": 0.0003333333333333333,
+        "equalUniverse": 0.0,
+        "benchmark": 0.0
+      },
       "rankIC": 0.1720478868129875,
       "factorRankIC": {
         "score": 0.1720478868129875,
@@ -1648,7 +2980,8 @@
         "lowDrawdownScore": 0.19453020424603876,
         "lowVolatilityScore": 0.1465118810085253,
         "lowRiskScore": 0.1921059314347905
-      }
+      },
+      "sample": "research"
     },
     {
       "startDate": "2022-03-01",
@@ -1672,11 +3005,45 @@
         "COST",
         "DDOG"
       ],
+      "bottomTickers": [
+        "DIS",
+        "MMM",
+        "ECL",
+        "APP",
+        "ROST",
+        "ADBE",
+        "CRWD",
+        "META",
+        "NFLX",
+        "MELI",
+        "SPOT",
+        "PLTR",
+        "DASH",
+        "SHOP",
+        "PDD"
+      ],
       "topReturn": 0.06543622839216363,
+      "topNetReturn": 0.06503622839216364,
       "bottomReturn": 0.02844557647681166,
+      "bottomNetReturn": 0.028178909810144995,
       "equalUniverseReturn": 0.0467483733266413,
+      "equalUniverseNetReturn": 0.0467483733266413,
       "benchmarkReturn": 0.05662374143481719,
+      "benchmarkNetReturn": 0.05662374143481719,
       "spreadReturn": 0.036990651915351974,
+      "spreadNetReturn": 0.03632398524868531,
+      "turnover": {
+        "top": 0.4,
+        "bottom": 0.26666666666666666,
+        "equalUniverse": 0.0,
+        "benchmark": 0.0
+      },
+      "transactionCosts": {
+        "top": 0.0004,
+        "bottom": 0.0002666666666666667,
+        "equalUniverse": 0.0,
+        "benchmark": 0.0
+      },
       "rankIC": 0.1317068746598948,
       "factorRankIC": {
         "score": 0.1317068746598948,
@@ -1686,7 +3053,8 @@
         "lowDrawdownScore": 0.12732693079177415,
         "lowVolatilityScore": 0.032914928351169964,
         "lowRiskScore": 0.1232541266098313
-      }
+      },
+      "sample": "research"
     },
     {
       "startDate": "2022-04-01",
@@ -1710,11 +3078,45 @@
         "LLY",
         "NVDA"
       ],
+      "bottomTickers": [
+        "BA",
+        "ROST",
+        "CRM",
+        "ADBE",
+        "DIS",
+        "C",
+        "MELI",
+        "META",
+        "DASH",
+        "APP",
+        "NFLX",
+        "SPOT",
+        "PLTR",
+        "SHOP",
+        "PDD"
+      ],
       "topReturn": -0.0760220961778893,
+      "topNetReturn": -0.07628876284455596,
       "bottomReturn": -0.20360641458298856,
+      "bottomNetReturn": -0.20380641458298857,
       "equalUniverseReturn": -0.0864576042671637,
+      "equalUniverseNetReturn": -0.08646427093383037,
       "benchmarkReturn": -0.09034718439615563,
+      "benchmarkNetReturn": -0.09034718439615563,
       "spreadReturn": 0.12758431840509926,
+      "spreadNetReturn": 0.1271176517384326,
+      "turnover": {
+        "top": 0.26666666666666666,
+        "bottom": 0.2,
+        "equalUniverse": 0.006666666666666625,
+        "benchmark": 0.0
+      },
+      "transactionCosts": {
+        "top": 0.0002666666666666667,
+        "bottom": 0.0002,
+        "equalUniverse": 6.666666666666625e-06,
+        "benchmark": 0.0
+      },
       "rankIC": 0.256461176052269,
       "factorRankIC": {
         "score": 0.256461176052269,
@@ -1724,7 +3126,8 @@
         "lowDrawdownScore": 0.4509532703578541,
         "lowVolatilityScore": 0.5786637509784698,
         "lowRiskScore": 0.5394070847593226
-      }
+      },
+      "sample": "research"
     },
     {
       "startDate": "2022-05-01",
@@ -1748,11 +3151,45 @@
         "KO",
         "PANW"
       ],
+      "bottomTickers": [
+        "ADBE",
+        "SBUX",
+        "NET",
+        "CRM",
+        "BA",
+        "DIS",
+        "META",
+        "MELI",
+        "APP",
+        "SPOT",
+        "PLTR",
+        "NFLX",
+        "DASH",
+        "PDD",
+        "SHOP"
+      ],
       "topReturn": 0.03485304650373844,
+      "topNetReturn": 0.03451971317040511,
       "bottomReturn": -0.06089726221797072,
+      "bottomNetReturn": -0.06103059555130405,
       "equalUniverseReturn": -0.004030279153192179,
+      "equalUniverseNetReturn": -0.004030279153192179,
       "benchmarkReturn": -0.0058494323849250796,
+      "benchmarkNetReturn": -0.0058494323849250796,
       "spreadReturn": 0.09575030872170916,
+      "spreadNetReturn": 0.09528364205504249,
+      "turnover": {
+        "top": 0.3333333333333333,
+        "bottom": 0.13333333333333333,
+        "equalUniverse": 0.0,
+        "benchmark": 0.0
+      },
+      "transactionCosts": {
+        "top": 0.0003333333333333333,
+        "bottom": 0.00013333333333333334,
+        "equalUniverse": 0.0,
+        "benchmark": 0.0
+      },
       "rankIC": 0.006373639268058489,
       "factorRankIC": {
         "score": 0.006373639268058489,
@@ -1762,7 +3199,8 @@
         "lowDrawdownScore": -0.02739526315660868,
         "lowVolatilityScore": 0.09688872295794122,
         "lowRiskScore": 0.013435383220969262
-      }
+      },
+      "sample": "research"
     },
     {
       "startDate": "2022-06-01",
@@ -1786,11 +3224,45 @@
         "MRK",
         "ELV"
       ],
+      "bottomTickers": [
+        "CRWD",
+        "SBUX",
+        "CRM",
+        "ABNB",
+        "BA",
+        "PDD",
+        "META",
+        "NET",
+        "SPOT",
+        "NFLX",
+        "PLTR",
+        "APP",
+        "DASH",
+        "MELI",
+        "SHOP"
+      ],
       "topReturn": -0.045742032355590066,
+      "topNetReturn": -0.045942032355590065,
       "bottomReturn": -0.03537389870202542,
+      "bottomNetReturn": -0.03550723203535875,
       "equalUniverseReturn": -0.06817911958593233,
+      "equalUniverseNetReturn": -0.06817911958593233,
       "benchmarkReturn": -0.06519496354791987,
+      "benchmarkNetReturn": -0.06519496354791987,
       "spreadReturn": -0.010368133653564648,
+      "spreadNetReturn": -0.010701466986897981,
+      "turnover": {
+        "top": 0.2,
+        "bottom": 0.13333333333333333,
+        "equalUniverse": 0.0,
+        "benchmark": 0.0
+      },
+      "transactionCosts": {
+        "top": 0.0002,
+        "bottom": 0.00013333333333333334,
+        "equalUniverse": 0.0,
+        "benchmark": 0.0
+      },
       "rankIC": 0.2324106174643358,
       "factorRankIC": {
         "score": 0.2324106174643358,
@@ -1800,7 +3272,8 @@
         "lowDrawdownScore": 0.24126576168137262,
         "lowVolatilityScore": 0.38028651072041936,
         "lowRiskScore": 0.300440477870404
-      }
+      },
+      "sample": "research"
     },
     {
       "startDate": "2022-07-01",
@@ -1824,11 +3297,45 @@
         "RTX",
         "AZN"
       ],
+      "bottomTickers": [
+        "LRCX",
+        "ROST",
+        "AMAT",
+        "NVDA",
+        "ABNB",
+        "META",
+        "RCL",
+        "SPOT",
+        "APP",
+        "DASH",
+        "MELI",
+        "NET",
+        "NFLX",
+        "PLTR",
+        "SHOP"
+      ],
       "topReturn": -0.0040439170487611845,
+      "topNetReturn": -0.004310583715427851,
       "bottomReturn": 0.15159746820646441,
+      "bottomNetReturn": 0.1512641348731311,
       "equalUniverseReturn": 0.08447923984035195,
+      "equalUniverseNetReturn": 0.08447923984035195,
       "benchmarkReturn": 0.07745779694144206,
+      "benchmarkNetReturn": 0.07745779694144206,
       "spreadReturn": -0.1556413852552256,
+      "spreadNetReturn": -0.1562413852552256,
+      "turnover": {
+        "top": 0.26666666666666666,
+        "bottom": 0.3333333333333333,
+        "equalUniverse": 0.0,
+        "benchmark": 0.0
+      },
+      "transactionCosts": {
+        "top": 0.0002666666666666667,
+        "bottom": 0.0003333333333333333,
+        "equalUniverse": 0.0,
+        "benchmark": 0.0
+      },
       "rankIC": -0.5396117329741021,
       "factorRankIC": {
         "score": -0.5396117329741021,
@@ -1838,7 +3345,8 @@
         "lowDrawdownScore": -0.5200270292654676,
         "lowVolatilityScore": -0.5050665462629148,
         "lowRiskScore": -0.5211673284117969
-      }
+      },
+      "sample": "research"
     },
     {
       "startDate": "2022-08-01",
@@ -1862,11 +3370,45 @@
         "COP",
         "VRTX"
       ],
+      "bottomTickers": [
+        "COF",
+        "DDOG",
+        "CMCSA",
+        "ABNB",
+        "DIS",
+        "PLTR",
+        "MELI",
+        "META",
+        "RCL",
+        "SPOT",
+        "NFLX",
+        "APP",
+        "DASH",
+        "NET",
+        "SHOP"
+      ],
       "topReturn": 0.00744824542107118,
+      "topNetReturn": 0.006914912087737846,
       "bottomReturn": -0.03874964024673939,
+      "bottomNetReturn": -0.03901630691340605,
       "equalUniverseReturn": -0.031549851197413714,
+      "equalUniverseNetReturn": -0.031549851197413714,
       "benchmarkReturn": -0.034934284936577464,
+      "benchmarkNetReturn": -0.034934284936577464,
       "spreadReturn": 0.046197885667810565,
+      "spreadNetReturn": 0.04539788566781057,
+      "turnover": {
+        "top": 0.5333333333333333,
+        "bottom": 0.26666666666666666,
+        "equalUniverse": 0.0,
+        "benchmark": 0.0
+      },
+      "transactionCosts": {
+        "top": 0.0005333333333333334,
+        "bottom": 0.0002666666666666667,
+        "equalUniverse": 0.0,
+        "benchmark": 0.0
+      },
       "rankIC": 0.12886909524572673,
       "factorRankIC": {
         "score": 0.12886909524572673,
@@ -1876,7 +3418,8 @@
         "lowDrawdownScore": 0.14751992503434608,
         "lowVolatilityScore": 0.2501898010826967,
         "lowRiskScore": 0.19006160386316556
-      }
+      },
+      "sample": "research"
     },
     {
       "startDate": "2022-09-01",
@@ -1900,11 +3443,45 @@
         "UNH",
         "TMUS"
       ],
+      "bottomTickers": [
+        "MRVL",
+        "CRM",
+        "ASML",
+        "ISRG",
+        "MELI",
+        "DDOG",
+        "SPOT",
+        "NVDA",
+        "RCL",
+        "NFLX",
+        "PLTR",
+        "APP",
+        "DASH",
+        "NET",
+        "SHOP"
+      ],
       "topReturn": -0.05008497471222267,
+      "topNetReturn": -0.050418308045556,
       "bottomReturn": -0.08867981899649363,
+      "bottomNetReturn": -0.08901315232982697,
       "equalUniverseReturn": -0.09202879022431931,
+      "equalUniverseNetReturn": -0.09202879022431931,
       "benchmarkReturn": -0.09528472670639532,
+      "benchmarkNetReturn": -0.09528472670639532,
       "spreadReturn": 0.038594844284270964,
+      "spreadNetReturn": 0.0379281776176043,
+      "turnover": {
+        "top": 0.3333333333333333,
+        "bottom": 0.3333333333333333,
+        "equalUniverse": 0.0,
+        "benchmark": 0.0
+      },
+      "transactionCosts": {
+        "top": 0.0003333333333333333,
+        "bottom": 0.0003333333333333333,
+        "equalUniverse": 0.0,
+        "benchmark": 0.0
+      },
       "rankIC": 0.3256084769094105,
       "factorRankIC": {
         "score": 0.3256084769094105,
@@ -1914,7 +3491,8 @@
         "lowDrawdownScore": 0.30171909568418803,
         "lowVolatilityScore": 0.11363026219216234,
         "lowRiskScore": 0.26553771757765066
-      }
+      },
+      "sample": "research"
     },
     {
       "startDate": "2022-10-01",
@@ -1938,11 +3516,45 @@
         "WM",
         "GILD"
       ],
+      "bottomTickers": [
+        "ABNB",
+        "ADBE",
+        "AMD",
+        "META",
+        "DDOG",
+        "NVDA",
+        "MELI",
+        "SPOT",
+        "NFLX",
+        "RCL",
+        "PLTR",
+        "APP",
+        "DASH",
+        "NET",
+        "SHOP"
+      ],
       "topReturn": 0.12408962883067187,
+      "topNetReturn": 0.12388962883067187,
       "bottomReturn": 0.04234734882196102,
+      "bottomNetReturn": 0.042080682155294355,
       "equalUniverseReturn": 0.0982420879644392,
+      "equalUniverseNetReturn": 0.0982420879644392,
       "benchmarkReturn": 0.07654406475780773,
+      "benchmarkNetReturn": 0.07654406475780773,
       "spreadReturn": 0.08174228000871085,
+      "spreadNetReturn": 0.08127561334204418,
+      "turnover": {
+        "top": 0.2,
+        "bottom": 0.26666666666666666,
+        "equalUniverse": 0.0,
+        "benchmark": 0.0
+      },
+      "transactionCosts": {
+        "top": 0.0002,
+        "bottom": 0.0002666666666666667,
+        "equalUniverse": 0.0,
+        "benchmark": 0.0
+      },
       "rankIC": 0.08777534802202903,
       "factorRankIC": {
         "score": 0.08777534802202903,
@@ -1952,7 +3564,8 @@
         "lowDrawdownScore": 0.09803283786529024,
         "lowVolatilityScore": 0.11409573173272958,
         "lowRiskScore": 0.11907301723229011
-      }
+      },
+      "sample": "research"
     },
     {
       "startDate": "2022-11-01",
@@ -1976,11 +3589,45 @@
         "MRK",
         "ELV"
       ],
+      "bottomTickers": [
+        "PLTR",
+        "TSLA",
+        "SHOP",
+        "ABNB",
+        "INTC",
+        "SPOT",
+        "RCL",
+        "MRVL",
+        "AMD",
+        "NVDA",
+        "META",
+        "DDOG",
+        "APP",
+        "DASH",
+        "NET"
+      ],
       "topReturn": 0.02161619731880736,
+      "topNetReturn": 0.021349530652140694,
       "bottomReturn": 0.07336031967045971,
+      "bottomNetReturn": 0.0731603196704597,
       "equalUniverseReturn": 0.08142655242517635,
+      "equalUniverseNetReturn": 0.08142655242517635,
       "benchmarkReturn": 0.05945066544504485,
+      "benchmarkNetReturn": 0.05945066544504485,
       "spreadReturn": -0.05174412235165235,
+      "spreadNetReturn": -0.052210789018319013,
+      "turnover": {
+        "top": 0.26666666666666666,
+        "bottom": 0.2,
+        "equalUniverse": 0.0,
+        "benchmark": 0.0
+      },
+      "transactionCosts": {
+        "top": 0.0002666666666666667,
+        "bottom": 0.0002,
+        "equalUniverse": 0.0,
+        "benchmark": 0.0
+      },
       "rankIC": -0.22606774014184472,
       "factorRankIC": {
         "score": -0.22606774014184472,
@@ -1990,7 +3637,8 @@
         "lowDrawdownScore": -0.25011069090543464,
         "lowVolatilityScore": -0.11044062832048548,
         "lowRiskScore": -0.2496435365540348
-      }
+      },
+      "sample": "research"
     },
     {
       "startDate": "2022-12-01",
@@ -2014,11 +3662,45 @@
         "TJX",
         "ADP"
       ],
+      "bottomTickers": [
+        "NET",
+        "CRM",
+        "ADBE",
+        "AMZN",
+        "MU",
+        "MRVL",
+        "TSLA",
+        "CRWD",
+        "DDOG",
+        "AMD",
+        "DASH",
+        "INTC",
+        "SPOT",
+        "META",
+        "APP"
+      ],
       "topReturn": -0.03827120821349605,
+      "topNetReturn": -0.03873787488016271,
       "bottomReturn": -0.1252948908702812,
+      "bottomNetReturn": -0.12562822420361452,
       "equalUniverseReturn": -0.05480514036288511,
+      "equalUniverseNetReturn": -0.05480514036288511,
       "benchmarkReturn": -0.05693439860170735,
+      "benchmarkNetReturn": -0.05693439860170735,
       "spreadReturn": 0.08702368265678515,
+      "spreadNetReturn": 0.08622368265678514,
+      "turnover": {
+        "top": 0.4666666666666667,
+        "bottom": 0.3333333333333333,
+        "equalUniverse": 0.0,
+        "benchmark": 0.0
+      },
+      "transactionCosts": {
+        "top": 0.00046666666666666666,
+        "bottom": 0.0003333333333333333,
+        "equalUniverse": 0.0,
+        "benchmark": 0.0
+      },
       "rankIC": 0.3727116760744922,
       "factorRankIC": {
         "score": 0.3727116760744922,
@@ -2028,7 +3710,8 @@
         "lowDrawdownScore": 0.4589372284031103,
         "lowVolatilityScore": 0.4905132718383219,
         "lowRiskScore": 0.48498150133735207
-      }
+      },
+      "sample": "research"
     },
     {
       "startDate": "2023-01-01",
@@ -2052,11 +3735,45 @@
         "BA",
         "CMI"
       ],
+      "bottomTickers": [
+        "FDX",
+        "MRVL",
+        "GOOGL",
+        "NOW",
+        "CRM",
+        "SPOT",
+        "AMZN",
+        "INTC",
+        "META",
+        "DDOG",
+        "DASH",
+        "CRWD",
+        "PLTR",
+        "TSLA",
+        "APP"
+      ],
       "topReturn": 0.017636121813957482,
+      "topNetReturn": 0.017169455147290815,
       "bottomReturn": 0.23927242687391045,
+      "bottomNetReturn": 0.2390057602072438,
       "equalUniverseReturn": 0.09603889316089993,
+      "equalUniverseNetReturn": 0.09603889316089993,
       "benchmarkReturn": 0.07418364540949063,
+      "benchmarkNetReturn": 0.07418364540949063,
       "spreadReturn": -0.22163630505995296,
+      "spreadNetReturn": -0.2223696383932863,
+      "turnover": {
+        "top": 0.4666666666666667,
+        "bottom": 0.26666666666666666,
+        "equalUniverse": 0.0,
+        "benchmark": 0.0
+      },
+      "transactionCosts": {
+        "top": 0.00046666666666666666,
+        "bottom": 0.0002666666666666667,
+        "equalUniverse": 0.0,
+        "benchmark": 0.0
+      },
       "rankIC": -0.49902484554869103,
       "factorRankIC": {
         "score": -0.49902484554869103,
@@ -2066,7 +3783,8 @@
         "lowDrawdownScore": -0.7519017859162921,
         "lowVolatilityScore": -0.7567863076462457,
         "lowRiskScore": -0.7968876811307484
-      }
+      },
+      "sample": "research"
     },
     {
       "startDate": "2023-02-01",
@@ -2090,11 +3808,45 @@
         "SYK",
         "COP"
       ],
+      "bottomTickers": [
+        "NET",
+        "GOOG",
+        "GOOGL",
+        "META",
+        "MMM",
+        "AMD",
+        "INTC",
+        "MRVL",
+        "AMZN",
+        "DASH",
+        "DDOG",
+        "PLTR",
+        "CRWD",
+        "TSLA",
+        "APP"
+      ],
       "topReturn": -0.05221163145685401,
+      "topNetReturn": -0.05274496479018734,
       "bottomReturn": -0.028046452993978996,
+      "bottomNetReturn": -0.02831311966064566,
       "equalUniverseReturn": -0.034143716619088875,
+      "equalUniverseNetReturn": -0.034143716619088875,
       "benchmarkReturn": -0.03909431865450541,
+      "benchmarkNetReturn": -0.03909431865450541,
       "spreadReturn": -0.02416517846287501,
+      "spreadNetReturn": -0.02496517846287501,
+      "turnover": {
+        "top": 0.5333333333333333,
+        "bottom": 0.26666666666666666,
+        "equalUniverse": 0.0,
+        "benchmark": 0.0
+      },
+      "transactionCosts": {
+        "top": 0.0005333333333333334,
+        "bottom": 0.0002666666666666667,
+        "equalUniverse": 0.0,
+        "benchmark": 0.0
+      },
       "rankIC": 0.05737321658740389,
       "factorRankIC": {
         "score": 0.05737321658740389,
@@ -2104,7 +3856,8 @@
         "lowDrawdownScore": 0.05583992809796815,
         "lowVolatilityScore": 0.11918229181949846,
         "lowRiskScore": 0.11386639406195831
-      }
+      },
+      "sample": "research"
     },
     {
       "startDate": "2023-03-01",
@@ -2128,11 +3881,45 @@
         "ETN",
         "LIN"
       ],
+      "bottomTickers": [
+        "MRVL",
+        "PLTR",
+        "AMD",
+        "DIS",
+        "ADBE",
+        "GOOGL",
+        "GOOG",
+        "NET",
+        "DASH",
+        "INTC",
+        "TSLA",
+        "AMZN",
+        "CRWD",
+        "DDOG",
+        "APP"
+      ],
       "topReturn": 0.014155827660156677,
+      "topNetReturn": 0.01368916099349001,
       "bottomReturn": 0.11741601544992825,
+      "bottomNetReturn": 0.11728268211659491,
       "equalUniverseReturn": 0.03489992174785525,
+      "equalUniverseNetReturn": 0.03489992174785525,
       "benchmarkReturn": 0.04107102084008463,
+      "benchmarkNetReturn": 0.04107102084008463,
       "spreadReturn": -0.10326018778977157,
+      "spreadNetReturn": -0.10386018778977157,
+      "turnover": {
+        "top": 0.4666666666666667,
+        "bottom": 0.13333333333333333,
+        "equalUniverse": 0.0,
+        "benchmark": 0.0
+      },
+      "transactionCosts": {
+        "top": 0.00046666666666666666,
+        "bottom": 0.00013333333333333334,
+        "equalUniverse": 0.0,
+        "benchmark": 0.0
+      },
       "rankIC": -0.2049246633183697,
       "factorRankIC": {
         "score": -0.2049246633183697,
@@ -2142,7 +3929,8 @@
         "lowDrawdownScore": -0.2322256386734894,
         "lowVolatilityScore": -0.30690813539114786,
         "lowRiskScore": -0.2817245210898262
-      }
+      },
+      "sample": "research"
     },
     {
       "startDate": "2023-04-01",
@@ -2166,11 +3954,45 @@
         "AMAT",
         "HCA"
       ],
+      "bottomTickers": [
+        "NET",
+        "MMM",
+        "WFC",
+        "BAC",
+        "PLTR",
+        "MRVL",
+        "USB",
+        "PNC",
+        "AMZN",
+        "CVS",
+        "CRWD",
+        "DDOG",
+        "TSLA",
+        "SCHW",
+        "APP"
+      ],
       "topReturn": -0.004813306354395393,
+      "topNetReturn": -0.005413306354395393,
       "bottomReturn": -0.05625300376820858,
+      "bottomNetReturn": -0.05671967043487525,
       "equalUniverseReturn": 0.001932081240106971,
+      "equalUniverseNetReturn": 0.001932081240106971,
       "benchmarkReturn": 0.014949140490047474,
+      "benchmarkNetReturn": 0.014949140490047474,
       "spreadReturn": 0.05143969741381319,
+      "spreadNetReturn": 0.050373030747146524,
+      "turnover": {
+        "top": 0.6,
+        "bottom": 0.4666666666666667,
+        "equalUniverse": 0.0,
+        "benchmark": 0.0
+      },
+      "transactionCosts": {
+        "top": 0.0006,
+        "bottom": 0.00046666666666666666,
+        "equalUniverse": 0.0,
+        "benchmark": 0.0
+      },
       "rankIC": -0.00014756211387172762,
       "factorRankIC": {
         "score": -0.00014756211387172762,
@@ -2180,7 +4002,8 @@
         "lowDrawdownScore": 0.1131563141155071,
         "lowVolatilityScore": 0.42041194756401123,
         "lowRiskScore": 0.24616738521712075
-      }
+      },
+      "sample": "research"
     },
     {
       "startDate": "2023-05-01",
@@ -2204,11 +4027,45 @@
         "ANET",
         "AMD"
       ],
+      "bottomTickers": [
+        "COP",
+        "MRVL",
+        "COF",
+        "MMM",
+        "PLTR",
+        "BAC",
+        "CVS",
+        "APP",
+        "PNC",
+        "USB",
+        "DDOG",
+        "SCHW",
+        "NET",
+        "CRWD",
+        "TSLA"
+      ],
       "topReturn": 0.07013260051670692,
+      "topNetReturn": 0.06973260051670692,
       "bottomReturn": 0.22276931572168876,
+      "bottomNetReturn": 0.2226359823883554,
       "equalUniverseReturn": 0.032503694615526574,
+      "equalUniverseNetReturn": 0.032503694615526574,
       "benchmarkReturn": 0.015186083468823997,
+      "benchmarkNetReturn": 0.015186083468823997,
       "spreadReturn": -0.15263671520498184,
+      "spreadNetReturn": -0.1531700485383152,
+      "turnover": {
+        "top": 0.4,
+        "bottom": 0.13333333333333333,
+        "equalUniverse": 0.0,
+        "benchmark": 0.0
+      },
+      "transactionCosts": {
+        "top": 0.0004,
+        "bottom": 0.00013333333333333334,
+        "equalUniverse": 0.0,
+        "benchmark": 0.0
+      },
       "rankIC": 0.06106049157740344,
       "factorRankIC": {
         "score": 0.06106049157740344,
@@ -2218,7 +4075,8 @@
         "lowDrawdownScore": -0.1395059687582478,
         "lowVolatilityScore": -0.6179142343344228,
         "lowRiskScore": -0.3740059558202587
-      }
+      },
+      "sample": "research"
     },
     {
       "startDate": "2023-06-01",
@@ -2242,11 +4100,45 @@
         "ORCL",
         "NET"
       ],
+      "bottomTickers": [
+        "WMB",
+        "DHR",
+        "GD",
+        "ADP",
+        "DE",
+        "BMY",
+        "T",
+        "COP",
+        "AMGN",
+        "BAC",
+        "MMM",
+        "PNC",
+        "CVS",
+        "SCHW",
+        "USB"
+      ],
       "topReturn": 0.04971118214883355,
+      "topNetReturn": 0.049244515482166885,
       "bottomReturn": 0.05461288084867956,
+      "bottomNetReturn": 0.05407954751534623,
       "equalUniverseReturn": 0.06054684752217677,
+      "equalUniverseNetReturn": 0.06054684752217677,
       "benchmarkReturn": 0.054778381012020594,
+      "benchmarkNetReturn": 0.054778381012020594,
       "spreadReturn": -0.0049016986998460105,
+      "spreadNetReturn": -0.0059016986998460105,
+      "turnover": {
+        "top": 0.4666666666666667,
+        "bottom": 0.5333333333333333,
+        "equalUniverse": 0.0,
+        "benchmark": 0.0
+      },
+      "transactionCosts": {
+        "top": 0.00046666666666666666,
+        "bottom": 0.0005333333333333334,
+        "equalUniverse": 0.0,
+        "benchmark": 0.0
+      },
       "rankIC": -0.01978576825636695,
       "factorRankIC": {
         "score": -0.01978576825636695,
@@ -2256,7 +4148,8 @@
         "lowDrawdownScore": 0.01698212183947975,
         "lowVolatilityScore": -0.056587403884617096,
         "lowRiskScore": 0.027046535401573403
-      }
+      },
+      "sample": "research"
     },
     {
       "startDate": "2023-07-01",
@@ -2280,11 +4173,45 @@
         "TDG",
         "AAPL"
       ],
+      "bottomTickers": [
+        "GD",
+        "DHR",
+        "BMY",
+        "DUK",
+        "ELV",
+        "BAC",
+        "AMGN",
+        "ABBV",
+        "T",
+        "PDD",
+        "MMM",
+        "PNC",
+        "USB",
+        "CVS",
+        "SCHW"
+      ],
       "topReturn": 0.05379352586452166,
+      "topNetReturn": 0.053460192531188326,
       "bottomReturn": 0.0831709059900493,
+      "bottomNetReturn": 0.08290423932338263,
       "equalUniverseReturn": 0.043231695934362734,
+      "equalUniverseNetReturn": 0.043231695934362734,
       "benchmarkReturn": 0.02977801016725401,
+      "benchmarkNetReturn": 0.02977801016725401,
       "spreadReturn": -0.02937738012552764,
+      "spreadNetReturn": -0.02997738012552764,
+      "turnover": {
+        "top": 0.3333333333333333,
+        "bottom": 0.26666666666666666,
+        "equalUniverse": 0.0,
+        "benchmark": 0.0
+      },
+      "transactionCosts": {
+        "top": 0.0003333333333333333,
+        "bottom": 0.0002666666666666667,
+        "equalUniverse": 0.0,
+        "benchmark": 0.0
+      },
       "rankIC": -0.014359749322192097,
       "factorRankIC": {
         "score": -0.014359749322192097,
@@ -2294,7 +4221,8 @@
         "lowDrawdownScore": -0.33108267784525647,
         "lowVolatilityScore": -0.5044579759100405,
         "lowRiskScore": -0.5000773367705231
-      }
+      },
+      "sample": "research"
     },
     {
       "startDate": "2023-08-01",
@@ -2318,11 +4246,45 @@
         "AMAT",
         "DASH"
       ],
+      "bottomTickers": [
+        "TMUS",
+        "NEE",
+        "AMGN",
+        "C",
+        "DUK",
+        "RTX",
+        "BAC",
+        "SCHW",
+        "BMY",
+        "PNC",
+        "CVS",
+        "VZ",
+        "DIS",
+        "USB",
+        "T"
+      ],
       "topReturn": -0.03925675501534716,
+      "topNetReturn": -0.03952342168201382,
       "bottomReturn": -0.03443774666269849,
+      "bottomNetReturn": -0.03483774666269849,
       "equalUniverseReturn": -0.010774888296383177,
+      "equalUniverseNetReturn": -0.010774888296383177,
       "benchmarkReturn": -0.01158873887049372,
+      "benchmarkNetReturn": -0.01158873887049372,
       "spreadReturn": -0.004819008352648667,
+      "spreadNetReturn": -0.005485675019315334,
+      "turnover": {
+        "top": 0.26666666666666666,
+        "bottom": 0.4,
+        "equalUniverse": 0.0,
+        "benchmark": 0.0
+      },
+      "transactionCosts": {
+        "top": 0.0002666666666666667,
+        "bottom": 0.0004,
+        "equalUniverse": 0.0,
+        "benchmark": 0.0
+      },
       "rankIC": 0.09270634250411129,
       "factorRankIC": {
         "score": 0.09270634250411129,
@@ -2332,7 +4294,8 @@
         "lowDrawdownScore": -0.003060551093279247,
         "lowVolatilityScore": 0.18032623672163206,
         "lowRiskScore": 0.12087114982888128
-      }
+      },
+      "sample": "research"
     },
     {
       "startDate": "2023-09-01",
@@ -2356,11 +4319,45 @@
         "GE",
         "ETN"
       ],
+      "bottomTickers": [
+        "WFC",
+        "QCOM",
+        "VZ",
+        "UPS",
+        "BMY",
+        "RTX",
+        "NEE",
+        "BAC",
+        "C",
+        "T",
+        "PNC",
+        "USB",
+        "DIS",
+        "SCHW",
+        "CVS"
+      ],
       "topReturn": -0.07185633285281005,
+      "topNetReturn": -0.07218966618614339,
       "bottomReturn": -0.04934593808053376,
+      "bottomNetReturn": -0.04954593808053376,
       "equalUniverseReturn": -0.04480819841708874,
+      "equalUniverseNetReturn": -0.04480819841708874,
       "benchmarkReturn": -0.049207860788842206,
+      "benchmarkNetReturn": -0.049207860788842206,
       "spreadReturn": -0.022510394772276295,
+      "spreadNetReturn": -0.023043728105609628,
+      "turnover": {
+        "top": 0.3333333333333333,
+        "bottom": 0.2,
+        "equalUniverse": 0.0,
+        "benchmark": 0.0
+      },
+      "transactionCosts": {
+        "top": 0.0003333333333333333,
+        "bottom": 0.0002,
+        "equalUniverse": 0.0,
+        "benchmark": 0.0
+      },
       "rankIC": -0.1822783234810436,
       "factorRankIC": {
         "score": -0.1822783234810436,
@@ -2370,7 +4367,8 @@
         "lowDrawdownScore": -0.2003192708192361,
         "lowVolatilityScore": 0.115110893817503,
         "lowRiskScore": -0.02892750788923952
-      }
+      },
+      "sample": "research"
     },
     {
       "startDate": "2023-10-01",
@@ -2394,11 +4392,45 @@
         "CAT",
         "BKNG"
       ],
+      "bottomTickers": [
+        "C",
+        "FTNT",
+        "TXN",
+        "TMO",
+        "QCOM",
+        "USB",
+        "MMM",
+        "CVS",
+        "VZ",
+        "UPS",
+        "T",
+        "BMY",
+        "DIS",
+        "RTX",
+        "NEE"
+      ],
       "topReturn": -0.02342229519269549,
+      "topNetReturn": -0.023822295192695492,
       "bottomReturn": -0.01563060560450471,
+      "bottomNetReturn": -0.015897272271171374,
       "equalUniverseReturn": -0.013491997767912317,
+      "equalUniverseNetReturn": -0.013491997767912317,
       "benchmarkReturn": -0.011275485015173614,
+      "benchmarkNetReturn": -0.011275485015173614,
       "spreadReturn": -0.007791689588190782,
+      "spreadNetReturn": -0.008458356254857448,
+      "turnover": {
+        "top": 0.4,
+        "bottom": 0.26666666666666666,
+        "equalUniverse": 0.0,
+        "benchmark": 0.0
+      },
+      "transactionCosts": {
+        "top": 0.0004,
+        "bottom": 0.0002666666666666667,
+        "equalUniverse": 0.0,
+        "benchmark": 0.0
+      },
       "rankIC": 0.045052669007511446,
       "factorRankIC": {
         "score": 0.045052669007511446,
@@ -2408,7 +4440,8 @@
         "lowDrawdownScore": 0.1423334370416463,
         "lowVolatilityScore": 0.04709720432019201,
         "lowRiskScore": 0.09807547002088982
-      }
+      },
+      "sample": "research"
     },
     {
       "startDate": "2023-11-01",
@@ -2432,11 +4465,45 @@
         "NOW",
         "SPOT"
       ],
+      "bottomTickers": [
+        "TXN",
+        "C",
+        "DHR",
+        "SBUX",
+        "MMM",
+        "HCA",
+        "RTX",
+        "MS",
+        "JCI",
+        "GLW",
+        "TMO",
+        "UPS",
+        "DIS",
+        "NEE",
+        "BMY"
+      ],
       "topReturn": 0.14803366527379141,
+      "topNetReturn": 0.1476336652737914,
       "bottomReturn": 0.10068175720999488,
+      "bottomNetReturn": 0.10028175720999488,
       "equalUniverseReturn": 0.11136153252196505,
+      "equalUniverseNetReturn": 0.11135491000540876,
       "benchmarkReturn": 0.08621594224946372,
+      "benchmarkNetReturn": 0.08621594224946372,
       "spreadReturn": 0.047351908063796536,
+      "spreadNetReturn": 0.04655190806379654,
+      "turnover": {
+        "top": 0.4,
+        "bottom": 0.4,
+        "equalUniverse": 0.006622516556291423,
+        "benchmark": 0.0
+      },
+      "transactionCosts": {
+        "top": 0.0004,
+        "bottom": 0.0004,
+        "equalUniverse": 6.6225165562914226e-06,
+        "benchmark": 0.0
+      },
       "rankIC": 0.060512373649355175,
       "factorRankIC": {
         "score": 0.060512373649355175,
@@ -2446,7 +4513,8 @@
         "lowDrawdownScore": -0.3667082317082533,
         "lowVolatilityScore": -0.3897455559428372,
         "lowRiskScore": -0.45710700592540954
-      }
+      },
+      "sample": "research"
     },
     {
       "startDate": "2023-12-01",
@@ -2470,11 +4538,45 @@
         "NOW",
         "SHOP"
       ],
+      "bottomTickers": [
+        "MRK",
+        "PEP",
+        "TMO",
+        "CVX",
+        "GLW",
+        "UPS",
+        "MRVL",
+        "CVS",
+        "AZN",
+        "TXN",
+        "JCI",
+        "RTX",
+        "NEE",
+        "FTNT",
+        "BMY"
+      ],
       "topReturn": 0.027358786172793734,
+      "topNetReturn": 0.026892119506127066,
       "bottomReturn": 0.062497725610641194,
+      "bottomNetReturn": 0.06203105894397453,
       "equalUniverseReturn": 0.048573456396914676,
+      "equalUniverseNetReturn": 0.048573456396914676,
       "benchmarkReturn": 0.0395057523273572,
+      "benchmarkNetReturn": 0.0395057523273572,
       "spreadReturn": -0.03513893943784746,
+      "spreadNetReturn": -0.03607227277118079,
+      "turnover": {
+        "top": 0.4666666666666667,
+        "bottom": 0.4666666666666667,
+        "equalUniverse": 0.0,
+        "benchmark": 0.0
+      },
+      "transactionCosts": {
+        "top": 0.00046666666666666666,
+        "bottom": 0.00046666666666666666,
+        "equalUniverse": 0.0,
+        "benchmark": 0.0
+      },
       "rankIC": -0.12453468107354479,
       "factorRankIC": {
         "score": -0.12453468107354479,
@@ -2484,7 +4586,8 @@
         "lowDrawdownScore": -0.18126509614752942,
         "lowVolatilityScore": -0.20135935866155455,
         "lowRiskScore": -0.23046009062391076
-      }
+      },
+      "sample": "research"
     },
     {
       "startDate": "2024-01-01",
@@ -2508,11 +4611,45 @@
         "RCL",
         "NET"
       ],
+      "bottomTickers": [
+        "ORCL",
+        "AZN",
+        "JNJ",
+        "HCA",
+        "MO",
+        "PEP",
+        "XOM",
+        "CVX",
+        "GLW",
+        "UPS",
+        "JCI",
+        "RTX",
+        "FTNT",
+        "NEE",
+        "BMY"
+      ],
       "topReturn": 0.0391139384023431,
+      "topNetReturn": 0.03864727173567643,
       "bottomReturn": 0.026477792563711966,
+      "bottomNetReturn": 0.02614445923037863,
       "equalUniverseReturn": 0.03370184382534601,
+      "equalUniverseNetReturn": 0.03370184382534601,
       "benchmarkReturn": 0.029223149613694765,
+      "benchmarkNetReturn": 0.029223149613694765,
       "spreadReturn": 0.012636145838631131,
+      "spreadNetReturn": 0.01183614583863113,
+      "turnover": {
+        "top": 0.4666666666666667,
+        "bottom": 0.3333333333333333,
+        "equalUniverse": 0.0,
+        "benchmark": 0.0
+      },
+      "transactionCosts": {
+        "top": 0.00046666666666666666,
+        "bottom": 0.0003333333333333333,
+        "equalUniverse": 0.0,
+        "benchmark": 0.0
+      },
       "rankIC": 0.18131056117113978,
       "factorRankIC": {
         "score": 0.18131056117113978,
@@ -2522,7 +4659,8 @@
         "lowDrawdownScore": 0.15186716391484786,
         "lowVolatilityScore": -0.042666434297664695,
         "lowRiskScore": 0.09556988497734402
-      }
+      },
+      "sample": "evaluation"
     },
     {
       "startDate": "2024-02-01",
@@ -2546,11 +4684,45 @@
         "PDD",
         "CEG"
       ],
+      "bottomTickers": [
+        "CVS",
+        "FTNT",
+        "FCX",
+        "TXN",
+        "CVX",
+        "DE",
+        "SCHW",
+        "SBUX",
+        "BA",
+        "MMM",
+        "JCI",
+        "NEE",
+        "UPS",
+        "BMY",
+        "TSLA"
+      ],
       "topReturn": 0.08931408600643902,
+      "topNetReturn": 0.08878075267310569,
       "bottomReturn": 0.018036831986995232,
+      "bottomNetReturn": 0.017436831986995232,
       "equalUniverseReturn": 0.06013179918605416,
+      "equalUniverseNetReturn": 0.06013179918605416,
       "benchmarkReturn": 0.04834406132735358,
+      "benchmarkNetReturn": 0.04834406132735358,
       "spreadReturn": 0.07127725401944379,
+      "spreadNetReturn": 0.07014392068611046,
+      "turnover": {
+        "top": 0.5333333333333333,
+        "bottom": 0.6,
+        "equalUniverse": 0.0,
+        "benchmark": 0.0
+      },
+      "transactionCosts": {
+        "top": 0.0005333333333333334,
+        "bottom": 0.0006,
+        "equalUniverse": 0.0,
+        "benchmark": 0.0
+      },
       "rankIC": 0.24938306029975602,
       "factorRankIC": {
         "score": 0.24938306029975602,
@@ -2560,7 +4732,8 @@
         "lowDrawdownScore": 0.09242469655575913,
         "lowVolatilityScore": -0.2565737190658766,
         "lowRiskScore": -0.09067967933077728
-      }
+      },
+      "sample": "evaluation"
     },
     {
       "startDate": "2024-03-01",
@@ -2584,11 +4757,45 @@
         "NFLX",
         "LLY"
       ],
+      "bottomTickers": [
+        "MO",
+        "PM",
+        "ARM",
+        "SBUX",
+        "PEP",
+        "GILD",
+        "FCX",
+        "CSCO",
+        "DE",
+        "MMM",
+        "BA",
+        "UPS",
+        "BMY",
+        "TSLA",
+        "NEE"
+      ],
       "topReturn": 0.0020424939573322255,
+      "topNetReturn": 0.0015758272906655588,
       "bottomReturn": 0.04454754214820454,
+      "bottomNetReturn": 0.044147542148204544,
       "equalUniverseReturn": 0.025862187511148167,
+      "equalUniverseNetReturn": 0.025862187511148167,
       "benchmarkReturn": 0.021317041336096132,
+      "benchmarkNetReturn": 0.021317041336096132,
       "spreadReturn": -0.042505048190872315,
+      "spreadNetReturn": -0.043371714857538976,
+      "turnover": {
+        "top": 0.4666666666666667,
+        "bottom": 0.4,
+        "equalUniverse": 0.0,
+        "benchmark": 0.0
+      },
+      "transactionCosts": {
+        "top": 0.00046666666666666666,
+        "bottom": 0.0004,
+        "equalUniverse": 0.0,
+        "benchmark": 0.0
+      },
       "rankIC": -0.15959219240153363,
       "factorRankIC": {
         "score": -0.15959219240153363,
@@ -2598,7 +4805,8 @@
         "lowDrawdownScore": -0.1438442622351219,
         "lowVolatilityScore": 0.04845590798187522,
         "lowRiskScore": -0.06391425583827118
-      }
+      },
+      "sample": "evaluation"
     },
     {
       "startDate": "2024-04-01",
@@ -2622,11 +4830,45 @@
         "NVDA",
         "ETN"
       ],
+      "bottomTickers": [
+        "ADBE",
+        "MDLZ",
+        "PM",
+        "AZN",
+        "CMCSA",
+        "AAPL",
+        "UNH",
+        "CVX",
+        "SBUX",
+        "GILD",
+        "CSCO",
+        "BA",
+        "UPS",
+        "BMY",
+        "TSLA"
+      ],
       "topReturn": -0.052354726761760575,
+      "topNetReturn": -0.05268806009509391,
       "bottomReturn": -0.03645788959466035,
+      "bottomNetReturn": -0.03692455626132701,
       "equalUniverseReturn": -0.039101213049367985,
+      "equalUniverseNetReturn": -0.039101213049367985,
       "benchmarkReturn": -0.0417688882497268,
+      "benchmarkNetReturn": -0.0417688882497268,
       "spreadReturn": -0.015896837167100226,
+      "spreadNetReturn": -0.01669683716710023,
+      "turnover": {
+        "top": 0.3333333333333333,
+        "bottom": 0.4666666666666667,
+        "equalUniverse": 0.0,
+        "benchmark": 0.0
+      },
+      "transactionCosts": {
+        "top": 0.0003333333333333333,
+        "bottom": 0.00046666666666666666,
+        "equalUniverse": 0.0,
+        "benchmark": 0.0
+      },
       "rankIC": -0.18298710352039038,
       "factorRankIC": {
         "score": -0.18298710352039038,
@@ -2636,7 +4878,8 @@
         "lowDrawdownScore": 0.17662471328345572,
         "lowVolatilityScore": 0.1935831300104566,
         "lowRiskScore": 0.23038340885325898
-      }
+      },
+      "sample": "evaluation"
     },
     {
       "startDate": "2024-05-01",
@@ -2660,11 +4903,45 @@
         "APP",
         "WFC"
       ],
+      "bottomTickers": [
+        "JNJ",
+        "UPS",
+        "AAPL",
+        "EQIX",
+        "ADBE",
+        "CSCO",
+        "CMCSA",
+        "UNH",
+        "TSLA",
+        "BA",
+        "GILD",
+        "INTC",
+        "BMY",
+        "CVS",
+        "SBUX"
+      ],
       "topReturn": 0.0642265022744927,
+      "topNetReturn": 0.06389316894115936,
       "bottomReturn": 0.019491686507924832,
+      "bottomNetReturn": 0.019225019841258167,
       "equalUniverseReturn": 0.04514830458346466,
+      "equalUniverseNetReturn": 0.04514830458346466,
       "benchmarkReturn": 0.05400235756119254,
+      "benchmarkNetReturn": 0.05400235756119254,
       "spreadReturn": 0.04473481576656786,
+      "spreadNetReturn": 0.044134815766567866,
+      "turnover": {
+        "top": 0.3333333333333333,
+        "bottom": 0.26666666666666666,
+        "equalUniverse": 0.0,
+        "benchmark": 0.0
+      },
+      "transactionCosts": {
+        "top": 0.0003333333333333333,
+        "bottom": 0.0002666666666666667,
+        "equalUniverse": 0.0,
+        "benchmark": 0.0
+      },
       "rankIC": 0.24974904147786686,
       "factorRankIC": {
         "score": 0.24974904147786686,
@@ -2674,7 +4951,8 @@
         "lowDrawdownScore": 0.0700325903311362,
         "lowVolatilityScore": -0.17502962704775182,
         "lowRiskScore": -0.02430812129661903
-      }
+      },
+      "sample": "evaluation"
     },
     {
       "startDate": "2024-06-01",
@@ -2698,11 +4976,45 @@
         "AVGO",
         "META"
       ],
+      "bottomTickers": [
+        "UNH",
+        "MNST",
+        "MCD",
+        "CRM",
+        "UPS",
+        "CVS",
+        "GILD",
+        "NET",
+        "SBUX",
+        "SHOP",
+        "BMY",
+        "ADBE",
+        "BA",
+        "INTC",
+        "TSLA"
+      ],
       "topReturn": 0.048729837878594064,
+      "topNetReturn": 0.048329837878594066,
       "bottomReturn": 0.05678892117315928,
+      "bottomNetReturn": 0.056455587839825946,
       "equalUniverseReturn": 0.025192820089813855,
+      "equalUniverseNetReturn": 0.025192820089813855,
       "benchmarkReturn": 0.03741084237538139,
+      "benchmarkNetReturn": 0.03741084237538139,
       "spreadReturn": -0.008059083294565214,
+      "spreadNetReturn": -0.008792416627898546,
+      "turnover": {
+        "top": 0.4,
+        "bottom": 0.3333333333333333,
+        "equalUniverse": 0.0,
+        "benchmark": 0.0
+      },
+      "transactionCosts": {
+        "top": 0.0004,
+        "bottom": 0.0003333333333333333,
+        "equalUniverse": 0.0,
+        "benchmark": 0.0
+      },
       "rankIC": -0.013398396653886372,
       "factorRankIC": {
         "score": -0.013398396653886372,
@@ -2712,7 +5024,8 @@
         "lowDrawdownScore": -0.17766369206287252,
         "lowVolatilityScore": -0.33915650052283025,
         "lowRiskScore": -0.27499825723248517
-      }
+      },
+      "sample": "evaluation"
     },
     {
       "startDate": "2024-07-01",
@@ -2736,11 +5049,45 @@
         "NVO",
         "META"
       ],
+      "bottomTickers": [
+        "ITW",
+        "MDLZ",
+        "DE",
+        "CMCSA",
+        "GILD",
+        "MNST",
+        "MCD",
+        "UPS",
+        "SHOP",
+        "TSLA",
+        "SBUX",
+        "BMY",
+        "CVS",
+        "BA",
+        "INTC"
+      ],
       "topReturn": -0.10876799853374987,
+      "topNetReturn": -0.1091013318670832,
       "bottomReturn": 0.02344653187692085,
+      "bottomNetReturn": 0.023179865210254186,
       "equalUniverseReturn": 0.00757228492515793,
+      "equalUniverseNetReturn": 0.00757228492515793,
       "benchmarkReturn": -0.004272575466374939,
+      "benchmarkNetReturn": -0.004272575466374939,
       "spreadReturn": -0.13221453041067072,
+      "spreadNetReturn": -0.1328145304106707,
+      "turnover": {
+        "top": 0.3333333333333333,
+        "bottom": 0.26666666666666666,
+        "equalUniverse": 0.0,
+        "benchmark": 0.0
+      },
+      "transactionCosts": {
+        "top": 0.0003333333333333333,
+        "bottom": 0.0002666666666666667,
+        "equalUniverse": 0.0,
+        "benchmark": 0.0
+      },
       "rankIC": -0.35859184384803067,
       "factorRankIC": {
         "score": -0.35859184384803067,
@@ -2750,7 +5097,8 @@
         "lowDrawdownScore": -0.054912793636359675,
         "lowVolatilityScore": 0.5183130010456605,
         "lowRiskScore": 0.24320669222725688
-      }
+      },
+      "sample": "evaluation"
     },
     {
       "startDate": "2024-08-01",
@@ -2774,11 +5122,45 @@
         "MCK",
         "RTX"
       ],
+      "bottomTickers": [
+        "DDOG",
+        "ABNB",
+        "MRVL",
+        "ADBE",
+        "DE",
+        "CMCSA",
+        "UPS",
+        "CRWD",
+        "FTNT",
+        "AMD",
+        "CVS",
+        "BA",
+        "SBUX",
+        "SHOP",
+        "INTC"
+      ],
       "topReturn": 0.07588092645363233,
+      "topNetReturn": 0.07548092645363233,
       "bottomReturn": 0.07628058376042987,
+      "bottomNetReturn": 0.0758139170937632,
       "equalUniverseReturn": 0.04981432833888051,
+      "equalUniverseNetReturn": 0.04981432833888051,
       "benchmarkReturn": 0.03806541829283461,
+      "benchmarkNetReturn": 0.03806541829283461,
       "spreadReturn": -0.0003996573067975434,
+      "spreadNetReturn": -0.00126632397346421,
+      "turnover": {
+        "top": 0.4,
+        "bottom": 0.4666666666666667,
+        "equalUniverse": 0.0,
+        "benchmark": 0.0
+      },
+      "transactionCosts": {
+        "top": 0.0004,
+        "bottom": 0.00046666666666666666,
+        "equalUniverse": 0.0,
+        "benchmark": 0.0
+      },
       "rankIC": 0.13147786685256188,
       "factorRankIC": {
         "score": 0.13147786685256188,
@@ -2788,7 +5170,8 @@
         "lowDrawdownScore": -0.07153223341696932,
         "lowVolatilityScore": -0.08510630881840363,
         "lowRiskScore": -0.08914604391774138
-      }
+      },
+      "sample": "evaluation"
     },
     {
       "startDate": "2024-09-01",
@@ -2812,11 +5195,45 @@
         "WELL",
         "AZN"
       ],
+      "bottomTickers": [
+        "SNPS",
+        "CDNS",
+        "NET",
+        "LRCX",
+        "ARM",
+        "UPS",
+        "DIS",
+        "CRM",
+        "AMD",
+        "BA",
+        "MNST",
+        "CVS",
+        "ABNB",
+        "PDD",
+        "INTC"
+      ],
       "topReturn": 0.040876891216407786,
+      "topNetReturn": 0.04047689121640779,
       "bottomReturn": 0.05195238058489223,
+      "bottomNetReturn": 0.05135238058489223,
       "equalUniverseReturn": 0.021810562902658412,
+      "equalUniverseNetReturn": 0.021810562902658412,
       "benchmarkReturn": 0.011858000608972352,
+      "benchmarkNetReturn": 0.011858000608972352,
       "spreadReturn": -0.011075489368484445,
+      "spreadNetReturn": -0.012075489368484444,
+      "turnover": {
+        "top": 0.4,
+        "bottom": 0.6,
+        "equalUniverse": 0.0,
+        "benchmark": 0.0
+      },
+      "transactionCosts": {
+        "top": 0.0004,
+        "bottom": 0.0006,
+        "equalUniverse": 0.0,
+        "benchmark": 0.0
+      },
       "rankIC": -0.06438480306727083,
       "factorRankIC": {
         "score": -0.06438480306727083,
@@ -2826,7 +5243,8 @@
         "lowDrawdownScore": -0.09662806332015614,
         "lowVolatilityScore": -0.12719762983617985,
         "lowRiskScore": -0.12513767863367026
-      }
+      },
+      "sample": "evaluation"
     },
     {
       "startDate": "2024-10-01",
@@ -2850,11 +5268,45 @@
         "RTX",
         "ORCL"
       ],
+      "bottomTickers": [
+        "MRK",
+        "ASML",
+        "UPS",
+        "MNST",
+        "MU",
+        "SNPS",
+        "CDNS",
+        "COP",
+        "LRCX",
+        "NET",
+        "DIS",
+        "CVS",
+        "ABNB",
+        "BA",
+        "INTC"
+      ],
       "topReturn": 0.011533540187383026,
+      "topNetReturn": 0.011066873520716359,
       "bottomReturn": -0.004283108542169304,
+      "bottomNetReturn": -0.004549775208835971,
       "equalUniverseReturn": 0.007540608243678759,
+      "equalUniverseNetReturn": 0.007540608243678759,
       "benchmarkReturn": 0.004256010442627467,
+      "benchmarkNetReturn": 0.004256010442627467,
       "spreadReturn": 0.01581664872955233,
+      "spreadNetReturn": 0.015083315396218997,
+      "turnover": {
+        "top": 0.4666666666666667,
+        "bottom": 0.26666666666666666,
+        "equalUniverse": 0.0,
+        "benchmark": 0.0
+      },
+      "transactionCosts": {
+        "top": 0.00046666666666666666,
+        "bottom": 0.0002666666666666667,
+        "equalUniverse": 0.0,
+        "benchmark": 0.0
+      },
       "rankIC": -0.03573719065876612,
       "factorRankIC": {
         "score": -0.03573719065876612,
@@ -2864,7 +5316,8 @@
         "lowDrawdownScore": -0.1720219203474532,
         "lowVolatilityScore": -0.17882886023004532,
         "lowRiskScore": -0.19676193795747648
-      }
+      },
+      "sample": "evaluation"
     },
     {
       "startDate": "2024-11-01",
@@ -2888,11 +5341,45 @@
         "ISRG",
         "AVGO"
       ],
+      "bottomTickers": [
+        "CVS",
+        "ADBE",
+        "MU",
+        "UPS",
+        "NVO",
+        "ABNB",
+        "DIS",
+        "PDD",
+        "COP",
+        "LRCX",
+        "MRK",
+        "BA",
+        "ELV",
+        "ASML",
+        "INTC"
+      ],
       "topReturn": 0.15840742268100944,
+      "topNetReturn": 0.15780742268100945,
       "bottomReturn": 0.011087667383269228,
+      "bottomNetReturn": 0.010821000716602561,
       "equalUniverseReturn": 0.07359510084244196,
+      "equalUniverseNetReturn": 0.07359510084244196,
       "benchmarkReturn": 0.05518004788390929,
+      "benchmarkNetReturn": 0.05518004788390929,
       "spreadReturn": 0.14731975529774022,
+      "spreadNetReturn": 0.14645308863107356,
+      "turnover": {
+        "top": 0.6,
+        "bottom": 0.26666666666666666,
+        "equalUniverse": 0.0,
+        "benchmark": 0.0
+      },
+      "transactionCosts": {
+        "top": 0.0006,
+        "bottom": 0.0002666666666666667,
+        "equalUniverse": 0.0,
+        "benchmark": 0.0
+      },
       "rankIC": 0.3286615545486232,
       "factorRankIC": {
         "score": 0.3286615545486232,
@@ -2902,7 +5389,8 @@
         "lowDrawdownScore": 0.35788982039907313,
         "lowVolatilityScore": -0.06714534681073545,
         "lowRiskScore": 0.1903764377831997
-      }
+      },
+      "sample": "evaluation"
     },
     {
       "startDate": "2024-12-01",
@@ -2926,11 +5414,45 @@
         "BK",
         "NFLX"
       ],
+      "bottomTickers": [
+        "FCX",
+        "NXPI",
+        "KLAC",
+        "MRK",
+        "AMAT",
+        "QCOM",
+        "MU",
+        "AMD",
+        "NVO",
+        "LRCX",
+        "BA",
+        "ELV",
+        "ASML",
+        "INTC",
+        "PDD"
+      ],
       "topReturn": -0.0398324663427635,
+      "topNetReturn": -0.040432466342763505,
       "bottomReturn": -0.06262393614715363,
+      "bottomNetReturn": -0.06302393614715363,
       "equalUniverseReturn": -0.04843273524199724,
+      "equalUniverseNetReturn": -0.04843273524199724,
       "benchmarkReturn": -0.024060271317689175,
+      "benchmarkNetReturn": -0.024060271317689175,
       "spreadReturn": 0.022791469804390126,
+      "spreadNetReturn": 0.021791469804390125,
+      "turnover": {
+        "top": 0.6,
+        "bottom": 0.4,
+        "equalUniverse": 0.0,
+        "benchmark": 0.0
+      },
+      "transactionCosts": {
+        "top": 0.0006,
+        "bottom": 0.0004,
+        "equalUniverse": 0.0,
+        "benchmark": 0.0
+      },
       "rankIC": 0.1401289647960962,
       "factorRankIC": {
         "score": 0.1401289647960962,
@@ -2940,7 +5462,8 @@
         "lowDrawdownScore": -0.004974685314511957,
         "lowVolatilityScore": -0.03002439874520739,
         "lowRiskScore": -0.0398326943185779
-      }
+      },
+      "sample": "evaluation"
     },
     {
       "startDate": "2025-01-01",
@@ -2964,11 +5487,45 @@
         "NOW",
         "WMB"
       ],
+      "bottomTickers": [
+        "MRK",
+        "KLAC",
+        "FCX",
+        "NXPI",
+        "ADBE",
+        "AMAT",
+        "LRCX",
+        "ASML",
+        "AMD",
+        "CVS",
+        "MU",
+        "ELV",
+        "NVO",
+        "PDD",
+        "INTC"
+      ],
       "topReturn": 0.08058678727463124,
+      "topNetReturn": 0.08038678727463124,
       "bottomReturn": 0.059359837482798224,
+      "bottomNetReturn": 0.05922650414946489,
       "equalUniverseReturn": 0.0570694640555712,
+      "equalUniverseNetReturn": 0.0570694640555712,
       "benchmarkReturn": 0.026856451807496295,
+      "benchmarkNetReturn": 0.026856451807496295,
       "spreadReturn": 0.021226949791833018,
+      "spreadNetReturn": 0.020893616458499686,
+      "turnover": {
+        "top": 0.2,
+        "bottom": 0.13333333333333333,
+        "equalUniverse": 0.0,
+        "benchmark": 0.0
+      },
+      "transactionCosts": {
+        "top": 0.0002,
+        "bottom": 0.00013333333333333334,
+        "equalUniverse": 0.0,
+        "benchmark": 0.0
+      },
       "rankIC": 0.2126559776925758,
       "factorRankIC": {
         "score": 0.2126559776925758,
@@ -2978,7 +5535,8 @@
         "lowDrawdownScore": 0.05403624956430812,
         "lowVolatilityScore": -0.22758800975949808,
         "lowRiskScore": -0.05860578598814918
-      }
+      },
+      "sample": "evaluation"
     },
     {
       "startDate": "2025-02-01",
@@ -3002,11 +5560,45 @@
         "COF",
         "MRVL"
       ],
+      "bottomTickers": [
+        "NXPI",
+        "AMGN",
+        "PEP",
+        "ASML",
+        "MRK",
+        "FCX",
+        "PDD",
+        "DHR",
+        "CMCSA",
+        "MDLZ",
+        "ADBE",
+        "AMD",
+        "INTC",
+        "ELV",
+        "NVO"
+      ],
       "topReturn": -0.0484307107628662,
+      "topNetReturn": -0.048764044096199534,
       "bottomReturn": 0.023210356680402434,
+      "bottomNetReturn": 0.0228770233470691,
       "equalUniverseReturn": 0.007051683140186167,
+      "equalUniverseNetReturn": 0.007051683140186167,
       "benchmarkReturn": -0.012694838334663117,
+      "benchmarkNetReturn": -0.012694838334663117,
       "spreadReturn": -0.07164106744326863,
+      "spreadNetReturn": -0.07230773410993531,
+      "turnover": {
+        "top": 0.3333333333333333,
+        "bottom": 0.3333333333333333,
+        "equalUniverse": 0.0,
+        "benchmark": 0.0
+      },
+      "transactionCosts": {
+        "top": 0.0003333333333333333,
+        "bottom": 0.0003333333333333333,
+        "equalUniverse": 0.0,
+        "benchmark": 0.0
+      },
       "rankIC": -0.22110491460439177,
       "factorRankIC": {
         "score": -0.22110491460439177,
@@ -3016,7 +5608,8 @@
         "lowDrawdownScore": 0.04430679787488815,
         "lowVolatilityScore": 0.36575810386894386,
         "lowRiskScore": 0.212962704775183
-      }
+      },
+      "sample": "evaluation"
     },
     {
       "startDate": "2025-03-01",
@@ -3040,11 +5633,45 @@
         "PM",
         "BK"
       ],
+      "bottomTickers": [
+        "GD",
+        "LRCX",
+        "FCX",
+        "UNH",
+        "SNPS",
+        "NXPI",
+        "HCA",
+        "DHR",
+        "MRK",
+        "AMAT",
+        "ADBE",
+        "ASML",
+        "ELV",
+        "NVO",
+        "AMD"
+      ],
       "topReturn": -0.06675832949535794,
+      "topNetReturn": -0.06729166282869127,
       "bottomReturn": -0.020792277551520043,
+      "bottomNetReturn": -0.021192277551520044,
       "equalUniverseReturn": -0.04835645330332733,
+      "equalUniverseNetReturn": -0.04835645330332733,
       "benchmarkReturn": -0.053052139400041054,
+      "benchmarkNetReturn": -0.053052139400041054,
       "spreadReturn": -0.0459660519438379,
+      "spreadNetReturn": -0.046899385277171225,
+      "turnover": {
+        "top": 0.5333333333333333,
+        "bottom": 0.4,
+        "equalUniverse": 0.0,
+        "benchmark": 0.0
+      },
+      "transactionCosts": {
+        "top": 0.0005333333333333334,
+        "bottom": 0.0004,
+        "equalUniverse": 0.0,
+        "benchmark": 0.0
+      },
       "rankIC": -0.20367723945625654,
       "factorRankIC": {
         "score": -0.20367723945625654,
@@ -3054,7 +5681,8 @@
         "lowDrawdownScore": 0.22556306458528202,
         "lowVolatilityScore": 0.375074939003137,
         "lowRiskScore": 0.2812861624259324
-      }
+      },
+      "sample": "evaluation"
     },
     {
       "startDate": "2025-04-01",
@@ -3078,11 +5706,45 @@
         "V",
         "DASH"
       ],
+      "bottomTickers": [
+        "CEG",
+        "INTC",
+        "TMO",
+        "MRVL",
+        "MU",
+        "NXPI",
+        "FCX",
+        "MRK",
+        "ASML",
+        "DHR",
+        "ADBE",
+        "ARM",
+        "AMAT",
+        "AMD",
+        "NVO"
+      ],
       "topReturn": 0.054682288983614616,
+      "topNetReturn": 0.05441562231694795,
       "bottomReturn": -0.02480564930727273,
+      "bottomNetReturn": -0.02520564930727273,
       "equalUniverseReturn": -0.0007192194788888405,
+      "equalUniverseNetReturn": -0.0007192194788888405,
       "benchmarkReturn": -0.004456597821395403,
+      "benchmarkNetReturn": -0.004456597821395403,
       "spreadReturn": 0.07948793829088735,
+      "spreadNetReturn": 0.07882127162422069,
+      "turnover": {
+        "top": 0.26666666666666666,
+        "bottom": 0.4,
+        "equalUniverse": 0.0,
+        "benchmark": 0.0
+      },
+      "transactionCosts": {
+        "top": 0.0002666666666666667,
+        "bottom": 0.0004,
+        "equalUniverse": 0.0,
+        "benchmark": 0.0
+      },
       "rankIC": 0.19713489020564656,
       "factorRankIC": {
         "score": 0.19713489020564656,
@@ -3092,7 +5754,8 @@
         "lowDrawdownScore": -0.08088256442394999,
         "lowVolatilityScore": -0.3028026340212321,
         "lowRiskScore": -0.16400139421401186
-      }
+      },
+      "sample": "evaluation"
     },
     {
       "startDate": "2025-05-01",
@@ -3116,11 +5779,45 @@
         "WMT",
         "MO"
       ],
+      "bottomTickers": [
+        "INTC",
+        "QCOM",
+        "FDX",
+        "MRK",
+        "AMAT",
+        "FCX",
+        "ADBE",
+        "TMO",
+        "UNH",
+        "NXPI",
+        "MRVL",
+        "UPS",
+        "MU",
+        "AMD",
+        "NVO"
+      ],
       "topReturn": 0.100611973242146,
+      "topNetReturn": 0.10027863990881267,
       "bottomReturn": 0.032226634694022434,
+      "bottomNetReturn": 0.03195996802735577,
       "equalUniverseReturn": 0.0589034391670316,
+      "equalUniverseNetReturn": 0.0589034391670316,
       "benchmarkReturn": 0.05536569558055038,
+      "benchmarkNetReturn": 0.05536569558055038,
       "spreadReturn": 0.06838533854812356,
+      "spreadNetReturn": 0.06778533854812356,
+      "turnover": {
+        "top": 0.3333333333333333,
+        "bottom": 0.26666666666666666,
+        "equalUniverse": 0.0,
+        "benchmark": 0.0
+      },
+      "transactionCosts": {
+        "top": 0.0003333333333333333,
+        "bottom": 0.0002666666666666667,
+        "equalUniverse": 0.0,
+        "benchmark": 0.0
+      },
       "rankIC": 0.06722551411641688,
       "factorRankIC": {
         "score": 0.06722551411641688,
@@ -3130,7 +5827,8 @@
         "lowDrawdownScore": -0.1678732637630988,
         "lowVolatilityScore": -0.44438518984947734,
         "lowRiskScore": -0.29507842453816663
-      }
+      },
+      "sample": "evaluation"
     },
     {
       "startDate": "2025-06-01",
@@ -3154,11 +5852,45 @@
         "BA",
         "DASH"
       ],
+      "bottomTickers": [
+        "SNPS",
+        "DDOG",
+        "PEP",
+        "COP",
+        "NXPI",
+        "DHR",
+        "FDX",
+        "TMO",
+        "AMD",
+        "UPS",
+        "INTC",
+        "MRK",
+        "MRVL",
+        "NVO",
+        "UNH"
+      ],
       "topReturn": 0.0394339049679819,
+      "topNetReturn": 0.03910057163464857,
       "bottomReturn": 0.10619187293207019,
+      "bottomNetReturn": 0.10585853959873685,
       "equalUniverseReturn": 0.0524828580107283,
+      "equalUniverseNetReturn": 0.0524828580107283,
       "benchmarkReturn": 0.05104577641166941,
+      "benchmarkNetReturn": 0.05104577641166941,
       "spreadReturn": -0.06675796796408828,
+      "spreadNetReturn": -0.06742463463075496,
+      "turnover": {
+        "top": 0.3333333333333333,
+        "bottom": 0.3333333333333333,
+        "equalUniverse": 0.0,
+        "benchmark": 0.0
+      },
+      "transactionCosts": {
+        "top": 0.0003333333333333333,
+        "bottom": 0.0003333333333333333,
+        "equalUniverse": 0.0,
+        "benchmark": 0.0
+      },
       "rankIC": -0.35927500871383755,
       "factorRankIC": {
         "score": -0.35927500871383755,
@@ -3168,7 +5900,8 @@
         "lowDrawdownScore": -0.3924146847546386,
         "lowVolatilityScore": -0.5801344724136754,
         "lowRiskScore": -0.5198710352039038
-      }
+      },
+      "sample": "evaluation"
     },
     {
       "startDate": "2025-07-01",
@@ -3192,11 +5925,45 @@
         "JCI",
         "T"
       ],
+      "bottomTickers": [
+        "ANET",
+        "PEP",
+        "ROST",
+        "CRM",
+        "DHR",
+        "AAPL",
+        "UPS",
+        "FDX",
+        "ADBE",
+        "TSLA",
+        "TMO",
+        "MRK",
+        "NVO",
+        "MRVL",
+        "UNH"
+      ],
       "topReturn": -0.007404929103090141,
+      "topNetReturn": -0.007738262436423474,
       "bottomReturn": -0.05055440750665899,
+      "bottomNetReturn": -0.050954407506658986,
       "equalUniverseReturn": -0.01042762587841207,
+      "equalUniverseNetReturn": -0.01042762587841207,
       "benchmarkReturn": 0.006589481647826023,
+      "benchmarkNetReturn": 0.006589481647826023,
       "spreadReturn": 0.04314947840356885,
+      "spreadNetReturn": 0.04241614507023552,
+      "turnover": {
+        "top": 0.3333333333333333,
+        "bottom": 0.4,
+        "equalUniverse": 0.0,
+        "benchmark": 0.0
+      },
+      "transactionCosts": {
+        "top": 0.0003333333333333333,
+        "bottom": 0.0004,
+        "equalUniverse": 0.0,
+        "benchmark": 0.0
+      },
       "rankIC": 0.12477169745555942,
       "factorRankIC": {
         "score": 0.12477169745555942,
@@ -3206,7 +5973,8 @@
         "lowDrawdownScore": 0.11345878838509485,
         "lowVolatilityScore": 0.009864072729241048,
         "lowRiskScore": 0.0739177413733008
-      }
+      },
+      "sample": "evaluation"
     },
     {
       "startDate": "2025-08-01",
@@ -3230,11 +5998,45 @@
         "PM",
         "WELL"
       ],
+      "bottomTickers": [
+        "AAPL",
+        "INTC",
+        "TSLA",
+        "DHR",
+        "BMY",
+        "FDX",
+        "MRK",
+        "CRM",
+        "TMO",
+        "MRVL",
+        "UPS",
+        "ADBE",
+        "ELV",
+        "NVO",
+        "UNH"
+      ],
       "topReturn": 0.009068965912741585,
+      "topNetReturn": 0.008668965912741586,
       "bottomReturn": 0.0938338588844747,
+      "bottomNetReturn": 0.09363385888447469,
       "equalUniverseReturn": 0.04149043485098295,
+      "equalUniverseNetReturn": 0.04149043485098295,
       "benchmarkReturn": 0.037524951288533615,
+      "benchmarkNetReturn": 0.037524951288533615,
       "spreadReturn": -0.0847648929717331,
+      "spreadNetReturn": -0.08536489297173311,
+      "turnover": {
+        "top": 0.4,
+        "bottom": 0.2,
+        "equalUniverse": 0.0,
+        "benchmark": 0.0
+      },
+      "transactionCosts": {
+        "top": 0.0004,
+        "bottom": 0.0002,
+        "equalUniverse": 0.0,
+        "benchmark": 0.0
+      },
       "rankIC": -0.3465597769257581,
       "factorRankIC": {
         "score": -0.3465597769257581,
@@ -3244,7 +6046,8 @@
         "lowDrawdownScore": -0.3544792214006412,
         "lowVolatilityScore": -0.1626526338904712,
         "lowRiskScore": -0.3043708609271523
-      }
+      },
+      "sample": "evaluation"
     },
     {
       "startDate": "2025-09-01",
@@ -3268,11 +6071,45 @@
         "CDNS",
         "BA"
       ],
+      "bottomTickers": [
+        "CRM",
+        "MRK",
+        "FDX",
+        "ISRG",
+        "BMY",
+        "SBUX",
+        "VRTX",
+        "LLY",
+        "FTNT",
+        "ADBE",
+        "UPS",
+        "ELV",
+        "MRVL",
+        "UNH",
+        "NVO"
+      ],
       "topReturn": 0.11092153005222398,
+      "topNetReturn": 0.11058819671889064,
       "bottomReturn": 0.04454212508414942,
+      "bottomNetReturn": 0.04420879175081609,
       "equalUniverseReturn": 0.04094380078578925,
+      "equalUniverseNetReturn": 0.04094380078578925,
       "benchmarkReturn": 0.03914928994286626,
+      "benchmarkNetReturn": 0.03914928994286626,
       "spreadReturn": 0.06637940496807457,
+      "spreadNetReturn": 0.06571273830140789,
+      "turnover": {
+        "top": 0.3333333333333333,
+        "bottom": 0.3333333333333333,
+        "equalUniverse": 0.0,
+        "benchmark": 0.0
+      },
+      "transactionCosts": {
+        "top": 0.0003333333333333333,
+        "bottom": 0.0003333333333333333,
+        "equalUniverse": 0.0,
+        "benchmark": 0.0
+      },
       "rankIC": 0.1993795747647264,
       "factorRankIC": {
         "score": 0.1993795747647264,
@@ -3282,7 +6119,8 @@
         "lowDrawdownScore": -0.10743031062773063,
         "lowVolatilityScore": -0.3306308818403625,
         "lowRiskScore": -0.21799233182293482
-      }
+      },
+      "sample": "evaluation"
     },
     {
       "startDate": "2025-10-01",
@@ -3306,11 +6144,45 @@
         "NVDA",
         "GE"
       ],
+      "bottomTickers": [
+        "FTNT",
+        "PGR",
+        "CARR",
+        "ISRG",
+        "SBUX",
+        "CRM",
+        "CL",
+        "BMY",
+        "CMCSA",
+        "VRTX",
+        "ADBE",
+        "NVO",
+        "UPS",
+        "ELV",
+        "UNH"
+      ],
       "topReturn": 0.0643729491630416,
+      "topNetReturn": 0.06403961582970827,
       "bottomReturn": -0.0026823774494999656,
+      "bottomNetReturn": -0.0029490441161666324,
       "equalUniverseReturn": 0.014483057004028237,
+      "equalUniverseNetReturn": 0.014483057004028237,
       "benchmarkReturn": 0.020360627680529042,
+      "benchmarkNetReturn": 0.020360627680529042,
       "spreadReturn": 0.06705532661254157,
+      "spreadNetReturn": 0.06645532661254157,
+      "turnover": {
+        "top": 0.3333333333333333,
+        "bottom": 0.26666666666666666,
+        "equalUniverse": 0.0,
+        "benchmark": 0.0
+      },
+      "transactionCosts": {
+        "top": 0.0003333333333333333,
+        "bottom": 0.0002666666666666667,
+        "equalUniverse": 0.0,
+        "benchmark": 0.0
+      },
       "rankIC": 0.3530324154757755,
       "factorRankIC": {
         "score": 0.3530324154757755,
@@ -3320,7 +6192,8 @@
         "lowDrawdownScore": 0.20245503877418441,
         "lowVolatilityScore": -0.38120599512025094,
         "lowRiskScore": -0.10891251307075636
-      }
+      },
+      "sample": "evaluation"
     },
     {
       "startDate": "2025-11-01",
@@ -3344,11 +6217,45 @@
         "GOOG",
         "APP"
       ],
+      "bottomTickers": [
+        "WM",
+        "ADP",
+        "ICE",
+        "TMUS",
+        "MDLZ",
+        "CL",
+        "FTNT",
+        "VRTX",
+        "ADBE",
+        "CARR",
+        "CMCSA",
+        "ELV",
+        "UNH",
+        "PGR",
+        "NVO"
+      ],
       "topReturn": -0.03887226242802185,
+      "topNetReturn": -0.03913892909468852,
       "bottomReturn": -0.0015226233261374845,
+      "bottomNetReturn": -0.0018559566594708178,
       "equalUniverseReturn": 0.0006999536940710987,
+      "equalUniverseNetReturn": 0.0006999536940710987,
       "benchmarkReturn": -0.0026244580688529195,
+      "benchmarkNetReturn": -0.0026244580688529195,
       "spreadReturn": -0.037349639101884366,
+      "spreadNetReturn": -0.03794963910188436,
+      "turnover": {
+        "top": 0.26666666666666666,
+        "bottom": 0.3333333333333333,
+        "equalUniverse": 0.0,
+        "benchmark": 0.0
+      },
+      "transactionCosts": {
+        "top": 0.0002666666666666667,
+        "bottom": 0.0003333333333333333,
+        "equalUniverse": 0.0,
+        "benchmark": 0.0
+      },
       "rankIC": -0.16794701986754967,
       "factorRankIC": {
         "score": -0.16794701986754967,
@@ -3358,7 +6265,8 @@
         "lowDrawdownScore": 0.025013419994508488,
         "lowVolatilityScore": 0.33140815615196934,
         "lowRiskScore": 0.2107110491460439
-      }
+      },
+      "sample": "evaluation"
     },
     {
       "startDate": "2025-12-01",
@@ -3382,11 +6290,45 @@
         "CMI",
         "AMD"
       ],
+      "bottomTickers": [
+        "MDLZ",
+        "SNPS",
+        "TMUS",
+        "MELI",
+        "ELV",
+        "CRM",
+        "PGR",
+        "EQIX",
+        "ADP",
+        "NOW",
+        "FTNT",
+        "CARR",
+        "CMCSA",
+        "ADBE",
+        "NVO"
+      ],
       "topReturn": 0.017997221394903666,
+      "topNetReturn": 0.01766388806157033,
       "bottomReturn": 0.0262257562946456,
+      "bottomNetReturn": 0.025892422961312264,
       "equalUniverseReturn": 0.015396212718750324,
+      "equalUniverseNetReturn": 0.015396212718750324,
       "benchmarkReturn": 0.0053875700506687,
+      "benchmarkNetReturn": 0.0053875700506687,
       "spreadReturn": -0.008228534899741933,
+      "spreadNetReturn": -0.008895201566408599,
+      "turnover": {
+        "top": 0.3333333333333333,
+        "bottom": 0.3333333333333333,
+        "equalUniverse": 0.0,
+        "benchmark": 0.0
+      },
+      "transactionCosts": {
+        "top": 0.0003333333333333333,
+        "bottom": 0.0003333333333333333,
+        "equalUniverse": 0.0,
+        "benchmark": 0.0
+      },
       "rankIC": -0.04223074241896131,
       "factorRankIC": {
         "score": -0.04223074241896131,
@@ -3396,7 +6338,8 @@
         "lowDrawdownScore": -0.08642821979245628,
         "lowVolatilityScore": -0.07230393865458348,
         "lowRiskScore": -0.10111188567445102
-      }
+      },
+      "sample": "evaluation"
     },
     {
       "startDate": "2026-01-01",
@@ -3420,11 +6363,45 @@
         "PLTR",
         "SHOP"
       ],
+      "bottomTickers": [
+        "MELI",
+        "CL",
+        "TMUS",
+        "ADP",
+        "SNPS",
+        "ORCL",
+        "TXN",
+        "CMCSA",
+        "MDLZ",
+        "NFLX",
+        "FTNT",
+        "NOW",
+        "ARM",
+        "CARR",
+        "NVO"
+      ],
       "topReturn": 0.09194580671958373,
+      "topNetReturn": 0.09174580671958373,
       "bottomReturn": 0.02244058445331619,
+      "bottomNetReturn": 0.022107251119982855,
       "equalUniverseReturn": 0.03221823767205105,
+      "equalUniverseNetReturn": 0.03221823767205105,
       "benchmarkReturn": 0.014737818820090842,
+      "benchmarkNetReturn": 0.014737818820090842,
       "spreadReturn": 0.06950522226626754,
+      "spreadNetReturn": 0.0689718889329342,
+      "turnover": {
+        "top": 0.2,
+        "bottom": 0.3333333333333333,
+        "equalUniverse": 0.0,
+        "benchmark": 0.0
+      },
+      "transactionCosts": {
+        "top": 0.0002,
+        "bottom": 0.0003333333333333333,
+        "equalUniverse": 0.0,
+        "benchmark": 0.0
+      },
       "rankIC": 0.07268386197281283,
       "factorRankIC": {
         "score": 0.07268386197281283,
@@ -3434,7 +6411,8 @@
         "lowDrawdownScore": 0.11292784942488672,
         "lowVolatilityScore": 0.08939700243987452,
         "lowRiskScore": 0.08653886371558034
-      }
+      },
+      "sample": "evaluation"
     },
     {
       "startDate": "2026-02-01",
@@ -3458,11 +6436,45 @@
         "APH",
         "MNST"
       ],
+      "bottomTickers": [
+        "ABT",
+        "CDNS",
+        "DASH",
+        "TMUS",
+        "ADP",
+        "CEG",
+        "FTNT",
+        "SPOT",
+        "ADBE",
+        "CRM",
+        "SNPS",
+        "NFLX",
+        "ARM",
+        "ORCL",
+        "NOW"
+      ],
       "topReturn": 0.07122686536960855,
+      "topNetReturn": 0.07089353203627521,
       "bottomReturn": -0.002204046587664051,
+      "bottomNetReturn": -0.002670713254330718,
       "equalUniverseReturn": 0.02041891987680199,
+      "equalUniverseNetReturn": 0.02041891987680199,
       "benchmarkReturn": -0.008642046247570145,
+      "benchmarkNetReturn": -0.008642046247570145,
       "spreadReturn": 0.07343091195727261,
+      "spreadNetReturn": 0.0726309119572726,
+      "turnover": {
+        "top": 0.3333333333333333,
+        "bottom": 0.4666666666666667,
+        "equalUniverse": 0.0,
+        "benchmark": 0.0
+      },
+      "transactionCosts": {
+        "top": 0.0003333333333333333,
+        "bottom": 0.00046666666666666666,
+        "equalUniverse": 0.0,
+        "benchmark": 0.0
+      },
       "rankIC": 0.22512373649355177,
       "factorRankIC": {
         "score": 0.22512373649355177,
@@ -3472,7 +6484,8 @@
         "lowDrawdownScore": 0.3544492735413531,
         "lowVolatilityScore": 0.31905890554200067,
         "lowRiskScore": 0.3804775182990589
-      }
+      },
+      "sample": "evaluation"
     },
     {
       "startDate": "2026-03-01",
@@ -3496,11 +6509,45 @@
         "CMI",
         "MRK"
       ],
+      "bottomTickers": [
+        "MSFT",
+        "SPGI",
+        "DDOG",
+        "BKNG",
+        "PANW",
+        "SPOT",
+        "DASH",
+        "CRM",
+        "MELI",
+        "ADP",
+        "SNPS",
+        "ADBE",
+        "ORCL",
+        "NOW",
+        "NVO"
+      ],
       "topReturn": -0.04802975886281804,
+      "topNetReturn": -0.04816309219615137,
       "bottomReturn": -0.03151133425729145,
+      "bottomNetReturn": -0.03197800092395811,
       "equalUniverseReturn": -0.04431868164666363,
+      "equalUniverseNetReturn": -0.04431868164666363,
       "benchmarkReturn": -0.04221712515385945,
+      "benchmarkNetReturn": -0.04221712515385945,
       "spreadReturn": -0.01651842460552659,
+      "spreadNetReturn": -0.01711842460552659,
+      "turnover": {
+        "top": 0.13333333333333333,
+        "bottom": 0.4666666666666667,
+        "equalUniverse": 0.0,
+        "benchmark": 0.0
+      },
+      "transactionCosts": {
+        "top": 0.00013333333333333334,
+        "bottom": 0.00046666666666666666,
+        "equalUniverse": 0.0,
+        "benchmark": 0.0
+      },
       "rankIC": -0.04729522481700941,
       "factorRankIC": {
         "score": -0.04729522481700941,
@@ -3510,7 +6557,8 @@
         "lowDrawdownScore": -0.13517390902457088,
         "lowVolatilityScore": -0.08268734750784246,
         "lowRiskScore": -0.12161728825374694
-      }
+      },
+      "sample": "evaluation"
     },
     {
       "startDate": "2026-04-01",
@@ -3534,11 +6582,45 @@
         "JNJ",
         "CMI"
       ],
+      "bottomTickers": [
+        "ABT",
+        "PDD",
+        "QCOM",
+        "APP",
+        "MSFT",
+        "MELI",
+        "CRM",
+        "UNH",
+        "ORCL",
+        "SPOT",
+        "ADP",
+        "DASH",
+        "ADBE",
+        "NOW",
+        "NVO"
+      ],
       "topReturn": 0.15932810814414067,
+      "topNetReturn": 0.15912810814414066,
       "bottomReturn": 0.0964390871378268,
+      "bottomNetReturn": 0.09610575380449346,
       "equalUniverseReturn": 0.07956198578129683,
+      "equalUniverseNetReturn": 0.07956198578129683,
       "benchmarkReturn": 0.09982605310899473,
+      "benchmarkNetReturn": 0.09982605310899473,
       "spreadReturn": 0.06288902100631387,
+      "spreadNetReturn": 0.06235568767298053,
+      "turnover": {
+        "top": 0.2,
+        "bottom": 0.3333333333333333,
+        "equalUniverse": 0.0,
+        "benchmark": 0.0
+      },
+      "transactionCosts": {
+        "top": 0.0002,
+        "bottom": 0.0003333333333333333,
+        "equalUniverse": 0.0,
+        "benchmark": 0.0
+      },
       "rankIC": 0.003576158940397351,
       "factorRankIC": {
         "score": 0.003576158940397351,
@@ -3548,7 +6630,8 @@
         "lowDrawdownScore": -0.20652497844090503,
         "lowVolatilityScore": -0.45292784942488673,
         "lowRiskScore": -0.3492227256883932
-      }
+      },
+      "sample": "evaluation"
     },
     {
       "startDate": "2026-05-01",
@@ -3572,11 +6655,45 @@
         "AMD",
         "NXPI"
       ],
+      "bottomTickers": [
+        "NFLX",
+        "PLTR",
+        "NVO",
+        "SYK",
+        "ADP",
+        "IBM",
+        "MELI",
+        "PDD",
+        "ORCL",
+        "ABT",
+        "DASH",
+        "ADBE",
+        "CRM",
+        "SPOT",
+        "NOW"
+      ],
       "topReturn": 0.16845906831868115,
+      "topNetReturn": 0.16812573498534783,
       "bottomReturn": 0.10639319960619605,
+      "bottomNetReturn": 0.10612653293952938,
       "equalUniverseReturn": 0.05782423992571246,
+      "equalUniverseNetReturn": 0.05782423992571246,
       "benchmarkReturn": 0.05257748503624504,
+      "benchmarkNetReturn": 0.05257748503624504,
       "spreadReturn": 0.06206586871248511,
+      "spreadNetReturn": 0.06146586871248511,
+      "turnover": {
+        "top": 0.3333333333333333,
+        "bottom": 0.26666666666666666,
+        "equalUniverse": 0.0,
+        "benchmark": 0.0
+      },
+      "transactionCosts": {
+        "top": 0.0003333333333333333,
+        "bottom": 0.0002666666666666667,
+        "equalUniverse": 0.0,
+        "benchmark": 0.0
+      },
       "rankIC": 0.032150575113279886,
       "factorRankIC": {
         "score": 0.032150575113279886,
@@ -3586,10 +6703,77 @@
         "lowDrawdownScore": -0.0942216196789888,
         "lowVolatilityScore": -0.5133914255838271,
         "lowRiskScore": -0.3577588009759498
-      }
+      },
+      "sample": "evaluation"
     }
   ],
   "metrics": {
+    "top": {
+      "periods": 89,
+      "cumulativeReturn": 8.811838837481389,
+      "annualizedReturn": 0.3605645650861329,
+      "volatilityAnnualized": 0.24796887817029997,
+      "sharpeLike": 1.4540718486394268,
+      "maxDrawdown": 0.19816502222740068,
+      "hitRate": 0.6741573033707865,
+      "averageMonthlyReturn": 0.028444178819460292,
+      "bestMonth": 0.22679803696946105,
+      "worstMonth": -0.14391201873120404
+    },
+    "bottom": {
+      "periods": 89,
+      "cumulativeReturn": 5.243664342649301,
+      "annualizedReturn": 0.2801188009781832,
+      "volatilityAnnualized": 0.2917876294069267,
+      "sharpeLike": 0.960009173615547,
+      "maxDrawdown": 0.36506578004915136,
+      "hitRate": 0.6067415730337079,
+      "averageMonthlyReturn": 0.024245961818203488,
+      "bestMonth": 0.25417848147164657,
+      "worstMonth": -0.25754884471569817
+    },
+    "equalUniverse": {
+      "periods": 89,
+      "cumulativeReturn": 4.177408536555517,
+      "annualizedReturn": 0.2482018523828584,
+      "volatilityAnnualized": 0.1881704775077182,
+      "sharpeLike": 1.3190265320588237,
+      "maxDrawdown": 0.2307016048749548,
+      "hitRate": 0.6966292134831461,
+      "averageMonthlyReturn": 0.020100515062100567,
+      "bestMonth": 0.16692459256370357,
+      "worstMonth": -0.17137894530158396
+    },
+    "benchmark": {
+      "periods": 89,
+      "cumulativeReturn": 2.380951515598575,
+      "annualizedReturn": 0.17850408818846586,
+      "volatilityAnnualized": 0.17416290642040144,
+      "sharpeLike": 1.0249259837085258,
+      "maxDrawdown": 0.23927170365660055,
+      "hitRate": 0.651685393258427,
+      "averageMonthlyReturn": 0.015038185473474294,
+      "bestMonth": 0.14885231422110268,
+      "worstMonth": -0.16425630785330136
+    },
+    "spread": {
+      "periods": 89,
+      "cumulativeReturn": 0.10561823978008245,
+      "annualizedReturn": 0.013629758207865272,
+      "volatilityAnnualized": 0.23830268230839788,
+      "sharpeLike": 0.057195152298900306,
+      "maxDrawdown": 0.48912797871200336,
+      "hitRate": 0.5056179775280899,
+      "averageMonthlyReturn": 0.003539040971294256,
+      "bestMonth": 0.15078752506717927,
+      "worstMonth": -0.2223696383932863
+    },
+    "rankICMean": -0.0037220247644540573,
+    "rankICTStat": -0.21428362733958647,
+    "rankICPValueApprox": 0.8303258850034794,
+    "rankICPeriods": 89
+  },
+  "grossMetrics": {
     "top": {
       "periods": 89,
       "cumulativeReturn": 9.130902502160557,
@@ -3649,19 +6833,141 @@
       "averageMonthlyReturn": 0.004236419248447814,
       "bestMonth": 0.15118752506717925,
       "worstMonth": -0.22163630505995296
+    }
+  },
+  "sampleMetrics": {
+    "research": {
+      "top": {
+        "periods": 60,
+        "cumulativeReturn": 2.636019989038906,
+        "annualizedReturn": 0.29456914699160164,
+        "volatilityAnnualized": 0.2501473714866305,
+        "sharpeLike": 1.1775824196791342,
+        "maxDrawdown": 0.19816502222740068,
+        "hitRate": 0.65,
+        "averageMonthlyReturn": 0.02422925536591325,
+        "bestMonth": 0.22679803696946105,
+        "worstMonth": -0.14391201873120404
+      },
+      "bottom": {
+        "periods": 60,
+        "cumulativeReturn": 2.241148714364304,
+        "annualizedReturn": 0.265143509117852,
+        "volatilityAnnualized": 0.339465354858043,
+        "sharpeLike": 0.7810620592747357,
+        "maxDrawdown": 0.36506578004915136,
+        "hitRate": 0.5833333333333334,
+        "averageMonthlyReturn": 0.024443694458689918,
+        "bestMonth": 0.25417848147164657,
+        "worstMonth": -0.25754884471569817
+      },
+      "equalUniverse": {
+        "periods": 60,
+        "cumulativeReturn": 1.8033568017913093,
+        "annualizedReturn": 0.22895413555609978,
+        "volatilityAnnualized": 0.21351839911618442,
+        "sharpeLike": 1.0722923012902328,
+        "maxDrawdown": 0.2307016048749548,
+        "hitRate": 0.65,
+        "averageMonthlyReturn": 0.019189794033232694,
+        "bestMonth": 0.16692459256370357,
+        "worstMonth": -0.17137894530158396
+      },
+      "benchmark": {
+        "periods": 60,
+        "cumulativeReturn": 1.061803501869551,
+        "annualizedReturn": 0.1557115526972861,
+        "volatilityAnnualized": 0.19590372134630313,
+        "sharpeLike": 0.7948371354418098,
+        "maxDrawdown": 0.23927170365660055,
+        "hitRate": 0.6333333333333333,
+        "averageMonthlyReturn": 0.013718488606364211,
+        "bestMonth": 0.14885231422110268,
+        "worstMonth": -0.16425630785330136
+      },
+      "spread": {
+        "periods": 60,
+        "cumulativeReturn": -0.19039770774966946,
+        "annualizedReturn": -0.04136264988372995,
+        "volatilityAnnualized": 0.2502004297640721,
+        "sharpeLike": -0.16531806089515153,
+        "maxDrawdown": 0.43854209648364906,
+        "hitRate": 0.48333333333333334,
+        "averageMonthlyReturn": -0.0008499946483322238,
+        "bestMonth": 0.15078752506717927,
+        "worstMonth": -0.2223696383932863
+      }
     },
-    "rankICMean": -0.0037220247644540573,
-    "rankICTStat": -0.1611492473305964,
-    "rankICPValueApprox": 0.8719758533184968,
-    "rankICPeriods": 89
+    "evaluation": {
+      "top": {
+        "periods": 29,
+        "cumulativeReturn": 1.6985106977024382,
+        "annualizedReturn": 0.5079821386575094,
+        "volatilityAnnualized": 0.244940891868041,
+        "sharpeLike": 2.073896827856652,
+        "maxDrawdown": 0.11277429331140591,
+        "hitRate": 0.7241379310344828,
+        "averageMonthlyReturn": 0.03716471010266107,
+        "bestMonth": 0.16812573498534783,
+        "worstMonth": -0.1091013318670832
+      },
+      "bottom": {
+        "periods": 29,
+        "cumulativeReturn": 0.9263739164384166,
+        "annualizedReturn": 0.311667301196616,
+        "volatilityAnnualized": 0.15735180375674365,
+        "sharpeLike": 1.9807037082233563,
+        "maxDrawdown": 0.06302393614715368,
+        "hitRate": 0.6551724137931034,
+        "averageMonthlyReturn": 0.023836859803403977,
+        "bestMonth": 0.10612653293952938,
+        "worstMonth": -0.06302393614715363
+      },
+      "equalUniverse": {
+        "periods": 29,
+        "cumulativeReturn": 0.8468603544319508,
+        "annualizedReturn": 0.2889871147401537,
+        "volatilityAnnualized": 0.12309495494310758,
+        "sharpeLike": 2.3476763517539667,
+        "maxDrawdown": 0.0490408938790705,
+        "hitRate": 0.7931034482758621,
+        "averageMonthlyReturn": 0.021984765466654784,
+        "bestMonth": 0.07956198578129683,
+        "worstMonth": -0.04843273524199724
+      },
+      "benchmark": {
+        "periods": 29,
+        "cumulativeReturn": 0.6398029746932146,
+        "annualizedReturn": 0.22709817918939357,
+        "volatilityAnnualized": 0.11968903642821134,
+        "sharpeLike": 1.8974016832828753,
+        "maxDrawdown": 0.06924008085200961,
+        "hitRate": 0.6896551724137931,
+        "averageMonthlyReturn": 0.017768592784736532,
+        "bestMonth": 0.09982605310899473,
+        "worstMonth": -0.053052139400041054
+      },
+      "spread": {
+        "periods": 29,
+        "cumulativeReturn": 0.3656313110316929,
+        "annualizedReturn": 0.13762742926947724,
+        "volatilityAnnualized": 0.21224798356946958,
+        "sharpeLike": 0.6484274995452725,
+        "maxDrawdown": 0.1670147834675676,
+        "hitRate": 0.5517241379310345,
+        "averageMonthlyReturn": 0.012619804322245595,
+        "bestMonth": 0.14645308863107356,
+        "worstMonth": -0.1328145304106707
+      }
+    }
   },
   "factorDiagnostics": {
     "score": {
       "label": "Combined score",
       "periods": 89,
       "meanRankIC": -0.0037220247644540573,
-      "tStat": -0.1611492473305964,
-      "roughPValue": 0.8719758533184968,
+      "tStat": -0.21428362733958647,
+      "roughPValue": 0.8303258850034794,
       "positiveRate": 0.5617977528089888,
       "bestMonth": 0.39176788074199387,
       "worstMonth": -0.5396117329741021
@@ -3670,8 +6976,8 @@
       "label": "Analyst consensus",
       "periods": 73,
       "meanRankIC": -0.0547945205479452,
-      "tStat": -0.753689151625593,
-      "roughPValue": 0.45103589747961736,
+      "tStat": -0.7655582130168113,
+      "roughPValue": 0.4439392163609065,
       "positiveRate": 0.4657534246575342,
       "bestMonth": 1.0,
       "worstMonth": -1.0
@@ -3680,8 +6986,8 @@
       "label": "6m momentum",
       "periods": 89,
       "meanRankIC": -0.0021911385349481782,
-      "tStat": -0.10041261318044489,
-      "roughPValue": 0.9200167565070461,
+      "tStat": -0.13267257815886907,
+      "roughPValue": 0.8944523305733459,
       "positiveRate": 0.5168539325842697,
       "bestMonth": 0.41207092333807843,
       "worstMonth": -0.5657122538779501
@@ -3690,8 +6996,8 @@
       "label": "12m momentum",
       "periods": 89,
       "meanRankIC": -0.000557160183892758,
-      "tStat": -0.022300656874806174,
-      "roughPValue": 0.9822081249031877,
+      "tStat": -0.028492331765127894,
+      "roughPValue": 0.9772694839128947,
       "positiveRate": 0.5617977528089888,
       "bestMonth": 0.4668954175741144,
       "worstMonth": -0.7058429263522823
@@ -3700,8 +7006,8 @@
       "label": "Low drawdown",
       "periods": 89,
       "meanRankIC": -0.03186344237384627,
-      "tStat": -1.3061315511050398,
-      "roughPValue": 0.19150782507873365,
+      "tStat": -1.5739723441972049,
+      "roughPValue": 0.11549384323354389,
       "positiveRate": 0.4606741573033708,
       "bestMonth": 0.4589372284031103,
       "worstMonth": -0.7519017859162921
@@ -3710,8 +7016,8 @@
       "label": "Low volatility",
       "periods": 89,
       "meanRankIC": -0.06449230657536316,
-      "tStat": -2.0626492439171566,
-      "roughPValue": 0.03914596548317478,
+      "tStat": -2.217277503518583,
+      "roughPValue": 0.026604134210772408,
       "positiveRate": 0.4157303370786517,
       "bestMonth": 0.5786637509784698,
       "worstMonth": -0.7567863076462457
@@ -3720,11 +7026,64 @@
       "label": "Low risk composite",
       "periods": 89,
       "meanRankIC": -0.050368152836782,
-      "tStat": -1.7914541890904405,
-      "roughPValue": 0.07322043971947254,
+      "tStat": -2.0236717461769174,
+      "roughPValue": 0.04300393752671241,
       "positiveRate": 0.449438202247191,
       "bestMonth": 0.5394070847593226,
       "worstMonth": -0.7968876811307484
     }
+  },
+  "readiness": {
+    "status": "research_only",
+    "passed": 6,
+    "total": 9,
+    "gates": [
+      {
+        "id": "benchmark",
+        "label": "Benchmark history available",
+        "passed": true
+      },
+      {
+        "id": "breadth",
+        "label": "At least 100 tradable stocks",
+        "passed": true
+      },
+      {
+        "id": "history",
+        "label": "At least 60 monthly observations",
+        "passed": true
+      },
+      {
+        "id": "costs",
+        "label": "Trading costs included",
+        "passed": true
+      },
+      {
+        "id": "rank_ic",
+        "label": "Positive, statistically significant rank IC",
+        "passed": false
+      },
+      {
+        "id": "net_spread",
+        "label": "Positive top-minus-bottom return after costs",
+        "passed": true
+      },
+      {
+        "id": "evaluation",
+        "label": "Recent evaluation segment beats SPY after costs",
+        "passed": true
+      },
+      {
+        "id": "point_in_time_universe",
+        "label": "Point-in-time universe includes delisted stocks",
+        "passed": false
+      },
+      {
+        "id": "prospective",
+        "label": "Independent live paper evidence",
+        "passed": false
+      }
+    ],
+    "note": "The evaluation segment has already been observed during model development and is not a pristine holdout. Only future paper results are genuinely prospective."
   }
 }

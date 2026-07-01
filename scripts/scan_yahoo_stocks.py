@@ -31,6 +31,10 @@ from update_yahoo_data import (
 OUT_PATH = ROOT / "public" / "data" / "scan-results.json"
 MODEL_V13 = "v13"
 MODEL_V14 = "v14"
+MODEL_FORMULA_VERSIONS = {
+    MODEL_V13: "v13.0.0",
+    MODEL_V14: "v14.0.0",
+}
 MARKET_VOL = 0.18
 W_ANALYST = 0.40
 W_MOMENTUM = 0.20
@@ -54,6 +58,11 @@ DEFAULT_FLAGS = {
     "earnings": True,
 }
 TICKER_RE = re.compile(r"^[A-Z][A-Z0-9.\-]{0,9}$")
+
+
+def model_formula_version(model: str) -> str:
+    """Return the immutable formula ID stored with forward-test evidence."""
+    return MODEL_FORMULA_VERSIONS.get(model, f"{model}.unversioned")
 
 
 def clamp(value: float, lo: float, hi: float) -> float:

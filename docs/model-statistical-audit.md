@@ -114,6 +114,15 @@ The current project does not store historical feature snapshots yet, so the clea
 
 Update: the project now saves compact daily snapshots in `public/data/history/`. Each snapshot includes prices, Yahoo inputs, and frozen v13/v14 model outputs, so future walk-forward tests can compare model expectation against later realized performance.
 
+July 2026 validation update:
+
+- v13.0.0 and v14.0.0 are frozen for prospective testing.
+- A golden-output contract fails if either implementation changes without an explicit version update.
+- New snapshots store formula IDs and a separate SPY price.
+- A persistent v14.0.0 paper portfolio tracks the top 20 stocks, rebalances monthly, and charges 10 basis points per one-way turnover.
+- Historical and prospective reports now remain `research_only` while rank significance, point-in-time delisted-stock coverage, or independent forward evidence is missing.
+- The historical price-only test uses Newey-West/HAC rank-IC statistics and reports a recent evaluation segment separately. That segment is not described as untouched because its results have already been observed.
+
 FMP free-access update: dated historical analyst grades and dividend-adjusted prices are available, but dated price-target consensus and dated fundamentals are not available from the tested endpoints. This supports a genuine historical test of a ratings-and-price model, but not a clean historical test of the current target-upside/fundamental model.
 
 First FMP historical result, using 9 large-cap tickers plus `SPY` from 2019 to 2026:

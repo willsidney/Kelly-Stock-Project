@@ -286,6 +286,23 @@ def spearman(xs: list[float], ys: list[float]) -> float | None:
     return pearson(rank(xs), rank(ys))
 
 
+def equal_weights(rows: list[dict]) -> dict[str, float]:
+    if not rows:
+        return {}
+    weight = 1 / len(rows)
+    return {row["ticker"]: weight for row in rows}
+
+
+def portfolio_turnover(previous: dict[str, float], current: dict[str, float]) -> float:
+    """One-way turnover; a complete replacement of a portfolio is 100%."""
+    if not current:
+        return 0.0
+    if not previous:
+        return 1.0
+    tickers = set(previous) | set(current)
+    return 0.5 * sum(abs(current.get(ticker, 0) - previous.get(ticker, 0)) for ticker in tickers)
+
+
 def performance(periods: list[dict], key: str) -> dict:
     returns = [row[key] for row in periods if isinstance(row.get(key), (int, float))]
     if not returns:
@@ -322,14 +339,30 @@ def normal_two_sided_p(z_score: float | None) -> float | None:
     return math.erfc(abs(z_score) / math.sqrt(2))
 
 
+def newey_west_mean_t(values: list[float], lags: int = 3) -> float | None:
+    """HAC t-stat for a mean, allowing short-run serial correlation."""
+    clean = [float(value) for value in values if is_num(value)]
+    n = len(clean)
+    if n < 3:
+        return None
+    mean_value = sum(clean) / n
+    residuals = [value - mean_value for value in clean]
+    long_run_variance = sum(value * value for value in residuals) / n
+    max_lag = min(max(0, lags), n - 1)
+    for lag in range(1, max_lag + 1):
+        covariance = sum(residuals[i] * residuals[i - lag] for i in range(lag, n)) / n
+        long_run_variance += 2 * (1 - lag / (max_lag + 1)) * covariance
+    if long_run_variance <= 0:
+        return None
+    return mean_value / math.sqrt(long_run_variance / n)
+
+
 def signal_stats(values: list[float]) -> dict:
     clean = [value for value in values if isinstance(value, (int, float)) and math.isfinite(value)]
     if not clean:
         return {"periods": 0}
     mean_value = sum(clean) / len(clean)
-    t_stat = None
-    if len(clean) > 2 and statistics.stdev(clean) > 0:
-        t_stat = mean_value / (statistics.stdev(clean) / math.sqrt(len(clean)))
+    t_stat = newey_west_mean_t(clean)
     return {
         "periods": len(clean),
         "meanRankIC": mean_value,
@@ -341,7 +374,92 @@ def signal_stats(values: list[float]) -> dict:
     }
 
 
-def run_backtest(universe: dict[str, dict], benchmark: str, top_n: int, model_variant: str) -> dict:
+def sample_metrics(periods: list[dict]) -> dict:
+    return {
+        "top": performance(periods, "topNetReturn"),
+        "bottom": performance(periods, "bottomNetReturn"),
+        "equalUniverse": performance(periods, "equalUniverseNetReturn"),
+        "benchmark": performance(periods, "benchmarkNetReturn"),
+        "spread": performance(periods, "spreadNetReturn"),
+    }
+
+
+def readiness_assessment(result: dict) -> dict:
+    metrics = result.get("metrics") or {}
+    evaluation = (result.get("sampleMetrics") or {}).get("evaluation") or {}
+    gates = [
+        {
+            "id": "benchmark",
+            "label": "Benchmark history available",
+            "passed": bool(result.get("benchmarkAvailable")),
+        },
+        {
+            "id": "breadth",
+            "label": "At least 100 tradable stocks",
+            "passed": int(result.get("tickerCount") or 0) >= 100,
+        },
+        {
+            "id": "history",
+            "label": "At least 60 monthly observations",
+            "passed": len(result.get("periods") or []) >= 60,
+        },
+        {
+            "id": "costs",
+            "label": "Trading costs included",
+            "passed": float(result.get("transactionCostBps") or 0) > 0,
+        },
+        {
+            "id": "rank_ic",
+            "label": "Positive, statistically significant rank IC",
+            "passed": (
+                is_num(metrics.get("rankICMean"))
+                and metrics["rankICMean"] > 0
+                and is_num(metrics.get("rankICPValueApprox"))
+                and metrics["rankICPValueApprox"] <= 0.05
+            ),
+        },
+        {
+            "id": "net_spread",
+            "label": "Positive top-minus-bottom return after costs",
+            "passed": float((metrics.get("spread") or {}).get("annualizedReturn") or 0) > 0,
+        },
+        {
+            "id": "evaluation",
+            "label": "Recent evaluation segment beats SPY after costs",
+            "passed": (
+                float((evaluation.get("top") or {}).get("annualizedReturn") or -1)
+                > float((evaluation.get("benchmark") or {}).get("annualizedReturn") or 1)
+            ),
+        },
+        {
+            "id": "point_in_time_universe",
+            "label": "Point-in-time universe includes delisted stocks",
+            "passed": False,
+        },
+        {
+            "id": "prospective",
+            "label": "Independent live paper evidence",
+            "passed": False,
+        },
+    ]
+    return {
+        "status": "live_pilot_candidate" if all(gate["passed"] for gate in gates) else "research_only",
+        "passed": sum(1 for gate in gates if gate["passed"]),
+        "total": len(gates),
+        "gates": gates,
+        "note": "The evaluation segment has already been observed during model development and is not a pristine holdout. Only future paper results are genuinely prospective.",
+    }
+
+
+def run_backtest(
+    universe: dict[str, dict],
+    benchmark: str,
+    top_n: int,
+    model_variant: str,
+    *,
+    transaction_cost_bps: float = 10,
+    evaluation_start: date = date(2024, 1, 1),
+) -> dict:
     config = MODEL_CONFIGS[model_variant]
     tradable = {
         ticker: item
@@ -360,6 +478,8 @@ def run_backtest(universe: dict[str, dict], benchmark: str, top_n: int, model_va
     periods = []
     rank_ics = []
     factor_ics = {key: [] for key, _ in FACTOR_SPECS}
+    previous_weights = {"top": {}, "bottom": {}, "equalUniverse": {}, "benchmark": {}}
+    cost_rate = max(0.0, float(transaction_cost_bps)) / 10_000
     for start_date, end_date in zip(rebalance_dates, rebalance_dates[1:]):
         features = [row for item in tradable.values() if (row := stock_features(item, start_date, model_variant))]
         returns = {
@@ -378,6 +498,23 @@ def run_backtest(universe: dict[str, dict], benchmark: str, top_n: int, model_va
         bottom_return = sum(returns[row["ticker"]] for row in bottom) / len(bottom)
         equal_return = sum(returns[row["ticker"]] for row in scored) / len(scored)
         benchmark_return = forward_return(universe[benchmark], start_date, end_date) if benchmark_available else None
+        weights = {
+            "top": equal_weights(top),
+            "bottom": equal_weights(bottom),
+            "equalUniverse": equal_weights(scored),
+            "benchmark": {benchmark: 1.0} if benchmark_return is not None else {},
+        }
+        turnover = {
+            key: portfolio_turnover(previous_weights[key], current)
+            for key, current in weights.items()
+        }
+        costs = {key: value * cost_rate for key, value in turnover.items()}
+        top_net_return = top_return - costs["top"]
+        bottom_net_return = bottom_return - costs["bottom"]
+        equal_net_return = equal_return - costs["equalUniverse"]
+        benchmark_net_return = benchmark_return - costs["benchmark"] if benchmark_return is not None else None
+        spread_net_return = top_return - bottom_return - costs["top"] - costs["bottom"]
+        previous_weights = weights
         ic = spearman([row["score"] for row in scored], [returns[row["ticker"]] for row in scored])
         if ic is not None:
             rank_ics.append(ic)
@@ -396,24 +533,34 @@ def run_backtest(universe: dict[str, dict], benchmark: str, top_n: int, model_va
                 "stockCount": len(scored),
                 "effectiveTopN": side_n,
                 "topTickers": [row["ticker"] for row in top],
+                "bottomTickers": [row["ticker"] for row in bottom],
                 "topReturn": top_return,
+                "topNetReturn": top_net_return,
                 "bottomReturn": bottom_return,
+                "bottomNetReturn": bottom_net_return,
                 "equalUniverseReturn": equal_return,
+                "equalUniverseNetReturn": equal_net_return,
                 "benchmarkReturn": benchmark_return,
+                "benchmarkNetReturn": benchmark_net_return,
                 "spreadReturn": top_return - bottom_return,
+                "spreadNetReturn": spread_net_return,
+                "turnover": turnover,
+                "transactionCosts": costs,
                 "rankIC": ic,
                 "factorRankIC": period_factor_ics,
+                "sample": "evaluation" if start_date >= evaluation_start else "research",
             }
         )
     mean_ic = sum(rank_ics) / len(rank_ics) if rank_ics else None
-    ic_t_stat = None
-    if len(rank_ics) > 2 and statistics.stdev(rank_ics) > 0:
-        ic_t_stat = mean_ic / (statistics.stdev(rank_ics) / math.sqrt(len(rank_ics)))
-    return {
+    ic_t_stat = newey_west_mean_t(rank_ics)
+    result = {
         "status": "ok" if periods else "insufficient_data",
         "model": model_variant,
         "description": config["description"],
         "benchmark": benchmark,
+        "transactionCostBps": transaction_cost_bps,
+        "evaluationStart": evaluation_start.isoformat(),
+        "universeConstruction": "Cached current ticker list. Delisted stocks and historical membership are not guaranteed, so survivorship bias remains.",
         "requestedTopN": top_n,
         "effectiveTopNRule": "Uses requested Top N, capped at half the tradable universe to prevent top/bottom overlap.",
         "loadedTickerCount": len(universe),
@@ -427,21 +574,30 @@ def run_backtest(universe: dict[str, dict], benchmark: str, top_n: int, model_va
         "benchmarkIssue": None if benchmark_available else f"{benchmark} was not loaded with at least 30 usable price rows.",
         "periods": periods,
         "metrics": {
+            **sample_metrics(periods),
+            "rankICMean": mean_ic,
+            "rankICTStat": ic_t_stat,
+            "rankICPValueApprox": normal_two_sided_p(ic_t_stat),
+            "rankICPeriods": len(rank_ics),
+        },
+        "grossMetrics": {
             "top": performance(periods, "topReturn"),
             "bottom": performance(periods, "bottomReturn"),
             "equalUniverse": performance(periods, "equalUniverseReturn"),
             "benchmark": performance(periods, "benchmarkReturn"),
             "spread": performance(periods, "spreadReturn"),
-            "rankICMean": mean_ic,
-            "rankICTStat": ic_t_stat,
-            "rankICPValueApprox": normal_two_sided_p(ic_t_stat),
-            "rankICPeriods": len(rank_ics),
+        },
+        "sampleMetrics": {
+            label: sample_metrics([row for row in periods if row.get("sample") == label])
+            for label in ("research", "evaluation")
         },
         "factorDiagnostics": {
             key: {"label": label, **signal_stats(factor_ics[key])}
             for key, label in FACTOR_SPECS
         },
     }
+    result["readiness"] = readiness_assessment(result)
+    return result
 
 
 def fmt_pct(value) -> str:
@@ -482,6 +638,8 @@ def print_markdown(result: dict) -> None:
     print()
     print(f"Model variant: {result.get('model')}")
     print(f"Benchmark: {result.get('benchmark')}")
+    print(f"Transaction costs: {fmt_num(result.get('transactionCostBps'))} bps per one-way turnover")
+    print(f"Evaluation segment starts: {result.get('evaluationStart')}")
     print(f"Loaded histories: {result.get('loadedTickerCount', result['tickerCount'])}")
     print(f"Ticker count: {result['tickerCount']}")
     print(f"Tickers with analyst grades: {result.get('gradeTickerCount', 0)}")
@@ -495,8 +653,10 @@ def print_markdown(result: dict) -> None:
         effective = sorted({row.get("effectiveTopN") for row in result["periods"] if row.get("effectiveTopN")})
         print(f"Effective Top N used: {', '.join(str(x) for x in effective)}")
     print(f"Rank IC mean: {fmt_pct(result['metrics'].get('rankICMean'))}")
-    print(f"Rank IC t-stat: {fmt_num(result['metrics'].get('rankICTStat'))}")
-    print(f"Rank IC rough p-value: {fmt_p(result['metrics'].get('rankICPValueApprox'))}")
+    print(f"Rank IC HAC t-stat: {fmt_num(result['metrics'].get('rankICTStat'))}")
+    print(f"Rank IC approximate p-value: {fmt_p(result['metrics'].get('rankICPValueApprox'))}")
+    print()
+    print("Net of modeled transaction costs.")
     print()
     print("| Portfolio | Periods | Cumulative | Annualized | Max DD | Hit Rate |")
     print("| --- | ---: | ---: | ---: | ---: | ---: |")
@@ -523,6 +683,35 @@ def print_markdown(result: dict) -> None:
                 f"{fmt_pct(row.get('meanRankIC'))} | {fmt_num(row.get('tStat'))} | "
                 f"{fmt_p(row.get('roughPValue'))} | {fmt_pct(row.get('positiveRate'))} |"
             )
+    samples = result.get("sampleMetrics") or {}
+    if samples:
+        print()
+        print("## Chronological Segments")
+        print()
+        print("The evaluation segment is reported separately, but it is no longer an untouched holdout because its results have already been observed.")
+        print()
+        print("| Segment | Portfolio | Periods | Annualized | Max DD |")
+        print("| --- | --- | ---: | ---: | ---: |")
+        for sample_name in ("research", "evaluation"):
+            for portfolio_name in ("top", "equalUniverse", "benchmark", "spread"):
+                row = (samples.get(sample_name) or {}).get(portfolio_name) or {}
+                print(
+                    f"| {sample_name} | {portfolio_name} | {row.get('periods', 0)} | "
+                    f"{fmt_pct(row.get('annualizedReturn'))} | {fmt_pct(row.get('maxDrawdown'))} |"
+                )
+    readiness = result.get("readiness") or {}
+    if readiness:
+        print()
+        print("## Investment Readiness")
+        print()
+        print(f"Status: {readiness.get('status', 'research_only')}")
+        print(f"Gates passed: {readiness.get('passed', 0)} of {readiness.get('total', 0)}")
+        print()
+        for gate in readiness.get("gates") or []:
+            print(f"- {'PASS' if gate.get('passed') else 'FAIL'}: {gate.get('label')}")
+        if readiness.get("note"):
+            print()
+            print(readiness["note"])
 
 
 def main() -> int:
@@ -535,9 +724,18 @@ def main() -> int:
     parser.add_argument("--model", choices=sorted(MODEL_CONFIGS), default="analyst_price")
     parser.add_argument("--min-tickers", type=int, default=0)
     parser.add_argument("--require-benchmark", action="store_true")
+    parser.add_argument("--cost-bps", type=float, default=10, help="Transaction cost per one-way turnover in basis points.")
+    parser.add_argument("--evaluation-start", default="2024-01-01", help="Start date for the separately reported evaluation segment.")
     args = parser.parse_args()
     universe = load_universe(args.history_dir)
-    result = run_backtest(universe, args.benchmark.strip().upper(), args.top, args.model)
+    result = run_backtest(
+        universe,
+        args.benchmark.strip().upper(),
+        args.top,
+        args.model,
+        transaction_cost_bps=args.cost_bps,
+        evaluation_start=parse_date(args.evaluation_start) or date(2024, 1, 1),
+    )
     issues = validation_issues(result, args.min_tickers, args.require_benchmark)
     if issues:
         result["validationIssues"] = issues

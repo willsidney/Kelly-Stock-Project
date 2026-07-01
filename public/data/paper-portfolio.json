@@ -1,0 +1,9 @@
+{
+  "schemaVersion": 1,
+  "status": "awaiting_first_snapshot",
+  "reason": "The paper portfolio will start after the next snapshot containing model scores and an SPY price.",
+  "model": "v14",
+  "formulaVersion": "v14.0.0",
+  "benchmark": "SPY",
+  "topN": 20
+}

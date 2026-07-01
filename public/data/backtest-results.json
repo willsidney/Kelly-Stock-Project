@@ -1,11 +1,209 @@
 {
-  "status": "insufficient_history",
-  "reason": "At least two dated history snapshots are needed for a walk-forward backtest.",
-  "snapshotCount": 1,
-  "rebalanceSnapshotCount": 1,
+  "status": "ok",
+  "reason": null,
+  "snapshotCount": 3,
+  "rebalanceSnapshotCount": 2,
   "schedule": "weekly",
   "benchmark": "SPY",
-  "models": {},
-  "baselines": {},
-  "periods": []
+  "transactionCostBps": 10.0,
+  "evidenceStart": "2026-06-24",
+  "evidenceEnd": "2026-06-26",
+  "modelFormulaVersions": {
+    "v13": [],
+    "v14": []
+  },
+  "models": {
+    "v13_top_10": {
+      "periods": 1,
+      "totalDays": 2,
+      "cumulativeReturn": 0.0015786480279236237,
+      "annualizedReturn": 0.33359205825319904,
+      "periodVolatilityAnnualized": null,
+      "sharpeLike": null,
+      "maxDrawdown": 0.0,
+      "hitRate": 1.0,
+      "averagePeriodReturn": 0.0015786480279235343,
+      "bestPeriod": 0.0015786480279235343,
+      "worstPeriod": 0.0015786480279235343
+    },
+    "v13_top_20": {
+      "periods": 1,
+      "totalDays": 2,
+      "cumulativeReturn": 0.002254245205046246,
+      "annualizedReturn": 0.5082299544479261,
+      "periodVolatilityAnnualized": null,
+      "sharpeLike": null,
+      "maxDrawdown": 0.0,
+      "hitRate": 1.0,
+      "averagePeriodReturn": 0.002254245205046166,
+      "bestPeriod": 0.002254245205046166,
+      "worstPeriod": 0.002254245205046166
+    },
+    "v14_top_10": {
+      "periods": 1,
+      "totalDays": 2,
+      "cumulativeReturn": 0.0018946738346168335,
+      "annualizedReturn": 0.41262661611207885,
+      "periodVolatilityAnnualized": null,
+      "sharpeLike": null,
+      "maxDrawdown": 0.0,
+      "hitRate": 1.0,
+      "averagePeriodReturn": 0.0018946738346167268,
+      "bestPeriod": 0.0018946738346167268,
+      "worstPeriod": 0.0018946738346167268
+    },
+    "v14_top_20": {
+      "periods": 1,
+      "totalDays": 2,
+      "cumulativeReturn": 0.0031468088220052426,
+      "annualizedReturn": 0.7742732574307509,
+      "periodVolatilityAnnualized": null,
+      "sharpeLike": null,
+      "maxDrawdown": 0.0,
+      "hitRate": 1.0,
+      "averagePeriodReturn": 0.0031468088220052374,
+      "bestPeriod": 0.0031468088220052374,
+      "worstPeriod": 0.0031468088220052374
+    }
+  },
+  "baselines": {
+    "equal_universe": {
+      "periods": 1,
+      "totalDays": 2,
+      "cumulativeReturn": 0.00666969744559287,
+      "annualizedReturn": 2.364160659547291,
+      "periodVolatilityAnnualized": null,
+      "sharpeLike": null,
+      "maxDrawdown": 0.0,
+      "hitRate": 1.0,
+      "averagePeriodReturn": 0.0066696974455928894,
+      "bestPeriod": 0.0066696974455928894,
+      "worstPeriod": 0.0066696974455928894
+    },
+    "SPY": {
+      "periods": 0
+    }
+  },
+  "periods": [
+    {
+      "startDate": "2026-06-24",
+      "endDate": "2026-06-26",
+      "days": 2,
+      "tradableStocks": 264,
+      "equalUniverseReturn": 0.0066696974455928894,
+      "equalUniverseGrossReturn": 0.0076696974455928895,
+      "equalUniverseTurnover": 1.0,
+      "v13_top_10": {
+        "return": 0.0015786480279235343,
+        "grossReturn": 0.0025786480279235344,
+        "turnover": 1.0,
+        "transactionCost": 0.001,
+        "tickers": [
+          "COP",
+          "PDD",
+          "NOC",
+          "AZN",
+          "PCG",
+          "HLN",
+          "REGN",
+          "OXY",
+          "TMUS",
+          "XOM"
+        ],
+        "expectedReturn": 0.3562259311972119,
+        "expectedMinusActual": 0.3536472831692884
+      },
+      "v13_top_20": {
+        "return": 0.002254245205046166,
+        "grossReturn": 0.003254245205046166,
+        "turnover": 1.0,
+        "transactionCost": 0.001,
+        "tickers": [
+          "COP",
+          "PDD",
+          "NOC",
+          "AZN",
+          "PCG",
+          "HLN",
+          "REGN",
+          "OXY",
+          "TMUS",
+          "XOM",
+          "FANG",
+          "CME",
+          "T",
+          "GILD",
+          "BSX",
+          "CVX",
+          "BMY",
+          "ORLY",
+          "MA",
+          "CELH"
+        ],
+        "expectedReturn": 0.3597855968349969,
+        "expectedMinusActual": 0.3565313516299507
+      },
+      "v14_top_10": {
+        "return": 0.0018946738346167268,
+        "grossReturn": 0.002894673834616727,
+        "turnover": 1.0,
+        "transactionCost": 0.001,
+        "tickers": [
+          "GILD",
+          "PDD",
+          "REGN",
+          "PCG",
+          "SCHW",
+          "COP",
+          "BSX",
+          "EOG",
+          "ICE",
+          "CELH"
+        ],
+        "expectedReturn": 0.4922296610590883,
+        "expectedMinusActual": 0.48933498722447155
+      },
+      "v14_top_20": {
+        "return": 0.0031468088220052374,
+        "grossReturn": 0.004146808822005237,
+        "turnover": 1.0,
+        "transactionCost": 0.001,
+        "tickers": [
+          "GILD",
+          "PDD",
+          "REGN",
+          "PCG",
+          "SCHW",
+          "COP",
+          "BSX",
+          "EOG",
+          "ICE",
+          "CELH",
+          "OXY",
+          "MSFT",
+          "NU",
+          "MA",
+          "SLB",
+          "META",
+          "V",
+          "T",
+          "ROST",
+          "VRTX"
+        ],
+        "expectedReturn": 0.4262400986265535,
+        "expectedMinusActual": 0.42209328980454824
+      }
+    }
+  ],
+  "readiness": {
+    "status": "research_only",
+    "evidenceDays": 2,
+    "minimumEvidenceDays": 90,
+    "benchmarkPeriods": 0,
+    "formulaVersionsMixed": false,
+    "issues": [
+      "At least 90 calendar days of prospective evidence are required.",
+      "No benchmark return periods are available."
+    ]
+  }
 }

@@ -20,6 +20,12 @@ on:
         description: "Benchmark ticker stored in snapshots"
         required: false
         default: "SPY"
+      transaction_cost_bps:
+        description: "Trading cost per one-way turnover in basis points"
+        required: false
+        default: "10"
+  schedule:
+    - cron: "35 21 * * 5"
 
 permissions:
   contents: write
@@ -36,14 +42,19 @@ jobs:
         with:
           python-version: "3.12"
 
+      - name: Verify frozen model contract
+        run: python scripts/test_model_contract.py
+
       - name: Run snapshot backtest
         run: |
           python scripts/backtest_snapshots.py \
             --schedule "${{ github.event.inputs.schedule || 'weekly' }}" \
             --top "${{ github.event.inputs.top || '10,20' }}" \
             --benchmark "${{ github.event.inputs.benchmark || 'SPY' }}" \
+            --cost-bps "${{ github.event.inputs.transaction_cost_bps || '10' }}" \
             --output public/data/backtest-results.json \
-            --format markdown
+            --format markdown | tee /tmp/kelly-backtest.md
+          cat /tmp/kelly-backtest.md >> "$GITHUB_STEP_SUMMARY"
 
       - name: Commit backtest results
         run: |
@@ -55,4 +66,5 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add public/data/backtest-results.json
           git commit -m "Update Kelly model backtest results"
+          git pull --rebase origin main
           git push

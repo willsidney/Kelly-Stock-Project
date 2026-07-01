@@ -27,6 +27,14 @@ on:
         description: "Fail if fewer tradable stock histories are available"
         required: false
         default: "10"
+      transaction_cost_bps:
+        description: "Trading cost per one-way turnover in basis points"
+        required: false
+        default: "10"
+      evaluation_start:
+        description: "Start of separately reported recent evaluation period"
+        required: false
+        default: "2024-01-01"
 
 permissions:
   contents: write
@@ -46,6 +54,9 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: "3.12"
+
+      - name: Verify frozen model contract
+        run: python scripts/test_model_contract.py
 
       - name: Fetch FMP history
         env:
@@ -80,6 +91,8 @@ jobs:
             --benchmark "${{ github.event.inputs.benchmark || 'SPY' }}" \
             --top "${{ github.event.inputs.top || '10' }}" \
             --model "${{ github.event.inputs.model_variant || 'price_only' }}" \
+            --cost-bps "${{ github.event.inputs.transaction_cost_bps || '10' }}" \
+            --evaluation-start "${{ github.event.inputs.evaluation_start || '2024-01-01' }}" \
             --min-tickers "${{ github.event.inputs.min_usable_tickers || '10' }}" \
             --require-benchmark \
             --output public/data/fmp-backtest-results.json \

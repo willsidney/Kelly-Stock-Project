@@ -401,12 +401,25 @@ def snapshot_model_outputs(stocks: list[dict]) -> dict[str, dict[str, dict]]:
             for key in ("expectedReturn", "expectedLoss", "dataConfidence", "riskScore", "qualityScore", "valuationScore"):
                 if row.get(key) is not None:
                     fields[key] = row.get(key)
-            outputs.setdefault(ticker, {})[model_name] = {
+            frozen = {
                 key: value
                 for key, value in fields.items()
                 if value is not None
             }
+            frozen["formulaVersion"] = model.model_formula_version(model_name)
+            outputs.setdefault(ticker, {})[model_name] = frozen
     return outputs
+
+
+def current_model_formula_versions() -> dict[str, str]:
+    try:
+        import scan_yahoo_stocks as model
+    except Exception:
+        return {"v13": "v13.unavailable", "v14": "v14.unavailable"}
+    return {
+        model_name: model.model_formula_version(model_name)
+        for model_name in (model.MODEL_V13, model.MODEL_V14)
+    }
 
 
 def parse_symbol_list(value: str | None) -> list[str]:
@@ -425,6 +438,8 @@ def parse_symbol_list(value: str | None) -> list[str]:
 def benchmark_entry(symbol: str, quote: dict | None, stocks_by_ticker: dict[str, dict]) -> dict | None:
     price, source, price_time = quote_current_price(quote)
     currency = (quote or {}).get("currency")
+    if price is None:
+        price, source, price_time = intraday_price(symbol)
     if price is None and symbol in stocks_by_ticker:
         stock = stocks_by_ticker[symbol]
         if valid_price(stock.get("currentPrice")):
@@ -482,7 +497,8 @@ def write_history_snapshot(
         "mode": mode,
         "reason": reason,
         "source": "Yahoo Finance",
-        "modelOutputVersion": "scan_yahoo_stocks.run_model v13/v14",
+        "modelOutputVersion": "scan_yahoo_stocks.run_model",
+        "modelFormulaVersions": current_model_formula_versions(),
         "stockCount": len(stocks),
         "modelReadyCount": sum(1 for stock in stocks if stock.get("modelReady")),
         "benchmarks": benchmark_entries,

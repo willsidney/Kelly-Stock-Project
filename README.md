@@ -2,9 +2,9 @@
 
 Interactive Kelly Criterion portfolio model for a EUR 250 Trading 212 portfolio.
 
-## Current Model
+## Current Models
 
-- Version: v13
+- Frozen formulas: v13.0.0 and v14.0.0
 - Default budget: EUR 250
 - Kelly fraction: Half Kelly by default
 - Holdings: Ryanair, Nvidia, Adidas, ASML, Broadcom, Cloudflare, Palantir, Novo Nordisk, IREN, Visa
@@ -25,6 +25,7 @@ Interactive Kelly Criterion portfolio model for a EUR 250 Trading 212 portfolio.
   - on-demand Monte Carlo projection
   - EUR/USD FX overlay
   - 20% hard cap per position
+  - forward paper portfolio and validation gates
 
 ## View On GitHub Pages
 
@@ -64,6 +65,7 @@ The app now includes:
 - `Fundamentals` - compares quality and valuation metrics from Yahoo Finance without changing the allocation model.
 - `Create Model` - select stocks from the database and generate a fresh allocation table using the same Kelly model settings.
 - `Stock Search` - looks up stocks already loaded into the saved database.
+- `Validation` - shows the frozen formula, forward paper results against SPY, historical signal diagnostics, and the current investment-readiness gates.
 
 GitHub Pages can run the model and save data in the browser, but it cannot safely hold private API keys. Yahoo Finance is the chosen primary source for analyst-style data and stock prices. The updater reads Yahoo Finance data and writes trusted model inputs into `public/data/stocks.json`.
 
@@ -75,7 +77,9 @@ The repo includes a GitHub Actions workflow named `Update Yahoo Finance Data`.
 
 It refreshes `public/data/stocks.json` from Yahoo Finance on weekdays and can also be run manually from the Actions tab. It updates best-effort fields including price, currency, analyst recommendation mix, target-price upside, beta, short interest, earnings distance, YTD performance, one-year drawdown, valuation multiples, margins, growth, cash flow, and balance-sheet metrics when Yahoo returns those fields.
 
-Each successful update also writes a compact daily point-in-time snapshot in `public/data/history/`. Each snapshot stores the stock price, Yahoo model inputs, and frozen v13/v14 model outputs for each stock, so future backtests can compare what the model expected on that day with what actually happened afterward. If the updater runs multiple times in the same day, the latest run replaces that day's snapshot. This keeps the evidence trail useful for backtesting without making the repo grow too quickly.
+Each successful update also writes a compact daily point-in-time snapshot in `public/data/history/`. Each snapshot stores the stock price, Yahoo model inputs, SPY price, and frozen v13/v14 model outputs for each stock, so future backtests can compare what the model expected on that day with what actually happened afterward. If the updater runs multiple times in the same day, the latest run replaces that day's file.
+
+Formula IDs are stored in every new snapshot. The frozen contracts are registered in `public/data/model-registry.json` and checked by `scripts/test_model_contract.py`. Any scoring or allocation change must receive a new formula version and start a new paper portfolio.
 
 For a large database, the updater has two modes:
 
@@ -83,6 +87,8 @@ For a large database, the updater has two modes:
 - `prices` - updates current Yahoo prices quickly and recalculates target-price upside when a stored Yahoo target is available.
 
 The scheduled workflow runs one rotating full refresh early on weekdays and several faster price refreshes during the day. This is the intended path for a larger stock universe, because analyst and fundamental data do not need to be re-pulled as often as price.
+
+The same workflow updates `public/data/paper-portfolio.json`. The forward paper account uses v14.0.0, the top 20 eligible stocks, monthly rebalancing, fractional shares, SPY as the benchmark, and a 10 basis-point cost per one-way turnover. It will stop rebalancing if the formula ID changes.
 
 To add new stocks:
 
@@ -129,18 +135,19 @@ For large databases, individual-stock Monte Carlo is disabled in the main app on
 
 ## Backtesting
 
-The repo includes a manual GitHub Actions workflow named `Backtest Kelly Model`.
+The repo includes a GitHub Actions workflow named `Backtest Kelly Model`. It can be run manually and also runs weekly.
 
-The backtester uses only saved files in `public/data/history/`, then compares model-selected top-N portfolios against the equal-weight tracked universe and the saved benchmark, currently `SPY`. It prefers the frozen model outputs saved inside each snapshot, so later formula changes do not rewrite old expectations. This avoids the main statistical error of testing today's Yahoo analyst targets and fundamentals against returns that happened before those inputs existed.
+The backtester uses only saved files in `public/data/history/`, then compares model-selected top-N portfolios against the equal-weight tracked universe and SPY. It prefers the frozen model outputs saved inside each snapshot, charges turnover costs, reports formula-version mixing, and never rewrites old expectations with a newer formula.
 
-Early backtest results will be limited until enough dated snapshots have accumulated. The first useful checks start after at least two snapshots; weekly and monthly tests become more meaningful after several weeks or months.
+The project remains `research_only` until it has at least 90 calendar days of prospective evidence. Ninety days verifies the operating pipeline; substantially more observations are needed to establish a statistical edge.
 
 Local commands:
 
 ```bash
 python3 scripts/update_yahoo_data.py --snapshot-only --no-benchmark-fetch
-python3 scripts/backtest_snapshots.py --schedule weekly --top 10,20 --output public/data/backtest-results.json
+python3 scripts/backtest_snapshots.py --schedule weekly --top 10,20 --cost-bps 10 --output public/data/backtest-results.json
 python3 scripts/audit_model_stats.py --format markdown
+python3 scripts/test_model_contract.py
 ```
 
 ## FMP Historical Data Probe
@@ -178,7 +185,7 @@ python3 scripts/probe_fmp_access.py --tickers AAPL,MSFT,NVDA,JPM,CELH --endpoint
 
 The repo also includes a workflow named `FMP Historical Backtest`.
 
-This workflow fetches FMP historical analyst grades and dividend-adjusted prices, stores them in `public/data/fmp-history/`, and writes `public/data/fmp-backtest-results.json`.
+This workflow fetches FMP historical analyst grades and dividend-adjusted prices, stores them in `public/data/fmp-history/`, and writes `public/data/fmp-backtest-results.json`. The report now includes turnover costs, autocorrelation-aware rank-IC statistics, separate research/evaluation segments, and explicit readiness gates.
 
 The free FMP access tested so far supports dated analyst grades and dated prices, but not dated price-target consensus or dated fundamentals. For that reason, this backtest is a genuine historical test of a separate `fmp_ratings_price_v1` model: historical analyst grades plus price momentum, drawdown, and volatility. It is not a full historical test of the current Yahoo target-upside model.
 
@@ -196,6 +203,8 @@ AAPL,MSFT,CELH,SPY
 ```
 
 Then expand carefully. Free API limits may make a full database pull too slow or unavailable.
+
+The cached FMP universe is assembled from current database names and does not prove that delisted securities were included at each historical date. The output must therefore retain its survivorship-bias warning even when headline returns look strong.
 
 ## Privacy Note
 

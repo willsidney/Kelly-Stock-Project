@@ -117,6 +117,25 @@ def equal_weight_return(tickers: list[str], returns_by_ticker: dict[str, float])
     return sum(clean) / len(clean)
 
 
+def weights_by_ticker(rows: list[dict]) -> dict[str, float]:
+    clean = {
+        str(row.get("ticker") or "").upper().strip(): max(0.0, float(row.get("weight") or 0))
+        for row in rows
+        if row.get("ticker") and is_num(row.get("weight"))
+    }
+    total = sum(clean.values())
+    return {ticker: weight / total for ticker, weight in clean.items()} if total > 0 else {}
+
+
+def turnover(previous: dict[str, float], current: dict[str, float]) -> float:
+    if not current:
+        return 0.0
+    if not previous:
+        return 1.0
+    tickers = set(previous) | set(current)
+    return 0.5 * sum(abs(current.get(ticker, 0) - previous.get(ticker, 0)) for ticker in tickers)
+
+
 def frozen_output(stock: dict, model_name: str) -> dict:
     outputs = stock.get("modelOutputs")
     if not isinstance(outputs, dict):
@@ -182,7 +201,14 @@ def period_days(start: dict, end: dict) -> int:
     return max(1, (parse_date(end["snapshotDate"]) - parse_date(start["snapshotDate"])).days)
 
 
-def run_backtest(snapshots: list[dict], models: list[str], top_ns: list[int], benchmark: str, schedule: str) -> dict:
+def run_backtest(
+    snapshots: list[dict],
+    models: list[str],
+    top_ns: list[int],
+    benchmark: str,
+    schedule: str,
+    transaction_cost_bps: float = 10,
+) -> dict:
     selected = select_rebalance_snapshots(snapshots, schedule)
     result = {
         "status": "ok" if len(selected) >= 2 else "insufficient_history",
@@ -191,6 +217,19 @@ def run_backtest(snapshots: list[dict], models: list[str], top_ns: list[int], be
         "rebalanceSnapshotCount": len(selected),
         "schedule": schedule,
         "benchmark": benchmark,
+        "transactionCostBps": transaction_cost_bps,
+        "evidenceStart": snapshots[0]["snapshotDate"] if snapshots else None,
+        "evidenceEnd": snapshots[-1]["snapshotDate"] if snapshots else None,
+        "modelFormulaVersions": {
+            model_name: sorted(
+                {
+                    str((snapshot.get("modelFormulaVersions") or {}).get(model_name))
+                    for snapshot in snapshots
+                    if (snapshot.get("modelFormulaVersions") or {}).get(model_name)
+                }
+            )
+            for model_name in models
+        },
         "models": {},
         "baselines": {},
         "periods": [],
@@ -206,6 +245,10 @@ def run_backtest(snapshots: list[dict], models: list[str], top_ns: list[int], be
         for model_name in models
         for top_n in top_ns
     }
+    previous_model_weights = {key: {} for key in model_periods}
+    previous_universe_weights = {}
+    benchmark_started = False
+    cost_rate = max(0.0, float(transaction_cost_bps)) / 10_000
 
     for start, end in zip(selected, selected[1:]):
         start_stocks = stock_map(start)
@@ -225,15 +268,28 @@ def run_backtest(snapshots: list[dict], models: list[str], top_ns: list[int], be
 
         universe_ret = equal_weight_return(list(returns_by_ticker), returns_by_ticker)
         if universe_ret is not None:
-            universe_periods.append({"return": universe_ret, "days": period["days"]})
-            period["equalUniverseReturn"] = universe_ret
+            universe_weights = {
+                ticker: 1 / len(returns_by_ticker)
+                for ticker in returns_by_ticker
+            }
+            universe_turnover = turnover(previous_universe_weights, universe_weights)
+            universe_net = universe_ret - universe_turnover * cost_rate
+            previous_universe_weights = universe_weights
+            universe_periods.append({"return": universe_net, "grossReturn": universe_ret, "days": period["days"]})
+            period["equalUniverseReturn"] = universe_net
+            period["equalUniverseGrossReturn"] = universe_ret
+            period["equalUniverseTurnover"] = universe_turnover
 
         start_benchmarks = benchmark_map(start)
         end_benchmarks = benchmark_map(end)
         benchmark_ret = forward_return(start_benchmarks.get(benchmark), end_benchmarks.get(benchmark))
         if benchmark_ret is not None:
-            benchmark_periods.append({"return": benchmark_ret, "days": period["days"]})
-            period["benchmarkReturn"] = benchmark_ret
+            benchmark_cost = (0 if benchmark_started else 1) * cost_rate
+            benchmark_started = True
+            benchmark_net = benchmark_ret - benchmark_cost
+            benchmark_periods.append({"return": benchmark_net, "grossReturn": benchmark_ret, "days": period["days"]})
+            period["benchmarkReturn"] = benchmark_net
+            period["benchmarkGrossReturn"] = benchmark_ret
 
         start_rows = [stock for ticker, stock in start_stocks.items() if ticker in returns_by_ticker]
         for model_name in models:
@@ -243,9 +299,23 @@ def run_backtest(snapshots: list[dict], models: list[str], top_ns: list[int], be
                 portfolio_ret = weighted_return(selected_rows, returns_by_ticker)
                 if portfolio_ret is None:
                     continue
-                model_periods[key].append({"return": portfolio_ret, "days": period["days"]})
+                current_weights = weights_by_ticker(selected_rows)
+                period_turnover = turnover(previous_model_weights[key], current_weights)
+                portfolio_net = portfolio_ret - period_turnover * cost_rate
+                previous_model_weights[key] = current_weights
+                model_periods[key].append(
+                    {
+                        "return": portfolio_net,
+                        "grossReturn": portfolio_ret,
+                        "turnover": period_turnover,
+                        "days": period["days"],
+                    }
+                )
                 period_row = {
-                    "return": portfolio_ret,
+                    "return": portfolio_net,
+                    "grossReturn": portfolio_ret,
+                    "turnover": period_turnover,
+                    "transactionCost": period_turnover * cost_rate,
                     "tickers": [row["ticker"] for row in selected_rows],
                 }
                 expected = weighted_model_expectation(selected_rows, model_name)
@@ -258,6 +328,28 @@ def run_backtest(snapshots: list[dict], models: list[str], top_ns: list[int], be
     result["baselines"]["equal_universe"] = metrics(universe_periods)
     result["baselines"][benchmark] = metrics(benchmark_periods)
     result["models"] = {key: metrics(periods) for key, periods in model_periods.items()}
+    evidence_days = (
+        (parse_date(result["evidenceEnd"]) - parse_date(result["evidenceStart"])).days
+        if result.get("evidenceStart") and result.get("evidenceEnd")
+        else 0
+    )
+    mixed_versions = any(len(versions) > 1 for versions in result["modelFormulaVersions"].values())
+    result["readiness"] = {
+        "status": "research_only",
+        "evidenceDays": evidence_days,
+        "minimumEvidenceDays": 90,
+        "benchmarkPeriods": result["baselines"][benchmark].get("periods", 0),
+        "formulaVersionsMixed": mixed_versions,
+        "issues": [
+            issue
+            for issue in (
+                "At least 90 calendar days of prospective evidence are required." if evidence_days < 90 else None,
+                "No benchmark return periods are available." if not result["baselines"][benchmark].get("periods") else None,
+                "Multiple formula versions are mixed in one result." if mixed_versions else None,
+            )
+            if issue
+        ],
+    }
     return result
 
 
@@ -314,6 +406,10 @@ def print_markdown(result: dict) -> None:
     print(f"Snapshots: {result['snapshotCount']}")
     print(f"Rebalance points: {result['rebalanceSnapshotCount']}")
     print(f"Schedule: {result['schedule']}")
+    print(f"Transaction costs: {result.get('transactionCostBps', 0):.2f} bps per one-way turnover")
+    readiness = result.get("readiness") or {}
+    print(f"Prospective evidence: {readiness.get('evidenceDays', 0)} days")
+    print(f"Status: {readiness.get('status', 'research_only')}")
     print()
     print("| Portfolio | Periods | Cumulative | Annualized | Max drawdown | Hit rate |")
     print("| --- | ---: | ---: | ---: | ---: | ---: |")
@@ -342,6 +438,7 @@ def main() -> int:
     parser.add_argument("--top", default="10,20", help="Comma separated top-N portfolio sizes.")
     parser.add_argument("--benchmark", default="SPY")
     parser.add_argument("--schedule", choices=["every", "weekly", "monthly"], default="weekly")
+    parser.add_argument("--cost-bps", type=float, default=10)
     parser.add_argument("--output", type=Path, default=None)
     parser.add_argument("--format", choices=["json", "markdown"], default="markdown")
     args = parser.parse_args()
@@ -349,7 +446,14 @@ def main() -> int:
     snapshots = load_snapshots(args.history_dir)
     models = parse_csv(args.models)
     top_ns = parse_csv(args.top, cast=int)
-    result = run_backtest(snapshots, models, top_ns, args.benchmark.upper(), args.schedule)
+    result = run_backtest(
+        snapshots,
+        models,
+        top_ns,
+        args.benchmark.upper(),
+        args.schedule,
+        transaction_cost_bps=args.cost_bps,
+    )
     if args.output:
         args.output.parent.mkdir(parents=True, exist_ok=True)
         args.output.write_text(json.dumps(result, indent=2) + "\n")

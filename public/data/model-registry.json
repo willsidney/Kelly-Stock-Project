@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "models": {
+    "v13": {
+      "formulaVersion": "v13.0.0",
+      "status": "frozen",
+      "label": "Blended Kelly",
+      "frozenForForwardTesting": true
+    },
+    "v14": {
+      "formulaVersion": "v14.0.0",
+      "status": "frozen",
+      "label": "Optimized Risk",
+      "frozenForForwardTesting": true
+    }
+  },
+  "changePolicy": "Any scoring or allocation change requires a new formulaVersion and a new paper portfolio."
+}

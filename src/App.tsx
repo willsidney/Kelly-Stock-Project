@@ -32,11 +32,15 @@ const NEXT_REVIEW = "Nov 2026";
 const STORAGE_KEY = "kelly-stock-database-v1";
 const DATA_URL = "./data/stocks.json";
 const SCAN_URL = "./data/scan-results.json";
+const PAPER_URL = "./data/paper-portfolio.json";
+const FMP_BACKTEST_URL = "./data/fmp-backtest-results.json";
+const HISTORY_INDEX_URL = "./data/history/index.json";
 const ACTION_URL = "https://github.com/willsidney/Kelly-Stock-Project/actions/workflows";
 const RUN_SCAN_URL = `${ACTION_URL}/scan-yahoo-stocks.yml`;
 const SAVE_SCAN_URL = `${ACTION_URL}/save-scan-picks.yml`;
 const MODEL_V13 = "v13";
 const MODEL_V14 = "v14";
+const MODEL_FORMULA_VERSIONS = { [MODEL_V13]:"v13.0.0", [MODEL_V14]:"v14.0.0" };
 const MODEL_OPTIONS = [
   { value: MODEL_V13, label: "v13 Current", short: "v13", pill: "Blended Kelly" },
   { value: MODEL_V14, label: "v14 Optimized", short: "v14", pill: "Optimized Risk" },
@@ -1209,6 +1213,133 @@ function CreateModel({stocks,results,budget,kellyMult,flags,marketBull,eurUsdNow
   );
 }
 
+function Validation(){
+  const [paper,setPaper] = useState(null);
+  const [backtest,setBacktest] = useState(null);
+  const [snapshots,setSnapshots] = useState([]);
+  useEffect(()=>{
+    Promise.all([
+      fetch(PAPER_URL,{cache:"no-store"}).then(r=>r.ok?r.json():null),
+      fetch(FMP_BACKTEST_URL,{cache:"no-store"}).then(r=>r.ok?r.json():null),
+      fetch(HISTORY_INDEX_URL,{cache:"no-store"}).then(r=>r.ok?r.json():[]),
+    ]).then(([paperData,backtestData,historyData])=>{
+      setPaper(paperData);
+      setBacktest(backtestData);
+      setSnapshots(Array.isArray(historyData)?historyData:[]);
+    }).catch(()=>{});
+  },[]);
+  const pct = value => isNum(value) ? `${(Number(value)*100).toFixed(2)}%` : "-";
+  const money = value => isNum(value) ? `$${Number(value).toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2})}` : "-";
+  const readiness = backtest?.readiness;
+  const gates = Array.isArray(readiness?.gates) ? readiness.gates : [];
+  const summary = paper?.summary || {};
+  const positions = Array.isArray(paper?.positions) ? paper.positions : [];
+  const lastSnapshot = snapshots.length ? snapshots[snapshots.length-1] : null;
+  const historical = backtest?.metrics || {};
+  const statusColor = readiness?.status==="live_pilot_candidate" ? "#4ade80" : "#fbbf24";
+  const paperActive = paper?.status==="active";
+  const paperStatus = paperActive ? "ACTIVE" : paper?.status==="formula_changed" ? "FROZEN" : "WAITING";
+  const metrics = [
+    {label:"Readiness",value:readiness?`${readiness.passed}/${readiness.total}`:"-",sub:"validation gates",color:statusColor},
+    {label:"Forward evidence",value:String(summary.evidenceDays||0),sub:"paper snapshot days",color:summary.evidenceDays>=90?"#4ade80":"#60a5fa"},
+    {label:"Rank IC",value:pct(historical.rankICMean),sub:`p ${isNum(historical.rankICPValueApprox)?Number(historical.rankICPValueApprox).toFixed(3):"-"}`,color:(historical.rankICMean||0)>0?"#4ade80":"#f87171"},
+    {label:"Net spread",value:pct(historical.spread?.annualizedReturn),sub:"annualized after costs",color:(historical.spread?.annualizedReturn||0)>0?"#4ade80":"#f87171"},
+    {label:"Paper return",value:pct(summary.portfolioReturn),sub:`SPY ${pct(summary.benchmarkReturn)}`,color:(summary.excessReturn||0)>=0?"#4ade80":"#f87171"},
+    {label:"Last evidence",value:lastSnapshot?.date||"-",sub:`${snapshots.length} saved snapshots`,color:"#94a3b8"},
+  ];
+  return(
+    <div style={{padding:"20px 22px"}}>
+      <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-end",gap:12,flexWrap:"wrap",marginBottom:14}}>
+        <div>
+          <div style={{fontSize:14,fontWeight:700,color:"#e2e8f0"}}>Model Validation</div>
+          <div style={{fontSize:9,color:"#475569",marginTop:3}}>Frozen formula {paper?.formulaVersion||MODEL_FORMULA_VERSIONS[MODEL_V14]} - forward paper account versus SPY</div>
+        </div>
+        <span className="pill" style={{background:statusColor+"15",color:statusColor,border:`1px solid ${statusColor}40`,fontSize:10}}>
+          {readiness?.status==="live_pilot_candidate"?"Live pilot candidate":"Research only"}
+        </span>
+      </div>
+
+      <div style={{display:"grid",gridTemplateColumns:"repeat(6,minmax(110px,1fr))",gap:1,background:"#1e293b",border:"1px solid #1e293b",marginBottom:16}} className="validation-stats">
+        {metrics.map(metric=>(
+          <div key={metric.label} style={{background:"#080f1e",padding:"12px 14px",minHeight:70}}>
+            <div style={{fontSize:8,fontWeight:700,color:"#334155",textTransform:"uppercase",marginBottom:5}}>{metric.label}</div>
+            <div className="mono" style={{fontSize:16,fontWeight:700,color:metric.color}}>{metric.value}</div>
+            <div style={{fontSize:8,color:"#475569",marginTop:3}}>{metric.sub}</div>
+          </div>
+        ))}
+      </div>
+
+      <div style={{display:"grid",gridTemplateColumns:"minmax(280px,.8fr) minmax(420px,1.2fr)",gap:16}} className="candidate-grid">
+        <section>
+          <div style={{fontSize:11,fontWeight:700,color:"#cbd5e1",marginBottom:8}}>Readiness gates</div>
+          <div style={{borderTop:"1px solid #1e293b"}}>
+            {gates.map(gate=>(
+              <div key={gate.id} style={{display:"grid",gridTemplateColumns:"54px 1fr",gap:10,padding:"9px 2px",borderBottom:"1px solid #1e293b",alignItems:"center"}}>
+                <span className="mono" style={{fontSize:9,fontWeight:700,color:gate.passed?"#4ade80":"#f87171"}}>{gate.passed?"PASS":"FAIL"}</span>
+                <span style={{fontSize:10,color:gate.passed?"#94a3b8":"#cbd5e1"}}>{gate.label}</span>
+              </div>
+            ))}
+            {!gates.length&&<div style={{fontSize:10,color:"#475569",padding:"12px 0"}}>Run the FMP Historical Backtest workflow to generate readiness gates.</div>}
+          </div>
+        </section>
+
+        <section>
+          <div style={{display:"flex",justifyContent:"space-between",gap:10,alignItems:"center",marginBottom:8}}>
+            <div>
+              <div style={{fontSize:11,fontWeight:700,color:"#cbd5e1"}}>Forward paper portfolio</div>
+              <div style={{fontSize:8,color:"#475569",marginTop:2}}>v14.0.0 - top 20 - monthly - 10 bps costs</div>
+            </div>
+            <span className="mono" style={{fontSize:9,color:paperActive?"#4ade80":paper?.status==="formula_changed"?"#f87171":"#fbbf24"}}>{paperStatus}</span>
+          </div>
+          {!paperActive&&(
+            <div style={{border:"1px solid #422006",background:"#1c1305",padding:"14px 16px",color:"#fbbf24",fontSize:10,lineHeight:1.7}}>
+              {paper?.statusReason||paper?.reason||"The paper portfolio will begin with the next complete Yahoo snapshot and SPY price."}
+            </div>
+          )}
+          {paperActive&&(
+            <>
+              <div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:1,background:"#1e293b",marginBottom:10}}>
+                {[
+                  ["Value",money(summary.portfolioValue),"#e2e8f0"],
+                  ["Excess",pct(summary.excessReturn),(summary.excessReturn||0)>=0?"#4ade80":"#f87171"],
+                  ["Max DD",pct(summary.maxDrawdown),"#fb923c"],
+                ].map(([label,value,color])=>(
+                  <div key={label} style={{background:"#080f1e",padding:"10px 12px"}}>
+                    <div style={{fontSize:8,color:"#334155",marginBottom:3}}>{label}</div>
+                    <div className="mono" style={{fontSize:13,fontWeight:700,color}}>{value}</div>
+                  </div>
+                ))}
+              </div>
+              <div style={{overflowX:"auto",borderTop:"1px solid #1e293b"}}>
+                <div style={{display:"grid",gridTemplateColumns:"42px 1fr 76px 76px 80px",gap:8,padding:"8px 4px",borderBottom:"1px solid #1e293b"}}>
+                  {["#","Holding","Weight","Score","Value"].map((label,index)=>(
+                    <div key={label} style={{fontSize:8,fontWeight:700,color:"#334155",textAlign:index>1?"right":"left"}}>{label}</div>
+                  ))}
+                </div>
+                {positions.map((position,index)=>{
+                  const value=(Number(position.shares)||0)*(Number(position.lastPrice)||0);
+                  return(
+                    <div key={position.ticker} style={{display:"grid",gridTemplateColumns:"42px 1fr 76px 76px 80px",gap:8,padding:"9px 4px",borderBottom:"1px solid #0f172a",alignItems:"center"}}>
+                      <div className="mono" style={{fontSize:9,color:"#334155"}}>{index+1}</div>
+                      <div>
+                        <div style={{fontSize:10,fontWeight:700,color:"#e2e8f0"}}>{position.name}</div>
+                        <div className="mono" style={{fontSize:8,color:"#475569"}}>{position.ticker}</div>
+                      </div>
+                      <div className="mono" style={{fontSize:10,color:"#60a5fa",textAlign:"right"}}>{pct(position.targetWeight)}</div>
+                      <div className="mono" style={{fontSize:10,color:"#4ade80",textAlign:"right"}}>{isNum(position.lastScore)?Number(position.lastScore).toFixed(1):"-"}</div>
+                      <div className="mono" style={{fontSize:10,color:"#94a3b8",textAlign:"right"}}>{money(value)}</div>
+                    </div>
+                  );
+                })}
+              </div>
+            </>
+          )}
+        </section>
+      </div>
+    </div>
+  );
+}
+
 function Toggle({label,sub,on,onToggle,color="#00cc77"}){
   return(
     <div style={{background:on?color+"0a":"#0f172a",border:`1px solid ${on?color+"50":"#1e293b"}`,borderRadius:10,padding:"9px 12px",cursor:"pointer",transition:"all .15s",userSelect:"none"}}
@@ -1340,8 +1471,9 @@ export default function App(){
         .view-btn{background:transparent;border:none;color:#475569;font-family:inherit;font-size:11px;font-weight:600;padding:7px 16px;border-radius:8px;cursor:pointer;transition:all .15s;letter-spacing:.04em;text-transform:uppercase;}
         .view-btn.active{background:#1e293b;color:#e2e8f0;}
         @keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}.pulsing{animation:pulse 1.1s ease-in-out infinite;}
-        @media(max-width:920px){.candidate-grid{grid-template-columns:1fr!important;}}
+        @media(max-width:920px){.candidate-grid{grid-template-columns:1fr!important;}.validation-stats{grid-template-columns:repeat(3,1fr)!important;}}
         @media(max-width:780px){.hide-sm{display:none!important;}.grid-flags{grid-template-columns:repeat(2,1fr)!important;}.grid-stats{grid-template-columns:repeat(2,1fr)!important;}}
+        @media(max-width:560px){.validation-stats{grid-template-columns:repeat(2,1fr)!important;}}
       `}</style>
 
       {/* HEADER */}
@@ -1441,7 +1573,7 @@ export default function App(){
 
       {/* TABS */}
       <div style={{padding:"8px 22px",borderBottom:"1px solid #1e293b",display:"flex",gap:4,background:"#020617",flexWrap:"wrap"}}>
-        {[{l:"Allocations",v:"table"},{l:"Portfolio Chart",v:"chart"},{l:"Scanner",v:"scanner"},{l:"Yahoo Scan",v:"scan"},{l:"Database",v:"database"},{l:"Fundamentals",v:"fundamentals"},{l:"Create Model",v:"create"},{l:"Stock Search",v:"search"},{l:"🔀 Win Prob Breakdown",v:"prob"}].map(o=>(
+        {[{l:"Allocations",v:"table"},{l:"Portfolio Chart",v:"chart"},{l:"Scanner",v:"scanner"},{l:"Yahoo Scan",v:"scan"},{l:"Database",v:"database"},{l:"Fundamentals",v:"fundamentals"},{l:"Create Model",v:"create"},{l:"Stock Search",v:"search"},{l:"Validation",v:"validation"},{l:"🔀 Win Prob Breakdown",v:"prob"}].map(o=>(
           <button key={o.v} className={`view-btn${view===o.v?" active":""}`} onClick={()=>setView(o.v)}
             style={o.v==="prob"?{color:view==="prob"?"#e2e8f0":"#22d3ee"}:{}}>{o.l}</button>
         ))}
@@ -1454,6 +1586,7 @@ export default function App(){
       {view==="fundamentals"&&<Fundamentals results={results}/>}
       {view==="create"&&<CreateModel stocks={stocks} results={results} budget={budget} kellyMult={kellyMult} flags={flags} marketBull={marketBull} eurUsdNow={eurUsdNow} eurUsdForecast={eurUsdForecast} modelVersion={modelVersion}/>}
       {view==="search"&&<StockSearch portfolioResults={results}/>}
+      {view==="validation"&&<Validation/>}
       {view==="prob"&&<ProbBreakdownPanel stocks={stocks}/>}
 
       {view==="table"&&(
