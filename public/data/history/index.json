@@ -120,5 +120,17 @@
     "benchmarks": [
       "SPY"
     ]
+  },
+  {
+    "date": "2026-07-09",
+    "file": "2026-07-09.json",
+    "snapshotTime": "2026-07-09T00:23:19+00:00",
+    "mode": "prices",
+    "reason": "Yahoo refresh",
+    "stockCount": 268,
+    "modelReadyCount": 264,
+    "benchmarks": [
+      "SPY"
+    ]
   }
 ]
