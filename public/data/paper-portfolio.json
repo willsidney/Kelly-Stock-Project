@@ -10,8 +10,8 @@
   "initialValue": 10000.0,
   "inceptionDate": "2026-07-01",
   "lastRebalanceDate": "2026-07-01",
-  "lastUpdated": "2026-07-13T23:32:42+00:00",
-  "latestSnapshot": "public/data/history/2026-07-13.json",
+  "lastUpdated": "2026-07-14T10:13:18+00:00",
+  "latestSnapshot": "public/data/history/2026-07-14.json",
   "cumulativeCosts": 10.0,
   "benchmarkStartPrice": 748.98,
   "positions": [
@@ -385,6 +385,17 @@
       "excessReturn": 0.04469345137494418,
       "transactionCost": 0.0,
       "rebalanced": false
+    },
+    {
+      "date": "2026-07-14",
+      "snapshotTime": "2026-07-14T10:13:18+00:00",
+      "portfolioValue": 10449.47129710814,
+      "benchmarkValue": 10002.5367833587,
+      "portfolioReturn": 0.04494712971081416,
+      "benchmarkReturn": 0.0002536783358699779,
+      "excessReturn": 0.04469345137494418,
+      "transactionCost": 0.0,
+      "rebalanced": false
     }
   ],
   "summary": {
@@ -394,7 +405,7 @@
     "benchmarkReturn": 0.0002536783358699779,
     "excessReturn": 0.04469345137494418,
     "maxDrawdown": 0.013889907340743761,
-    "evidenceDays": 9
+    "evidenceDays": 10
   },
   "requiresReset": false
 }
