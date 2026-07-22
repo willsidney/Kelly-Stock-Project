@@ -10,8 +10,8 @@
   "initialValue": 10000.0,
   "inceptionDate": "2026-07-01",
   "lastRebalanceDate": "2026-07-01",
-  "lastUpdated": "2026-07-21T21:36:17+00:00",
-  "latestSnapshot": "public/data/history/2026-07-21.json",
+  "lastUpdated": "2026-07-22T09:23:27+00:00",
+  "latestSnapshot": "public/data/history/2026-07-22.json",
   "cumulativeCosts": 10.0,
   "benchmarkStartPrice": 748.98,
   "positions": [
@@ -48,7 +48,7 @@
       "entryPrice": 16.652,
       "lastPrice": 17.49,
       "entryScore": 22.323819259374307,
-      "lastScore": 20.640689448927617,
+      "lastScore": 20.63694006941173,
       "enteredDate": "2026-07-01"
     },
     {
@@ -72,7 +72,7 @@
       "entryPrice": 628.54,
       "lastPrice": 675.19,
       "entryScore": 21.20165354633534,
-      "lastScore": 15.545362479289643,
+      "lastScore": 15.555169864041563,
       "enteredDate": "2026-07-01"
     },
     {
@@ -84,7 +84,7 @@
       "entryPrice": 103.9,
       "lastPrice": 117.5,
       "entryScore": 20.773168524463824,
-      "lastScore": 12.361218248572682,
+      "lastScore": 12.32518067342129,
       "enteredDate": "2026-07-01"
     },
     {
@@ -96,7 +96,7 @@
       "entryPrice": 43.015,
       "lastPrice": 43.19,
       "entryScore": 20.68519315895107,
-      "lastScore": 19.741058842746078,
+      "lastScore": 19.749908841439414,
       "enteredDate": "2026-07-01"
     },
     {
@@ -108,7 +108,7 @@
       "entryPrice": 48.17,
       "lastPrice": 56.5,
       "entryScore": 19.50463641446836,
-      "lastScore": 7.549574203660381,
+      "lastScore": 7.107235627092541,
       "enteredDate": "2026-07-01"
     },
     {
@@ -120,7 +120,7 @@
       "entryPrice": 95.56,
       "lastPrice": 99.96,
       "entryScore": 19.011525308703416,
-      "lastScore": 18.76893718821134,
+      "lastScore": 18.773181575119978,
       "enteredDate": "2026-07-01"
     },
     {
@@ -132,7 +132,7 @@
       "entryPrice": 20.635,
       "lastPrice": 22.26,
       "entryScore": 18.93171371484038,
-      "lastScore": 13.195782813462486,
+      "lastScore": 12.82223555530849,
       "enteredDate": "2026-07-01"
     },
     {
@@ -144,7 +144,7 @@
       "entryPrice": 82.09,
       "lastPrice": 84.83,
       "entryScore": 18.355598781063122,
-      "lastScore": 17.086621248432763,
+      "lastScore": 17.121624803457923,
       "enteredDate": "2026-07-01"
     },
     {
@@ -168,7 +168,7 @@
       "entryPrice": 45.915,
       "lastPrice": 46.59,
       "entryScore": 18.104098184946178,
-      "lastScore": 15.3906602998082,
+      "lastScore": 15.416623919552134,
       "enteredDate": "2026-07-01"
     },
     {
@@ -180,7 +180,7 @@
       "entryPrice": 211.89,
       "lastPrice": 235.81,
       "entryScore": 18.03836007880783,
-      "lastScore": 8.921408211597976,
+      "lastScore": 8.8793981645198,
       "enteredDate": "2026-07-01"
     },
     {
@@ -192,7 +192,7 @@
       "entryPrice": 172.295,
       "lastPrice": 190.77,
       "entryScore": 17.643540440620047,
-      "lastScore": 11.768842300536097,
+      "lastScore": 11.714431548979183,
       "enteredDate": "2026-07-01"
     },
     {
@@ -204,7 +204,7 @@
       "entryPrice": 151.215,
       "lastPrice": 155.05,
       "entryScore": 17.23504610165447,
-      "lastScore": 15.147596883662647,
+      "lastScore": 15.131988117630844,
       "enteredDate": "2026-07-01"
     },
     {
@@ -216,7 +216,7 @@
       "entryPrice": 42.1,
       "lastPrice": 43.78,
       "entryScore": 16.76955132328266,
-      "lastScore": 12.613774770229652,
+      "lastScore": 12.400018206927903,
       "enteredDate": "2026-07-01"
     },
     {
@@ -252,7 +252,7 @@
       "entryPrice": 184.675,
       "lastPrice": 169.34,
       "entryScore": 16.335450593063396,
-      "lastScore": 15.870611533717296,
+      "lastScore": 15.845571835144554,
       "enteredDate": "2026-07-01"
     }
   ],
@@ -451,6 +451,17 @@
       "excessReturn": 0.06279428379880614,
       "transactionCost": 0.0,
       "rebalanced": false
+    },
+    {
+      "date": "2026-07-22",
+      "snapshotTime": "2026-07-22T09:23:27+00:00",
+      "portfolioValue": 10618.596794034951,
+      "benchmarkValue": 9990.65395604689,
+      "portfolioReturn": 0.06185967940349513,
+      "benchmarkReturn": -0.0009346043953110117,
+      "excessReturn": 0.06279428379880614,
+      "transactionCost": 0.0,
+      "rebalanced": false
     }
   ],
   "summary": {
@@ -460,7 +471,7 @@
     "benchmarkReturn": -0.0009346043953110117,
     "excessReturn": 0.06279428379880614,
     "maxDrawdown": 0.013889907340743761,
-    "evidenceDays": 15
+    "evidenceDays": 16
   },
   "requiresReset": false
 }
