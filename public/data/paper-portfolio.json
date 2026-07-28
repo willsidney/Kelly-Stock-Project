@@ -10,7 +10,7 @@
   "initialValue": 10000.0,
   "inceptionDate": "2026-07-01",
   "lastRebalanceDate": "2026-07-01",
-  "lastUpdated": "2026-07-28T09:32:54+00:00",
+  "lastUpdated": "2026-07-28T10:48:11+00:00",
   "latestSnapshot": "public/data/history/2026-07-28.json",
   "cumulativeCosts": 10.0,
   "benchmarkStartPrice": 748.98,
@@ -498,7 +498,7 @@
     },
     {
       "date": "2026-07-28",
-      "snapshotTime": "2026-07-28T09:32:54+00:00",
+      "snapshotTime": "2026-07-28T10:48:11+00:00",
       "portfolioValue": 10811.146064151526,
       "benchmarkValue": 9867.953750433922,
       "portfolioReturn": 0.08111460641515267,
