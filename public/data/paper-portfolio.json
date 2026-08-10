@@ -10,8 +10,8 @@
   "initialValue": 10000.0,
   "inceptionDate": "2026-07-01",
   "lastRebalanceDate": "2026-08-03",
-  "lastUpdated": "2026-08-07T21:01:28+00:00",
-  "latestSnapshot": "public/data/history/2026-08-07.json",
+  "lastUpdated": "2026-08-10T08:22:51+00:00",
+  "latestSnapshot": "public/data/history/2026-08-10.json",
   "cumulativeCosts": 17.983044062692144,
   "benchmarkStartPrice": 748.98,
   "positions": [
@@ -24,7 +24,7 @@
       "entryPrice": 130.21,
       "lastPrice": 133.21,
       "entryScore": 19.58476705384066,
-      "lastScore": 18.07179356263032,
+      "lastScore": 12.894843012142443,
       "enteredDate": "2026-08-03"
     },
     {
@@ -72,7 +72,7 @@
       "entryPrice": 132.45,
       "lastPrice": 135.0,
       "entryScore": 17.84425375229839,
-      "lastScore": 16.5341595491239,
+      "lastScore": 16.029789506421512,
       "enteredDate": "2026-08-03"
     },
     {
@@ -108,7 +108,7 @@
       "entryPrice": 86.07,
       "lastPrice": 89.72,
       "entryScore": 16.33254281869139,
-      "lastScore": 13.08715881509515,
+      "lastScore": 13.218748270905511,
       "enteredDate": "2026-08-03"
     },
     {
@@ -120,7 +120,7 @@
       "entryPrice": 556.71,
       "lastPrice": 592.1,
       "entryScore": 16.189512567505954,
-      "lastScore": 13.110386961554212,
+      "lastScore": 12.993630187212442,
       "enteredDate": "2026-08-03"
     },
     {
@@ -132,7 +132,7 @@
       "entryPrice": 29.21,
       "lastPrice": 27.77,
       "entryScore": 15.838075323945233,
-      "lastScore": 15.61799361269036,
+      "lastScore": 9.006050424289787,
       "enteredDate": "2026-08-03"
     },
     {
@@ -156,7 +156,7 @@
       "entryPrice": 367.41,
       "lastPrice": 389.93,
       "entryScore": 15.31371795588646,
-      "lastScore": 11.993105734939478,
+      "lastScore": 11.898080650489606,
       "enteredDate": "2026-08-03"
     },
     {
@@ -168,7 +168,7 @@
       "entryPrice": 279.05,
       "lastPrice": 282.49,
       "entryScore": 15.274828405255258,
-      "lastScore": 14.054336142717627,
+      "lastScore": 14.048442970528004,
       "enteredDate": "2026-08-03"
     },
     {
@@ -180,7 +180,7 @@
       "entryPrice": 356.13,
       "lastPrice": 354.3,
       "entryScore": 15.077533372243975,
-      "lastScore": 15.428575510187034,
+      "lastScore": 15.441794363809263,
       "enteredDate": "2026-08-03"
     },
     {
@@ -216,7 +216,7 @@
       "entryPrice": 389.28,
       "lastPrice": 427.76,
       "entryScore": 14.818989098376159,
-      "lastScore": 11.106959668480922,
+      "lastScore": 11.092635772759895,
       "enteredDate": "2026-08-03"
     },
     {
@@ -228,7 +228,7 @@
       "entryPrice": 202.95,
       "lastPrice": 207.94,
       "entryScore": 14.708143228062568,
-      "lastScore": 12.752415020029556,
+      "lastScore": 12.72959727970081,
       "enteredDate": "2026-08-03"
     },
     {
@@ -240,7 +240,7 @@
       "entryPrice": 356.65,
       "lastPrice": 353.47,
       "entryScore": 14.436850868888,
-      "lastScore": 14.87292328607145,
+      "lastScore": 14.884424337931518,
       "enteredDate": "2026-08-03"
     },
     {
@@ -252,7 +252,7 @@
       "entryPrice": 169.64,
       "lastPrice": 161.42,
       "entryScore": 14.290190385050956,
-      "lastScore": 14.955470754287573,
+      "lastScore": 15.28508800387017,
       "enteredDate": "2026-08-03"
     }
   ],
@@ -622,6 +622,17 @@
       "excessReturn": 0.0933281803316004,
       "transactionCost": 0.0,
       "rebalanced": false
+    },
+    {
+      "date": "2026-08-10",
+      "snapshotTime": "2026-08-10T08:22:51+00:00",
+      "portfolioValue": 11257.456013575289,
+      "benchmarkValue": 10324.174210259285,
+      "portfolioReturn": 0.12574560135752888,
+      "benchmarkReturn": 0.03241742102592848,
+      "excessReturn": 0.0933281803316004,
+      "transactionCost": 0.0,
+      "rebalanced": false
     }
   ],
   "summary": {
@@ -631,7 +642,7 @@
     "benchmarkReturn": 0.03241742102592848,
     "excessReturn": 0.0933281803316004,
     "maxDrawdown": 0.013889907340743761,
-    "evidenceDays": 28
+    "evidenceDays": 29
   },
   "requiresReset": false
 }
