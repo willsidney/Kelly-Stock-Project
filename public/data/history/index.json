@@ -448,8 +448,8 @@
   {
     "date": "2026-08-17",
     "file": "2026-08-17.json",
-    "snapshotTime": "2026-08-17T07:44:03+00:00",
-    "mode": "full",
+    "snapshotTime": "2026-08-17T09:03:10+00:00",
+    "mode": "prices",
     "reason": "Yahoo refresh",
     "stockCount": 268,
     "modelReadyCount": 264,
