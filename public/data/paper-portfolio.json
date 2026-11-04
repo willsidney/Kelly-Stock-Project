@@ -10,7 +10,7 @@
   "initialValue": 10000.0,
   "inceptionDate": "2026-07-01",
   "lastRebalanceDate": "2026-11-02",
-  "lastUpdated": "2026-11-04T00:39:15+00:00",
+  "lastUpdated": "2026-11-04T14:59:32+00:00",
   "latestSnapshot": "public/data/history/2026-11-04.json",
   "cumulativeCosts": 37.82036494962698,
   "benchmarkStartPrice": 748.98,
@@ -22,9 +22,9 @@
       "shares": 7.326746428397926,
       "targetWeight": 0.05844890088476593,
       "entryPrice": 88.94,
-      "lastPrice": 89.28,
+      "lastPrice": 90.84,
       "entryScore": 22.015976347946392,
-      "lastScore": 22.030080639502117,
+      "lastScore": 21.378477763619,
       "enteredDate": "2026-11-02"
     },
     {
@@ -34,9 +34,9 @@
       "shares": 53.526679435064835,
       "targetWeight": 0.056868716940294876,
       "entryPrice": 11.845,
-      "lastPrice": 11.88,
+      "lastPrice": 11.76,
       "entryScore": 20.966934365452207,
-      "lastScore": 20.853215854533374,
+      "lastScore": 21.213916050159582,
       "enteredDate": "2026-11-02"
     },
     {
@@ -46,9 +46,9 @@
       "shares": 50.79760125521385,
       "targetWeight": 0.054515998387768716,
       "entryPrice": 11.965,
-      "lastPrice": 11.61,
+      "lastPrice": 12.015,
       "entryScore": 20.17932101951271,
-      "lastScore": 20.529908569069768,
+      "lastScore": 19.88682189436356,
       "enteredDate": "2026-11-02"
     },
     {
@@ -58,9 +58,9 @@
       "shares": 6.6476840177928045,
       "targetWeight": 0.052721643611609255,
       "entryPrice": 88.42,
-      "lastPrice": 91.41,
+      "lastPrice": 81.905,
       "entryScore": 19.030261810678464,
-      "lastScore": 17.194517490033704,
+      "lastScore": 21.453558397283807,
       "enteredDate": "2026-11-02"
     },
     {
@@ -70,9 +70,9 @@
       "shares": 3.6976096896285644,
       "targetWeight": 0.0526638102505109,
       "entryPrice": 158.79,
-      "lastPrice": 154.41,
+      "lastPrice": 159.38,
       "entryScore": 19.003253780119962,
-      "lastScore": 19.911581236200036,
+      "lastScore": 18.56101841175588,
       "enteredDate": "2026-11-02"
     },
     {
@@ -82,9 +82,9 @@
       "shares": 2.7773138479570822,
       "targetWeight": 0.050975597648146874,
       "entryPrice": 204.63,
-      "lastPrice": 192.34,
+      "lastPrice": 189.16,
       "entryScore": 18.214862846444856,
-      "lastScore": 21.847595857645512,
+      "lastScore": 22.454772141976225,
       "enteredDate": "2026-11-02"
     },
     {
@@ -94,9 +94,9 @@
       "shares": 6.799356568303629,
       "targetWeight": 0.050551962342638895,
       "entryPrice": 82.89,
-      "lastPrice": 80.17,
+      "lastPrice": 83.693,
       "entryScore": 18.0170262507581,
-      "lastScore": 19.10668350284012,
+      "lastScore": 17.55678856973627,
       "enteredDate": "2026-11-02"
     },
     {
@@ -106,9 +106,9 @@
       "shares": 4.496039211305806,
       "targetWeight": 0.049862576024332465,
       "entryPrice": 123.645,
-      "lastPrice": 122.71,
+      "lastPrice": 125.3,
       "entryScore": 18.006184770703314,
-      "lastScore": 18.285091562156776,
+      "lastScore": 17.41790067487611,
       "enteredDate": "2026-11-02"
     },
     {
@@ -118,9 +118,9 @@
       "shares": 5.349010690656845,
       "targetWeight": 0.04946524831341012,
       "entryPrice": 103.1,
-      "lastPrice": 102.97,
+      "lastPrice": 104.03,
       "entryScore": 17.820633753876162,
-      "lastScore": 17.39546389380145,
+      "lastScore": 16.95844701236672,
       "enteredDate": "2026-11-02"
     },
     {
@@ -130,9 +130,9 @@
       "shares": 1.9195798453512436,
       "targetWeight": 0.04878453090936728,
       "entryPrice": 283.34,
-      "lastPrice": 280.03,
+      "lastPrice": 291.01,
       "entryScore": 17.502740480842473,
-      "lastScore": 17.75270277476226,
+      "lastScore": 16.457074318389953,
       "enteredDate": "2026-11-02"
     },
     {
@@ -142,9 +142,9 @@
       "shares": 1.9286131614504185,
       "targetWeight": 0.048740785866882665,
       "entryPrice": 281.76,
-      "lastPrice": 278.27,
+      "lastPrice": 289.22,
       "entryScore": 17.482311658761763,
-      "lastScore": 17.74468712301157,
+      "lastScore": 16.718120201896877,
       "enteredDate": "2026-11-02"
     },
     {
@@ -154,9 +154,9 @@
       "shares": 2.3629222591193852,
       "targetWeight": 0.0485443076541261,
       "entryPrice": 229.045,
-      "lastPrice": 231.6,
+      "lastPrice": 242.405,
       "entryScore": 17.390556839857407,
-      "lastScore": 16.677619912452286,
+      "lastScore": 13.15642338087685,
       "enteredDate": "2026-11-02"
     },
     {
@@ -166,9 +166,9 @@
       "shares": 1.6311097035608375,
       "targetWeight": 0.04839461523025317,
       "entryPrice": 330.785,
-      "lastPrice": 332.13,
+      "lastPrice": 331.02,
       "entryScore": 17.320650863764104,
-      "lastScore": 17.254580047294336,
+      "lastScore": 17.208159117529153,
       "enteredDate": "2026-11-02"
     },
     {
@@ -178,9 +178,9 @@
       "shares": 3.454559067997999,
       "targetWeight": 0.04823536960833212,
       "entryPrice": 155.67,
-      "lastPrice": 155.67,
+      "lastPrice": 168.4,
       "entryScore": 17.24628356880718,
-      "lastScore": 17.24123622801151,
+      "lastScore": 15.124987499255099,
       "enteredDate": "2026-11-02"
     },
     {
@@ -190,9 +190,9 @@
       "shares": 1.8253884899722264,
       "targetWeight": 0.048172098009379605,
       "entryPrice": 294.22,
-      "lastPrice": 295.44,
+      "lastPrice": 301.855,
       "entryScore": 16.905635741594143,
-      "lastScore": 16.562396355417498,
+      "lastScore": 14.591664109224576,
       "enteredDate": "2026-11-02"
     },
     {
@@ -202,9 +202,9 @@
       "shares": 2.9761979764552673,
       "targetWeight": 0.046753618076284746,
       "entryPrice": 175.14,
-      "lastPrice": 180.25,
+      "lastPrice": 179.91,
       "entryScore": 16.554309422784634,
-      "lastScore": 15.157252105877916,
+      "lastScore": 15.2168874149156,
       "enteredDate": "2026-11-02"
     },
     {
@@ -214,9 +214,9 @@
       "shares": 0.32973267674404894,
       "targetWeight": 0.04654570273246301,
       "entryPrice": 1573.8,
-      "lastPrice": 1552.14,
+      "lastPrice": 1515.3,
       "entryScore": 16.457213493153812,
-      "lastScore": 16.381097038862286,
+      "lastScore": 16.850429649811733,
       "enteredDate": "2026-11-02"
     },
     {
@@ -226,9 +226,9 @@
       "shares": 0.8461514243282027,
       "targetWeight": 0.0465398930328706,
       "entryPrice": 613.21,
-      "lastPrice": 621.03,
+      "lastPrice": 630.6,
       "entryScore": 16.454500378419556,
-      "lastScore": 16.141864216175264,
+      "lastScore": 15.732615656163462,
       "enteredDate": "2026-11-02"
     },
     {
@@ -238,9 +238,9 @@
       "shares": 1.3636380258021743,
       "targetWeight": 0.047067286148175506,
       "entryPrice": 384.815,
-      "lastPrice": 387.65,
+      "lastPrice": 367.255,
       "entryScore": 16.38969145023515,
-      "lastScore": 15.263360108928703,
+      "lastScore": 20.081324315485325,
       "enteredDate": "2026-11-02"
     },
     {
@@ -250,9 +250,9 @@
       "shares": 3.0871678773423734,
       "targetWeight": 0.046147338328387084,
       "entryPrice": 166.655,
-      "lastPrice": 169.91,
+      "lastPrice": 186.21,
       "entryScore": 16.271178343296175,
-      "lastScore": 15.931693308377016,
+      "lastScore": 14.637696912989906,
       "enteredDate": "2026-11-02"
     }
   ],
@@ -1413,22 +1413,22 @@
     },
     {
       "date": "2026-11-04",
-      "snapshotTime": "2026-11-04T00:39:15+00:00",
-      "portfolioValue": 11107.355026772633,
-      "benchmarkValue": 10071.69750861171,
-      "portfolioReturn": 0.1107355026772634,
-      "benchmarkReturn": 0.007169750861170998,
-      "excessReturn": 0.1035657518160924,
+      "snapshotTime": "2026-11-04T14:59:32+00:00",
+      "portfolioValue": 11259.612826817909,
+      "benchmarkValue": 10241.795508558305,
+      "portfolioReturn": 0.12596128268179085,
+      "benchmarkReturn": 0.024179550855830456,
+      "excessReturn": 0.1017817318259604,
       "transactionCost": 0.0,
       "rebalanced": false
     }
   ],
   "summary": {
-    "portfolioValue": 11107.355026772633,
-    "benchmarkValue": 10071.69750861171,
-    "portfolioReturn": 0.1107355026772634,
-    "benchmarkReturn": 0.007169750861170998,
-    "excessReturn": 0.1035657518160924,
+    "portfolioValue": 11259.612826817909,
+    "benchmarkValue": 10241.795508558305,
+    "portfolioReturn": 0.12596128268179085,
+    "benchmarkReturn": 0.024179550855830456,
+    "excessReturn": 0.1017817318259604,
     "maxDrawdown": 0.07654081851989547,
     "evidenceDays": 93
   },
