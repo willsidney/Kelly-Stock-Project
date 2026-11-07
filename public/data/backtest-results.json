@@ -1,13 +1,13 @@
 {
   "status": "ok",
   "reason": null,
-  "snapshotCount": 95,
-  "rebalanceSnapshotCount": 20,
+  "snapshotCount": 101,
+  "rebalanceSnapshotCount": 21,
   "schedule": "weekly",
   "benchmark": "SPY",
   "transactionCostBps": 10.0,
   "evidenceStart": "2026-06-24",
-  "evidenceEnd": "2026-10-30",
+  "evidenceEnd": "2026-11-07",
   "modelFormulaVersions": {
     "v13": [
       "v13.0.0"
@@ -18,84 +18,84 @@
   },
   "models": {
     "v13_top_10": {
-      "periods": 19,
-      "totalDays": 128,
-      "cumulativeReturn": 0.08997975216024479,
-      "annualizedReturn": 0.2785007671921731,
-      "periodVolatilityAnnualized": 0.1700342172517125,
-      "sharpeLike": 1.6379101318171192,
+      "periods": 20,
+      "totalDays": 136,
+      "cumulativeReturn": 0.1145213070471438,
+      "annualizedReturn": 0.33775594721352253,
+      "periodVolatilityAnnualized": 0.1742538628639969,
+      "sharpeLike": 1.9382981912839263,
       "maxDrawdown": 0.10576431384623748,
-      "hitRate": 0.631578947368421,
-      "averagePeriodReturn": 0.004809287733672659,
-      "bestPeriod": 0.04269440916939344,
+      "hitRate": 0.65,
+      "averagePeriodReturn": 0.0057133850978868285,
+      "bestPeriod": 0.045985190931199994,
       "worstPeriod": -0.05571710986309308
     },
     "v13_top_20": {
-      "periods": 19,
-      "totalDays": 128,
-      "cumulativeReturn": 0.09114439106729222,
-      "annualizedReturn": 0.2824000637910884,
-      "periodVolatilityAnnualized": 0.1448695394781143,
-      "sharpeLike": 1.9493405225723872,
+      "periods": 20,
+      "totalDays": 136,
+      "cumulativeReturn": 0.10740907188024207,
+      "annualizedReturn": 0.3149676217643016,
+      "periodVolatilityAnnualized": 0.1490911859117419,
+      "sharpeLike": 2.112583784468347,
       "maxDrawdown": 0.09049669098465672,
-      "hitRate": 0.631578947368421,
-      "averagePeriodReturn": 0.004792082429830607,
-      "bestPeriod": 0.03702061018484832,
+      "hitRate": 0.6,
+      "averagePeriodReturn": 0.0053161624044611635,
+      "bestPeriod": 0.03746080222499087,
       "worstPeriod": -0.038247605705714297
     },
     "v14_top_10": {
-      "periods": 19,
-      "totalDays": 128,
-      "cumulativeReturn": 0.1396437135614914,
-      "annualizedReturn": 0.45171256061507936,
-      "periodVolatilityAnnualized": 0.15091462654581156,
-      "sharpeLike": 2.993166208962242,
-      "maxDrawdown": 0.05209220475621641,
-      "hitRate": 0.631578947368421,
-      "averagePeriodReturn": 0.007109127005188959,
+      "periods": 20,
+      "totalDays": 136,
+      "cumulativeReturn": 0.14535933941164303,
+      "annualizedReturn": 0.4394258121516246,
+      "periodVolatilityAnnualized": 0.1439213557187399,
+      "sharpeLike": 3.0532356366235036,
+      "maxDrawdown": 0.04733818713335409,
+      "hitRate": 0.6,
+      "averagePeriodReturn": 0.006996229595253157,
       "bestPeriod": 0.045549710243240484,
-      "worstPeriod": -0.026880627872185647
+      "worstPeriod": -0.0259080001962177
     },
     "v14_top_20": {
-      "periods": 19,
-      "totalDays": 128,
-      "cumulativeReturn": 0.1260216187671106,
-      "annualizedReturn": 0.4027772650808277,
-      "periodVolatilityAnnualized": 0.1368220913703615,
-      "sharpeLike": 2.943802868723563,
+      "periods": 20,
+      "totalDays": 136,
+      "cumulativeReturn": 0.1149979677977302,
+      "annualizedReturn": 0.3392920073802861,
+      "periodVolatilityAnnualized": 0.13782263870724365,
+      "sharpeLike": 2.4618017080705745,
       "maxDrawdown": 0.04966676687273671,
-      "hitRate": 0.6842105263157895,
-      "averagePeriodReturn": 0.0064353271959197164,
+      "hitRate": 0.65,
+      "averagePeriodReturn": 0.0056294468840138836,
       "bestPeriod": 0.03856713891090001,
       "worstPeriod": -0.0244623665653438
     }
   },
   "baselines": {
     "equal_universe": {
-      "periods": 19,
-      "totalDays": 128,
-      "cumulativeReturn": 0.039186088557593424,
-      "annualizedReturn": 0.11584033856543408,
-      "periodVolatilityAnnualized": 0.07614839509739706,
-      "sharpeLike": 1.5212446489157037,
+      "periods": 20,
+      "totalDays": 136,
+      "cumulativeReturn": 0.02463768847764647,
+      "annualizedReturn": 0.06750247366676465,
+      "periodVolatilityAnnualized": 0.08574505654354249,
+      "sharpeLike": 0.7872462435485827,
       "maxDrawdown": 0.04275999265364541,
-      "hitRate": 0.47368421052631576,
-      "averagePeriodReturn": 0.00207761185505629,
+      "hitRate": 0.5,
+      "averagePeriodReturn": 0.001284715558582655,
       "bestPeriod": 0.024665809203075702,
-      "worstPeriod": -0.016757923748606796
+      "worstPeriod": -0.023594183108235283
     },
     "SPY": {
-      "periods": 17,
-      "totalDays": 116,
-      "cumulativeReturn": 0.004901170738275784,
-      "annualizedReturn": 0.015503062574797166,
-      "periodVolatilityAnnualized": 0.08695113563490707,
-      "sharpeLike": 0.17829626331612128,
-      "maxDrawdown": 0.028387760349704024,
-      "hitRate": 0.4117647058823529,
-      "averagePeriodReturn": 0.0003555204066763541,
+      "periods": 18,
+      "totalDays": 124,
+      "cumulativeReturn": -0.022265148689796788,
+      "annualizedReturn": -0.06413043822934006,
+      "periodVolatilityAnnualized": 0.09835947979134603,
+      "sharpeLike": -0.6520005836283658,
+      "maxDrawdown": 0.05465415273849296,
+      "hitRate": 0.3888888888888889,
+      "averagePeriodReturn": -0.0011624771114181291,
       "bestPeriod": 0.02513902231122045,
-      "worstPeriod": -0.014553869889431637
+      "worstPeriod": -0.030564081469058868
     }
   },
   "periods": [
@@ -2095,17 +2095,17 @@
     },
     {
       "startDate": "2026-10-26",
-      "endDate": "2026-10-30",
-      "days": 4,
+      "endDate": "2026-11-02",
+      "days": 7,
       "tradableStocks": 264,
-      "equalUniverseReturn": -0.0012571651667727987,
-      "equalUniverseGrossReturn": -0.0012571651667727987,
+      "equalUniverseReturn": 0.008556703867046074,
+      "equalUniverseGrossReturn": 0.008556703867046074,
       "equalUniverseTurnover": 0.0,
-      "benchmarkReturn": -0.012608280962148943,
-      "benchmarkGrossReturn": -0.012608280962148943,
+      "benchmarkReturn": -0.009012634412114418,
+      "benchmarkGrossReturn": -0.009012634412114418,
       "v13_top_10": {
-        "return": 0.029244282846560388,
-        "grossReturn": 0.0295523597101741,
+        "return": 0.045985190931199994,
+        "grossReturn": 0.04629326779481371,
         "turnover": 0.3080768636137128,
         "transactionCost": 0.0003080768636137128,
         "tickers": [
@@ -2121,11 +2121,11 @@
           "WMB"
         ],
         "expectedReturn": 0.3794401353079518,
-        "expectedMinusActual": 0.3498877755977777
+        "expectedMinusActual": 0.3331468675131381
       },
       "v13_top_20": {
-        "return": 0.020551835460388683,
-        "grossReturn": 0.020942180404533616,
+        "return": 0.03746080222499087,
+        "grossReturn": 0.0378511471691358,
         "turnover": 0.390344944144932,
         "transactionCost": 0.000390344944144932,
         "tickers": [
@@ -2151,11 +2151,11 @@
           "GOOGL"
         ],
         "expectedReturn": 0.39862597567175034,
-        "expectedMinusActual": 0.37768379526721674
+        "expectedMinusActual": 0.36077482850261455
       },
       "v14_top_10": {
-        "return": -0.026880627872185647,
-        "grossReturn": -0.026581562154559306,
+        "return": -0.0014208532578422685,
+        "grossReturn": -0.001121787540215928,
         "turnover": 0.2990657176263405,
         "transactionCost": 0.0002990657176263405,
         "tickers": [
@@ -2171,11 +2171,11 @@
           "HWM"
         ],
         "expectedReturn": 0.49723811387029104,
-        "expectedMinusActual": 0.5238196760248504
+        "expectedMinusActual": 0.49835990141050696
       },
       "v14_top_20": {
-        "return": -0.013478877857941477,
-        "grossReturn": -0.0131793880183424,
+        "return": -0.0011027764240924076,
+        "grossReturn": -0.0008032865844933324,
         "turnover": 0.2994898395990754,
         "transactionCost": 0.0002994898395990754,
         "tickers": [
@@ -2201,15 +2201,126 @@
           "T"
         ],
         "expectedReturn": 0.46263048062406,
-        "expectedMinusActual": 0.4758098686424024
+        "expectedMinusActual": 0.46343376720855334
+      }
+    },
+    {
+      "startDate": "2026-11-02",
+      "endDate": "2026-11-07",
+      "days": 5,
+      "tradableStocks": 264,
+      "equalUniverseReturn": -0.023594183108235283,
+      "equalUniverseGrossReturn": -0.023594183108235283,
+      "equalUniverseTurnover": 0.0,
+      "benchmarkReturn": -0.030564081469058868,
+      "benchmarkGrossReturn": -0.030564081469058868,
+      "v13_top_10": {
+        "return": 0.00615032693331645,
+        "grossReturn": 0.006560229575410368,
+        "turnover": 0.4099026420939176,
+        "transactionCost": 0.0004099026420939176,
+        "tickers": [
+          "HLN",
+          "PDD",
+          "TMUS",
+          "CI",
+          "CTVA",
+          "CVS",
+          "PCG",
+          "SCHW",
+          "NU",
+          "T"
+        ],
+        "expectedReturn": 0.3496100858382836,
+        "expectedMinusActual": 0.34304985626287327
+      },
+      "v13_top_20": {
+        "return": -0.0016352848421604545,
+        "grossReturn": -0.0012888491952195947,
+        "turnover": 0.3464356469408597,
+        "transactionCost": 0.00034643564694085974,
+        "tickers": [
+          "HLN",
+          "PDD",
+          "TMUS",
+          "CI",
+          "CTVA",
+          "CVS",
+          "PCG",
+          "SCHW",
+          "NU",
+          "T",
+          "WMB",
+          "DLR",
+          "BKNG",
+          "ORLY",
+          "EQIX",
+          "AVGO",
+          "SE",
+          "GOOG",
+          "GOOGL",
+          "ROST"
+        ],
+        "expectedReturn": 0.36216447292251236,
+        "expectedMinusActual": 0.36345332211773196
+      },
+      "v14_top_10": {
+        "return": -0.020608595807870434,
+        "grossReturn": -0.020210597423008934,
+        "turnover": 0.39799838486150096,
+        "transactionCost": 0.00039799838486150095,
+        "tickers": [
+          "SCHW",
+          "CTVA",
+          "NU",
+          "FANG",
+          "TMUS",
+          "CVS",
+          "PDD",
+          "C",
+          "CSCO",
+          "ROST"
+        ],
+        "expectedReturn": 0.3799624609666641,
+        "expectedMinusActual": 0.40017305838967304
+      },
+      "v14_top_20": {
+        "return": -0.022058380476046014,
+        "grossReturn": -0.021803291190717507,
+        "turnover": 0.25508928532850816,
+        "transactionCost": 0.00025508928532850817,
+        "tickers": [
+          "SCHW",
+          "CTVA",
+          "NU",
+          "FANG",
+          "TMUS",
+          "CVS",
+          "PDD",
+          "C",
+          "CSCO",
+          "ROST",
+          "GOOGL",
+          "GOOG",
+          "AVGO",
+          "BKNG",
+          "ASML",
+          "CI",
+          "META",
+          "ANET",
+          "DLR",
+          "VLO"
+        ],
+        "expectedReturn": 0.40155708433495857,
+        "expectedMinusActual": 0.42336037552567607
       }
     }
   ],
   "readiness": {
     "status": "research_only",
-    "evidenceDays": 128,
+    "evidenceDays": 136,
     "minimumEvidenceDays": 90,
-    "benchmarkPeriods": 17,
+    "benchmarkPeriods": 18,
     "formulaVersionsMixed": false,
     "issues": []
   }
